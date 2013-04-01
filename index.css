@@ -9,11 +9,11 @@ div {
 */
 }
 
-#scenario_responses ul {
+#scenario_responses ul, ul.choice {
     width:90%;
 }
 
-#scenario_responses li {
+#scenario_responses li, li.choice {
     display: inline-block;
     list-style-type: none;
     padding: 5px;
@@ -23,6 +23,7 @@ div {
     width:30%;
     font-size:large;
     border-radius:10px;
+    cursor:hand; cursor:pointer;
 }
 
 #start_screen {
