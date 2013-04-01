@@ -1,23 +1,88 @@
 div {
-    background: skyblue;
+    background: #404040;
     text-align:center;
+/*    height: 100%;
+    width: 100%;
+    position: fixed;
+    top: 0%;
+    left: 0%
+*/
+}
+
+#scenario_responses ul {
+    width:90%;
+}
+
+#scenario_responses li {
+    display: inline-block;
+    list-style-type: none;
+    padding: 5px;
+    margin: 10px;
+    background: #cccccc;
+    color: #003366;
+    width:30%;
+    font-size:large;
+    border-radius:10px;
 }
 
 #start_screen {
-    background: green;
+    background: #353535;
     font-size: x-large;
+    color: white;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    top: 0%;
+    left: 0%;
+    padding-top:10%;
 }
 
 #scenario_screen {
     display:none;
     font-size: xx-large;
+    background: #404040;
+    color: white;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    top: 0%;
+    left: 0%;
+    padding-top:10%;
+}
+
+#scenario_description {
+    background: #404040;
+    color: white;
 }
 
 #factoid_screen {
     display:none;
     font-size: x-large;
+    background: #404040;
+    color: white;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    top: 0%;
+    left: 0%;
+    padding-top:10%;
+}
+
+#factiod_text {
+    background: #404040;
+    color: white;
+    margin:5px;
 }
 
 #end_screen {
     display:none;
+    background: #454545;
+    font-size: x-large;
+    color: white;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    top: 0%;
+    left: 0%
+    padding-top:10%;
 }
