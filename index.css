@@ -9,6 +9,10 @@ div {
 */
 }
 
+body {
+    font-family: Cambria, serif;
+}
+
 small {
     font-size:x-small;
 }
