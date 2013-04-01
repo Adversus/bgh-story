@@ -1,0 +1,23 @@
+div {
+    background: skyblue;
+    text-align:center;
+}
+
+#start_screen {
+    background: green;
+    font-size: x-large;
+}
+
+#scenario_screen {
+    display:none;
+    font-size: xx-large;
+}
+
+#factoid_screen {
+    display:none;
+    font-size: x-large;
+}
+
+#end_screen {
+    display:none;
+}
