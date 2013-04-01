@@ -9,6 +9,10 @@ div {
 */
 }
 
+small {
+    font-size:x-small;
+}
+
 #scenario_responses ul, ul.choice {
     width:90%;
 }
@@ -52,6 +56,7 @@ div {
 }
 
 #scenario_description {
+    margin:3em;
     background: #404040;
     color: white;
 }
