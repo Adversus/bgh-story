@@ -20,12 +20,14 @@
     <body>
       <form method="post">
         <h2>Scenario Manager
-        <select name="consequences_for_scenarios" id="consequences_for_scenarios">
+        <select name="consequences_for_scenarios" id="consequences_for_scenarios" 
+                onChange="loadScenario();">
           <option value="null">Choose a consequence</option>
           <option value="new">Create a new consequence</option>
           <option value="0">0 - A friend says to you, ...</option>
           <option value="1">1 - You spend all night worrying, ...</option>
         </select>
+        <input type="button" value="Delete this Scenario"/>
         </h2>
 
         <h3>Scenario body:</h3>
@@ -38,9 +40,9 @@
 
         <p>
           <input type="button" id="add_response_button"
-                 onClick="createResponseForm();" value="Add another response">
+                 onClick="createResponseForm();" value="Add another response"/>
 
-(Recommended max of two responses)
+          (Recommended max of two responses)
         </p>
         <div id="responses">
         </div>
