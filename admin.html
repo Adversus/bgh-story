@@ -1,0 +1,66 @@
+<DOCTYPE html>
+  <html>
+    <head>
+      <meta lang="en"/>
+      <title>Interactive Story Editor</title>
+      
+      <script type="text/javascript" src="admin.js"></script>
+
+      <!-- TinyMCE -->
+      <script type="text/javascript" src="tiny_mce/tiny_mce.js"></script>
+      <script type="text/javascript">
+      tinyMCE.init({
+        mode : "textareas",
+        theme : "simple"
+      });
+      </script>
+      <!-- /TinyMCE -->
+
+    </head>
+    <body>
+      <form method="post">
+        <h2>Scenario Manager
+        <select name="consequences_for_scenarios" id="consequences_for_scenarios">
+          <option value="null">Choose a consequence</option>
+          <option value="new">Create a new consequence</option>
+          <option value="0">0 - A friend says to you, ...</option>
+          <option value="1">1 - You spend all night worrying, ...</option>
+        </select>
+        </h2>
+
+        <h3>Scenario body:</h3>
+
+        <textarea id="elm1" name="elm1" rows="15" cols="80" style="width: 80%">
+        </textarea>
+
+        <br/>
+        <h3>"What will you do?" Responses</h3>
+
+        <p>
+          <input type="button" id="add_response_button"
+                 onClick="createResponseForm();" value="Add another response">
+
+(Recommended max of two responses)
+        </p>
+        <div id="responses">
+        </div>
+        <p>
+
+
+
+        </p>
+        <p>
+          <hr/>
+          <input type="submit" name="save" value="Save Scenarios" />
+          <input type="reset" name="reset" value="Reset" />
+        </p>
+      </form>
+
+      <script>
+        createResponseForm(); // add response 0.
+        var consequence_dropdowns = [document.getElementById("consequences_for_response0"),
+                                     document.getElementById("scenarios")];
+      </script>
+    </body>
+  </html>
+
