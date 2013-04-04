@@ -13,13 +13,6 @@ body {
 */
 }
 
-/* for tiny_mce default font */
-body, td, pre {
-    font-family: Cambria, serif;
-    font-size:x-large;
-    text-align:center;
-}
-
 small {
     font-size:x-small;
 }
