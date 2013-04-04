@@ -1,7 +1,7 @@
-<DOCTYPE html>
-  <html>
+<!DOCTYPE html>
+  <html lang="en">
     <head>
-      <meta lang="en"/>
+      <meta charset="utf-8">
       <title>Interactive Story Editor</title>
       
       <script type="text/javascript" src="admin.js"></script>
@@ -20,23 +20,23 @@
       <!-- /TinyMCE -->
 
       <style>
-        textarea {
+      textarea {
         font-size:x-large;
-        }
+      }
       </style>
 
     </head>
     <body>
       <form method="post">
         <h2>Scenario Manager
-        <select name="consequences_for_scenarios" id="consequences_for_scenarios" 
-                onChange="loadScenario();">
-          <option value="null">Choose a consequence</option>
-          <option value="new">Create a new consequence</option>
-          <option value="0">0 - A friend says to you, ...</option>
-          <option value="1">1 - You spend all night worrying, ...</option>
-        </select>
-        <input type="button" value="Delete this Scenario"/>
+          <select name="consequences_for_scenarios" id="consequences_for_scenarios" 
+                  onChange="loadScenario();">
+            <option value="null">Choose a consequence</option>
+            <option value="new">Create a new consequence</option>
+            <option value="0">0 - A friend says to you, ...</option>
+            <option value="1">1 - You spend all night worrying, ...</option>
+          </select>
+          <input type="button" value="Delete this Scenario"/>
         </h2>
 
         <h3>Scenario body:</h3>
@@ -55,22 +55,19 @@
         </p>
         <div id="responses">
         </div>
+
+        <hr/>
+
         <p>
-
-
-
-        </p>
-        <p>
-          <hr/>
           <input type="submit" name="save" value="Save Scenarios" />
           <input type="reset" name="reset" value="Reset" />
         </p>
       </form>
 
       <script>
-        createResponseForm(); // add response 0.
-        var consequence_dropdowns = [document.getElementById("consequences_for_response0"),
-                                     document.getElementById("scenarios")];
+      createResponseForm(); // add response 0.
+      var consequence_dropdowns = [document.getElementById("consequences_for_response0"),
+          document.getElementById("scenarios")];
       </script>
     </body>
   </html>
