@@ -28,7 +28,8 @@
     </head>
     <body>
       <form method="post">
-        <h2>Scenario Manager
+        <h2>Scenario Manager</h2>
+        <p> Scenario overview:
           <select name="consequences_for_scenarios" id="consequences_for_scenarios" 
                   onChange="loadScenario();">
             <option value="null">Choose a consequence</option>
@@ -37,14 +38,13 @@
             <option value="1">1 - You spend all night worrying, ...</option>
           </select>
           <input type="button" value="Delete this Scenario"/>
-        </h2>
+        </p>
 
         <h3>Scenario body:</h3>
 
         <textarea id="elm1" name="elm1" rows="9" cols="80" style="width: 80%">
         </textarea>
 
-        <br/>
         <h3>"What will you do?" Responses</h3>
 
         <p>
@@ -59,7 +59,7 @@
         <hr/>
 
         <p>
-          <input type="submit" name="save" value="Save Scenarios" />
+          <input type="submit" name="save" value="Save Scenario" />
           <input type="reset" name="reset" value="Reset" />
         </p>
       </form>
