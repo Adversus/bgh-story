@@ -1,7 +1,11 @@
-div {
-    background: #404040;
+body {
+    background: #373737;
+    margin:0px;
+    /* background:pink; */
     text-align:center;
-/*    height: 100%;
+
+/*    position:fixed;
+    height: 100%;
     width: 100%;
     position: fixed;
     top: 0%;
@@ -17,12 +21,24 @@ small {
     font-size:x-small;
 }
 
-#scenario_responses ul, ul.choice {
+div.screen {
+    width:70%;
+    height:75%;
+    padding-top:10%;
+    padding-bottom:15%;
+    padding-left:15%;
+    padding-right:15%;
+    overflow:scroll;
+}
+
+ul#scenario_responses, ul.choice {
     width:90%;
+    margin:5%;
+    -webkit-padding-start:0;
 }
 
 #scenario_responses li, li.choice {
-    display: inline-block;
+    display: inline-table;
     list-style-type: none;
     padding: 5px;
     margin: 10px;
@@ -32,18 +48,15 @@ small {
     font-size:large;
     border-radius:10px;
     cursor:hand; cursor:pointer;
+
 }
 
 #start_screen {
     background: #353535;
     font-size: x-large;
     color: white;
-    height: 100%;
-    width: 100%;
-    position: fixed;
     top: 0%;
     left: 0%;
-    padding-top:10%;
 }
 
 #scenario_screen {
@@ -51,16 +64,17 @@ small {
     font-size: xx-large;
     background: #404040;
     color: white;
-    height: 100%;
-    width: 100%;
-    position: fixed;
     top: 0%;
     left: 0%;
-    padding-top:10%;
+}
+
+/* The horizontal rules */
+hr {
+    width:60%;
 }
 
 #scenario_description {
-    margin:3em;
+    /* margin:3em; */
     background: #404040;
     color: white;
 }
@@ -70,12 +84,8 @@ small {
     font-size: x-large;
     background: #404040;
     color: white;
-    height: 100%;
-    width: 100%;
-    position: fixed;
     top: 0%;
     left: 0%;
-    padding-top:10%;
 }
 
 #factiod_text {
@@ -89,10 +99,7 @@ small {
     background: #454545;
     font-size: x-large;
     color: white;
-    height: 100%;
-    width: 100%;
-    position: fixed;
-    top: 0%;
+/*    top: 0%;
     left: 0%;
-    padding-top:10%;
+    padding-top:10%; */
 }
