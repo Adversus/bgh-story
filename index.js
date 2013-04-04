@@ -55,6 +55,8 @@ function displayOnly(screen_name, callback) {
 
     screen_name = "#" + screen_name; // add jquery class selector id.
 
+    /* If the "next-screen" is already visible, fade it and execute
+     * any callback, then fade it back. */
     if ($(screen_name).is(':visible')) {
         $(screen_name).fadeOut(1000, function() {
             if (callback) {callback();}
@@ -65,8 +67,8 @@ function displayOnly(screen_name, callback) {
         if (callback) {callback();}
         for (var i = 0; i < screens.length; i++) {
             if (screens[i] != screen_name)
-                $(screens[i]).fadeOut(2000, function() {
-                    $(screen_name).fadeIn(2000);
+                $(screens[i]).fadeOut(1000, function() {
+                    $(screen_name).fadeIn(1000);
                 });
         }
     }
