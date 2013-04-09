@@ -5,6 +5,7 @@
       <title>Interactive Story Editor</title>
       
       <script type="text/javascript" src="admin.js"></script>
+      <script type="text/javascript" src="../ajax.js"></script>
 
       <!-- TinyMCE -->
       <script type="text/javascript" src="tiny_mce/tiny_mce.js"></script>
@@ -49,7 +50,8 @@
         </p>
 
         <h3>Scenario Options:</h3>
-        <input type="checkbox" value="default_scenario_for_story">
+        <input type="checkbox" value="default_scenario_for_story" 
+               id="default_scenario_checkbox" name="default_scenario_checkbox">
         <label for="default_scenario_checkbox">is starting scenario.</label>
 
         <h3>Scenario Body:</h3>
