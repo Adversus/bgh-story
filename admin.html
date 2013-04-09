@@ -29,7 +29,18 @@
     <body>
       <form method="post">
         <h2>Scenario Manager</h2>
-        <p> Scenario overview:
+        <p> 
+          Story overview:
+<select name="stories" id="stories" 
+                  onChange="">
+            <option value="null">ALL STORIES</option>
+            <option value="new">Create a new Story</option>
+            <option value="0">0 - SHAUNS_STORY</option>
+            <option value="1">1 - A_MIDSUMMERS_NIGHT</option>
+          </select>
+          <input type="button" value="Delete this Story"/>
+          <br/>
+Scenario overview:
           <select name="consequences_for_scenarios" id="consequences_for_scenarios" 
                   onChange="loadScenario();">
             <option value="null">Choose a consequence</option>
