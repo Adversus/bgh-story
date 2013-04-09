@@ -29,10 +29,21 @@
     <body>
       <form method="post">
         <h2>Scenario Manager</h2>
-        <p> Scenario overview:
+        <p> 
+          Story overview:
+          <select name="stories_dropdown" id="stories_dropdown" 
+                  onChange="loadStory(this);">
+            <option value="null">Displaying all stories</option>
+            <option value="new">Create a new Story</option>
+            <option value="0">0 - SHAUNS_STORY</option>
+            <option value="1">1 - A_MIDSUMMERS_NIGHT</option>
+          </select>
+          <input type="button" value="Delete this Story"/>
+          <br/>
+Scenario overview:
           <select name="consequences_for_scenarios" id="consequences_for_scenarios" 
                   onChange="loadScenario();">
-            <option value="null">Choose a consequence</option>
+            <option value="null">Choose a scenario to edit</option>
             <option value="new">Create a new consequence</option>
             <option value="0">0 - A friend says to you, ...</option>
             <option value="1">1 - You spend all night worrying, ...</option>

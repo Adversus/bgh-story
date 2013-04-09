@@ -123,6 +123,18 @@ function clearResponses() {
     numResponses = 0;
 }
 
+function loadStory(obj) {
+    if (obj.value != "new") 
+        return; // until we know how to load
+
+    var new_name = prompt("New story name:");
+
+    // TODO: Sanitize name
+    new_name = new_name.replace(" ", "");
+
+    console.log("Creating STORY: '" + new_name + "'");
+}
+
 function loadScenario() {
     /* Called by onChange from consequences_for_scenarios. */
     var obj = document.getElementById("consequences_for_scenarios");
