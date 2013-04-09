@@ -27,7 +27,7 @@
 
     </head>
     <body>
-      <form method="post">
+      <form method="post" action="admin.php">
         <h2>Scenario Manager</h2>
         <p> 
           Story overview:
@@ -40,7 +40,9 @@
           </select>
           <input type="button" value="Delete this Story"/>
           <br/>
-Scenario overview:
+          
+          Scenario overview:
+
           <select name="consequences_for_scenarios" id="consequences_for_scenarios" 
                   onChange="loadScenario();">
             <option value="null">Choose a scenario to edit</option>
@@ -53,7 +55,7 @@ Scenario overview:
 
         <h3>Scenario body:</h3>
 
-        <textarea id="elm1" name="elm1" rows="9" cols="80" style="width: 80%">
+        <textarea id="body_text" name="body_text" rows="9" cols="80" style="width: 80%">
         </textarea>
 
         <h3>"What will you do?" Responses</h3>
