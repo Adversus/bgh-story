@@ -19,50 +19,50 @@
       </script>
       <!-- /TinyMCE -->
 
-      <style>
-      textarea {
-        font-size:x-large;
-      }
-      </style>
-
+      <link REL=StyleSheet HREF="admin.css" TYPE="text/css" MEDIA=screen>
+      
     </head>
     <body>
       <form method="post" action="admin.php">
         <h2>Scenario Manager</h2>
         <p> 
-          Story overview:
+          <label for="stories_dropdown">Story overview:</label>
           <select name="stories_dropdown" id="stories_dropdown" 
                   onChange="loadStory(this);">
             <option value="null">Displaying all stories</option>
-            <option value="new">Create a new Story</option>
+            <option value="new">Create a new story</option>
             <option value="0">0 - SHAUNS_STORY</option>
             <option value="1">1 - A_MIDSUMMERS_NIGHT</option>
           </select>
           <input type="button" value="Delete this Story"/>
           <br/>
           
-          Scenario overview:
-
+          <label for="consequences_for_scenarios">Scenario overview:</label>
           <select name="consequences_for_scenarios" id="consequences_for_scenarios" 
                   onChange="loadScenario();">
             <option value="null">Choose a scenario to edit</option>
-            <option value="new">Create a new consequence</option>
+            <option value="new">Create a new scenario</option>
             <option value="0">0 - A friend says to you, ...</option>
             <option value="1">1 - You spend all night worrying, ...</option>
           </select>
           <input type="button" value="Delete this Scenario"/>
         </p>
 
-        <h3>Scenario body:</h3>
+        <h3>Scenario Options:</h3>
+        <input type="checkbox" value="default_scenario_for_story">
+        <label for="default_scenario_checkbox">is starting scenario.</label>
 
-        <textarea id="body_text" name="body_text" rows="9" cols="80" style="width: 80%">
+        <h3>Scenario Body:</h3>
+
+        <textarea id="body_text" name="body_text" rows="9" cols="80" 
+                  style="width: 80%" >
         </textarea>
 
         <h3>"What will you do?" Responses</h3>
 
         <p>
           <input type="button" id="add_response_button"
-                 onClick="createResponseForm();" value="Add another response"/>
+                 onClick="createResponseForm();" value="Add Response"/>
 
           (Recommended max of two responses)
         </p>
