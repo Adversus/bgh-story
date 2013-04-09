@@ -35,6 +35,11 @@ function createNewConsequence() {
     
 }
 
+function clearForms() {
+    /* Clear the page input forms out: body_text and responseForms. */
+    clearResponses();
+    tinyMCE.get("body_text").setContent("")
+}
 
 function setConsequenceOptions(obj) {
 /* Request (ajax / etc) the present consequences, prepend two generic
@@ -126,8 +131,12 @@ function clearResponses() {
 }
 
 function loadStory(obj) {
+    /* This is the onChange handler for the stories dropdown.
+       obj.value is one of "null", "new", or the story ID (int) */
     if (obj.value != "new") 
-        return; // until we know how to load
+        return; // abort until we know how to load
+
+    // TODO: add story loading code.
 
     var new_name = prompt("New story name:");
 
@@ -146,15 +155,14 @@ function loadScenario() {
 
     if (obj.value == "new") {
         console.log("Creating a new consequence!");
-        clearResponses();
+        clearForms();
         createResponseForm();
         return;
     }
 
     console.log("Loading scenario " + obj.value);
-    /* Clear form */
-    clearResponses();
-    tinyMCE.get("body_text").setContent("");
+
+    clearForms();
 
     sendData("action=get_scenario\nscenario_id="+obj.value, 
              "http://gimli.morningside.edu/~meyersh/bgh/admin/admin.php",
