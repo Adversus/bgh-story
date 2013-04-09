@@ -82,6 +82,7 @@ function createResponseForm(responseText, consequenceId) {
 
     new_response_textbox.id          = new_responseid;
     new_response_textbox.name        = new_responseid;
+    new_response_textbox.value       = responseText ? responseText : "";
     new_response_textbox.placeholder = responseText || new_responseid + " text";
     new_response_textbox.required    = true;
 
@@ -150,6 +151,26 @@ function loadScenario() {
         return;
     }
 
-    console.log("Loading consequence " + obj.value);
+    console.log("Loading scenario " + obj.value);
+    /* Clear form */
+    clearResponses();
+    tinyMCE.get("body_text").setContent("");
+
+    sendData("action=get_scenario\nscenario_id="+obj.value, 
+             "http://gimli.morningside.edu/~meyersh/bgh/admin/admin.php",
+             "GET", function(msg) {
+                 var scenario = JSON.parse(msg)["body"];
+                 if (scenario == null) {
+                     console.warn("Loaded null body.");
+                     return
+                 }
+
+                 /* Populate all needed response forms */
+                 for (var i = 0; i < scenario.responses.length; i++) {
+                     createResponseForm(scenario.responses[i].choice, scenario.responses[i].consequence);
+                 }
+
+                 tinyMCE.get("body_text").setContent(scenario.descr);
+             });
     
 }
