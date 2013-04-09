@@ -80,9 +80,10 @@ function createResponseForm(responseText, consequenceId) {
     new_label.appendChild(document.createTextNode("Response " + numResponses + ": "));
     new_label.for = new_responseid;
 
-    new_response_textbox.id    = new_responseid;
-    new_response_textbox.name  = new_responseid;
-    new_response_textbox.value = responseText || new_responseid;
+    new_response_textbox.id          = new_responseid;
+    new_response_textbox.name        = new_responseid;
+    new_response_textbox.placeholder = responseText || new_responseid + " text";
+    new_response_textbox.required    = true;
 
     new_consequence_dropdown.id       = "consequences_for_" + new_responseid;
     new_consequence_dropdown.name     = "consequences_for_" + new_responseid;
