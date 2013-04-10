@@ -1,3 +1,5 @@
+var adminURL = "http://gimli.morningside.edu/~meyersh/bgh/admin/admin.php";
+
 var numResponses = 0; // we start with one response initially. 
 var consequence_dropdowns = []; // This is populated at the end of the pageload.
 
@@ -164,9 +166,12 @@ function loadScenario() {
 
     clearForms();
 
-    sendData("action=get_scenario\nscenario_id="+obj.value, 
-             "http://gimli.morningside.edu/~meyersh/bgh/admin/admin.php",
-             "GET", function(msg) {
+    data = {action: "get_scenario",
+            scenario_id: obj.value};
+
+    sendData2(data, 
+             adminURL,
+             "POST", function(msg) {
                  var scenario = JSON.parse(msg)["body"];
                  if (scenario == null) {
                      console.warn("Loaded null body.");
@@ -181,4 +186,19 @@ function loadScenario() {
                  tinyMCE.get("body_text").setContent(scenario.descr);
              });
     
+}
+
+function testJson() {
+/* Testing some submission code. This is pretty awesome. */
+
+    var data = {json: JSON.stringify([1,2,3]),
+                shaun: 1,
+                mike: 2};
+
+    data.nested = JSON.stringify(data);
+
+    sendData2(data,
+              adminURL,
+              "POST", 
+              null);
 }
