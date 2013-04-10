@@ -190,10 +190,6 @@ function parseData(data)
 	}
 }
 
-
-
-
-
 function sendData(dataStr, url, method, parseFunction) { 
     var req = getXMLHttpReq();
 
@@ -230,7 +226,9 @@ function sendData(dataStr, url, method, parseFunction) {
 		}
 	}
 
-    req.setRequestHeader("Content-Type", "text/plain");
+    if ( method == "POST" )
+        // req.setRequestHeader("Content-type", "text/plain");
+        req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 
     if (method == "POST")
 	    req.send(dataStr);
@@ -238,6 +236,25 @@ function sendData(dataStr, url, method, parseFunction) {
 	    req.send(dataStr);
 
     return 0;
+}
+
+function sendData2(data, url, method, parseFunction) {
+    /* A little wrapper that deals with the DATA piece
+     * differently. This expects data to be a simple dictionary (eg
+     * {'key': 'value'}) and POSTS all that data in a way PHP can
+     * handle with $_POST. */
+    var dataStr = "";
+    for (var key in data) {
+        if (!data.hasOwnProperty(key))
+            continue; // Skippy
+
+        dataStr += encodeURIComponent(key) + "=" + encodeURIComponent(data[key]) + "&";
+    }
+
+    dataStr.replace("%20", "+");
+
+    sendData(dataStr, url, method, parseFunction);
+    
 }
 
 /* 
