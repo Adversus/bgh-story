@@ -1,0 +1,14 @@
+textarea {
+    font-size:x-large;
+}
+
+label {
+    width:10em;
+    color:black;
+    background:#f0f0ee;
+    display:inline-block;
+}
+
+select {
+    width:17em;
+}

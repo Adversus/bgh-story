@@ -1,3 +1,5 @@
+var adminURL = "http://gimli.morningside.edu/~meyersh/bgh/admin/admin.php";
+
 var numResponses = 0; // we start with one response initially. 
 var consequence_dropdowns = []; // This is populated at the end of the pageload.
 
@@ -35,6 +37,11 @@ function createNewConsequence() {
     
 }
 
+function clearForms() {
+    /* Clear the page input forms out: body_text and responseForms. */
+    clearResponses();
+    tinyMCE.get("body_text").setContent("")
+}
 
 function setConsequenceOptions(obj) {
 /* Request (ajax / etc) the present consequences, prepend two generic
@@ -80,9 +87,11 @@ function createResponseForm(responseText, consequenceId) {
     new_label.appendChild(document.createTextNode("Response " + numResponses + ": "));
     new_label.for = new_responseid;
 
-    new_response_textbox.id    = new_responseid;
-    new_response_textbox.name  = new_responseid;
-    new_response_textbox.value = responseText || new_responseid;
+    new_response_textbox.id          = new_responseid;
+    new_response_textbox.name        = new_responseid;
+    new_response_textbox.value       = responseText ? responseText : "";
+    new_response_textbox.placeholder = responseText || new_responseid + " text";
+    new_response_textbox.required    = true;
 
     new_consequence_dropdown.id       = "consequences_for_" + new_responseid;
     new_consequence_dropdown.name     = "consequences_for_" + new_responseid;
@@ -123,6 +132,22 @@ function clearResponses() {
     numResponses = 0;
 }
 
+function loadStory(obj) {
+    /* This is the onChange handler for the stories dropdown.
+       obj.value is one of "null", "new", or the story ID (int) */
+    if (obj.value != "new") 
+        return; // abort until we know how to load
+
+    // TODO: add story loading code.
+
+    var new_name = prompt("New story name:");
+
+    // TODO: Sanitize name
+    new_name = new_name.replace(" ", "");
+
+    console.log("Creating STORY: '" + new_name + "'");
+}
+
 function loadScenario() {
     /* Called by onChange from consequences_for_scenarios. */
     var obj = document.getElementById("consequences_for_scenarios");
@@ -132,11 +157,48 @@ function loadScenario() {
 
     if (obj.value == "new") {
         console.log("Creating a new consequence!");
-        clearResponses();
+        clearForms();
         createResponseForm();
         return;
     }
 
-    console.log("Loading consequence " + obj.value);
+    console.log("Loading scenario " + obj.value);
+
+    clearForms();
+
+    data = {action: "get_scenario",
+            scenario_id: obj.value};
+
+    sendData2(data, 
+             adminURL,
+             "POST", function(msg) {
+                 var scenario = JSON.parse(msg)["body"];
+                 if (scenario == null) {
+                     console.warn("Loaded null body.");
+                     return
+                 }
+
+                 /* Populate all needed response forms */
+                 for (var i = 0; i < scenario.responses.length; i++) {
+                     createResponseForm(scenario.responses[i].choice, scenario.responses[i].consequence);
+                 }
+
+                 tinyMCE.get("body_text").setContent(scenario.descr);
+             });
     
+}
+
+function testJson() {
+/* Testing some submission code. This is pretty awesome. */
+
+    var data = {json: JSON.stringify([1,2,3]),
+                shaun: 1,
+                mike: 2};
+
+    data.nested = JSON.stringify(data);
+
+    sendData2(data,
+              adminURL,
+              "POST", 
+              null);
 }
