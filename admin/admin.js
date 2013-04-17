@@ -76,6 +76,15 @@ function clearForms() {
     tinyMCE.get("body_text").setContent("")
 }
 
+function clearResponses() {
+    /* Clear all response input forms and clear global counter. */
+
+    var div = document.getElementById("responses");
+    div.innerHTML = "";
+
+    numResponses = 0;
+}
+
 function setConsequenceOptions(obj) {
 /* Request (ajax / etc) the present consequences, prepend two generic
  * "null" and "new" options, and return an element set. */
@@ -181,16 +190,6 @@ function createResponseForm(responseText, consequenceId) {
 
     console.log("Creating response #" + numResponses);
     numResponses++;
-
-}
-
-function clearResponses() {
-    /* Clear all response input forms and clear global counter. */
-
-    var div = document.getElementById("responses");
-    div.innerHTML = "";
-
-    numResponses = 0;
 }
 
 function loadStory(obj) {
