@@ -6,7 +6,8 @@ var consequence_dropdowns = []; // This is populated at the end of the pageload.
 var consequences = [{id: 0, 'descr':'A friend says to you, ...'},
                     {id: 1, 'descr': 'You spend all night worrying, ...'}];
 
-
+var facts = [{id: 0, 'descr': "You know, 2 out of 3 facts are..."},
+             {id: 1, 'descr': "8 out of 10 dentists agree, ..."}];
 
 
 function newOption(value, text) {
@@ -37,6 +38,11 @@ function createNewConsequence() {
     
 }
 
+function createNewFact() {
+    /* Called by "fact" selector dropdown onChange. */
+    return;
+}
+
 function clearForms() {
     /* Clear the page input forms out: body_text and responseForms. */
     clearResponses();
@@ -62,11 +68,29 @@ function setConsequenceOptions(obj) {
         var c_text = consequences[i].id + " - " + consequences[i].descr;
         obj.add(newOption(consequences[i].id, c_text));
     }
-
-
-    
-    
 }
+
+function setFactOptions(obj) {
+/* Request (ajax / etc) the present consequences, prepend two generic
+ * "null" and "new" options, and return an element set. */
+
+    // get the current selection
+    var current_value = obj.value;
+    
+    // clear the options
+    obj.options.length = 0;
+
+    // Insert std options
+    obj.add(newOption("null", "Choose a fact (NONE)"));
+    obj.add(newOption("new", "Create a new fact"));
+
+    // add all imported consequences
+    for (var i = 0; i < facts.length; i++) {
+        var c_text = facts[i].id + " - " + facts[i].descr;
+        obj.add(newOption(facts[i].id, c_text));
+    }
+}
+
 
 function createResponseForm(responseText, consequenceId) {
     /* create a new form-row to handle a new response. */
@@ -79,6 +103,7 @@ function createResponseForm(responseText, consequenceId) {
     var new_label                = document.createElement("label");
     var new_response_textbox     = document.createElement("input");
     var new_consequence_dropdown = document.createElement("select");
+    var new_fact_dropdown        = document.createElement("select");
     var new_delete_button        = document.createElement("input");
     var new_br                   = document.createElement("br");
 
@@ -97,6 +122,10 @@ function createResponseForm(responseText, consequenceId) {
     new_consequence_dropdown.name     = "consequences_for_" + new_responseid;
     new_consequence_dropdown.onchange = createNewConsequence;
 
+    new_fact_dropdown.id              = "facts_for_" + new_responseid;
+    new_fact_dropdown.name            = "facts_for_" + new_responseid;
+    new_fact_dropdown.onchange        = createNewFact;
+
     new_delete_button.type = "button";
     new_delete_button.value = "Delete this Response";
     new_delete_button.onclick = function() {
@@ -112,11 +141,13 @@ function createResponseForm(responseText, consequenceId) {
     div.appendChild(new_label);
     div.appendChild(new_response_textbox);
     div.appendChild(new_consequence_dropdown);
+    div.appendChild(new_fact_dropdown);
     div.appendChild(new_delete_button);
     div.appendChild(new_br);
 
     consequence_dropdowns.push(new_consequence_dropdown);
     setConsequenceOptions(new_consequence_dropdown);
+    setFactOptions(new_fact_dropdown);
 
     console.log("Creating response #" + numResponses);
     numResponses++;
