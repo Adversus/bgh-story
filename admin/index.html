@@ -39,12 +39,8 @@
           <br/>
           
           <label for="consequences_for_scenarios">Scenario overview:</label>
-          <select name="consequences_for_scenarios" id="consequences_for_scenarios" 
+          <select name="scenarios_dropdown" id="consequences_for_scenarios" 
                   onChange="loadScenario();">
-            <option value="null">Choose a scenario to edit</option>
-            <option value="new">Create a new scenario</option>
-            <option value="0">0 - A friend says to you, ...</option>
-            <option value="1">1 - You spend all night worrying, ...</option>
           </select>
           <input type="button" value="Delete this Scenario"/>
         </p>
@@ -80,11 +76,6 @@
         </p>
       </form>
 
-      <script>
-      createResponseForm(); // add response 0.
-      var consequence_dropdowns = [document.getElementById("consequences_for_response0"),
-          document.getElementById("scenarios")];
-      </script>
     </body>
   </html>
 

@@ -1,7 +1,26 @@
 var adminURL = "http://gimli.morningside.edu/~meyersh/bgh/admin/admin.php";
 
 var numResponses = 0; // we start with one response initially. 
-var consequence_dropdowns = []; // This is populated at the end of the pageload.
+
+window.onload = function () {
+    /* Initialize page onLoad. */
+    setConsequenceOptions(document.getElementById("consequences_for_scenarios"));
+    createResponseForm(); // add response 0 to a blank/fresh scenario
+
+
+
+    // ALL consequences / scenario dropdowns available at:
+    // document.getElementsByName("consequence_dropdown") and
+    // document.getElementsByName("scenarios_dropdown")
+
+    // ALL fact dropdowns available at document.getElementsbyName("fact_dropdown");
+    
+
+};
+
+/*
+ * END of window.onload stuff. 
+ */
 
 var consequences = [{id: 0, 'descr':'A friend says to you, ...'},
                     {id: 1, 'descr': 'You spend all night worrying, ...'}];
@@ -11,6 +30,8 @@ var facts = [{id: 0, 'descr': "You know, 2 out of 3 facts are..."},
 
 
 function newOption(value, text) {
+    /* Create and return a new option element with value `value` and
+     * text `text` */
     var new_option = document.createElement("option");
     new_option.value = value;
     new_option.innerHTML = text;
@@ -40,6 +61,12 @@ function createNewConsequence() {
 
 function createNewFact() {
     /* Called by "fact" selector dropdown onChange. */
+
+    if (this.value != "new")
+        return;
+
+    var response_id = this.id.replace("facts_for_", "");
+    console.log("Creating new dropdown for " + document.getElementById(response_id).value);
     return;
 }
 
@@ -59,9 +86,16 @@ function setConsequenceOptions(obj) {
     // clear the options
     obj.options.length = 0;
 
-    // Insert std options
-    obj.add(newOption("null", "Choose a consequence"));
-    obj.add(newOption("new", "Create a new consequence"));
+    // Insert std options (choose description based on select name attribute)
+    if (obj.name == "consequence_dropdown") {
+        obj.add(newOption("null", "Choose a consequence"));
+        obj.add(newOption("new", "Create a new consequence"));
+    }
+    if (obj.name == "scenarios_dropdown") {
+        obj.add(newOption("null", "Choose a scenario to edit"));
+        obj.add(newOption("new", "Create a new scenario"));
+    }
+
 
     // add all imported consequences
     for (var i = 0; i < consequences.length; i++) {
@@ -95,9 +129,6 @@ function setFactOptions(obj) {
 function createResponseForm(responseText, consequenceId) {
     /* create a new form-row to handle a new response. */
 
-    /*TODO: Handle responseText and consequenceId to handle loading
-     * saved responses. */
-
     var div = document.getElementById("responses");
 
     var new_label                = document.createElement("label");
@@ -119,11 +150,11 @@ function createResponseForm(responseText, consequenceId) {
     new_response_textbox.required    = true;
 
     new_consequence_dropdown.id       = "consequences_for_" + new_responseid;
-    new_consequence_dropdown.name     = "consequences_for_" + new_responseid;
+    new_consequence_dropdown.name     = "consequence_dropdown";
     new_consequence_dropdown.onchange = createNewConsequence;
 
     new_fact_dropdown.id              = "facts_for_" + new_responseid;
-    new_fact_dropdown.name            = "facts_for_" + new_responseid;
+    new_fact_dropdown.name            = "fact_dropdown";
     new_fact_dropdown.onchange        = createNewFact;
 
     new_delete_button.type = "button";
@@ -145,7 +176,6 @@ function createResponseForm(responseText, consequenceId) {
     div.appendChild(new_delete_button);
     div.appendChild(new_br);
 
-    consequence_dropdowns.push(new_consequence_dropdown);
     setConsequenceOptions(new_consequence_dropdown);
     setFactOptions(new_fact_dropdown);
 
