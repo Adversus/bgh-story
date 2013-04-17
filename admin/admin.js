@@ -247,7 +247,7 @@ function loadScenario() {
              });
 }
 
-function responseJson() {
+function responses() {
     /* Generate the json string representing all responses. */
     //TODO: Error checking
 
@@ -268,7 +268,21 @@ function responseJson() {
         responses.push(response);
     }
 
-    return JSON.stringify(responses);
+    return responses;
+}
+
+function submit_scenario() {
+    /* Package up and POST the details of the scenario as it is
+     * displayed in the gui. */
+    
+    var data = {
+        "scenario_id"   : Number(document.getElementById("consequences_for_scenarios").value),
+        "story_id"      : Number(document.getElementById("stories_dropdown").value),
+        "scenario_text" : tinyMCE.get("body_text").getContent(),
+        "responses"     : responses()
+    };
+
+    console.log(data);
 }
 
 function testJson() {
