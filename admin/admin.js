@@ -182,6 +182,7 @@ function createResponseForm(responseText, consequenceId) {
         div.removeChild(new_label);
         div.removeChild(new_response_textbox);
         div.removeChild(new_consequence_dropdown);
+        div.removeChild(new_fact_dropdown);
         div.removeChild(new_delete_button);
         div.removeChild(new_br);
         //TODO: add ajax delete call here.
