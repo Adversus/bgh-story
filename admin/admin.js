@@ -153,7 +153,7 @@ function createResponseForm(responseText, consequenceId) {
     new_label.for = new_responseid;
 
     new_response_textbox.id          = new_responseid;
-    new_response_textbox.name        = new_responseid;
+    new_response_textbox.name        = "response_textbox";
     new_response_textbox.value       = responseText ? responseText : "";
     new_response_textbox.placeholder = responseText || new_responseid + " text";
     new_response_textbox.required    = true;
@@ -245,7 +245,30 @@ function loadScenario() {
 
                  tinyMCE.get("body_text").setContent(scenario.descr);
              });
-    
+}
+
+function responseJson() {
+    /* Generate the json string representing all responses. */
+    //TODO: Error checking
+
+    var responses = [];
+
+    var response_textboxes = document.getElementsByName("response_textbox");
+    for (var i = 0; i < response_textboxes.length; i++) {
+        var response_id = response_textboxes[i].id;
+        var response    = {};
+        var consequence = document.getElementById("consequences_for_" + response_id).value;
+        var fact        = document.getElementById("facts_for_" + response_id).value;
+
+        response.text = document.getElementById(response_id).value;
+
+        response.consequence = consequence;
+        response.fact        = fact != "null" ? fact : null;
+
+        responses.push(response);
+    }
+
+    return JSON.stringify(responses);
 }
 
 function testJson() {
