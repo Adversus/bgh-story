@@ -155,16 +155,25 @@ function createResponseForm(responseText, consequenceId) {
     new_response_textbox.id          = new_responseid;
     new_response_textbox.name        = "response_textbox";
     new_response_textbox.value       = responseText ? responseText : "";
-    new_response_textbox.placeholder = responseText || new_responseid + " text";
+    new_response_textbox.placeholder = new_responseid + " text";
     new_response_textbox.required    = true;
+    new_response_textbox.oninput     = function () {
+        /* Disable consequence & fact selection when textbox is empty. */
+        var condition = new_response_textbox.value == "";
+
+        new_fact_dropdown.disabled        = condition;
+        new_consequence_dropdown.disabled = condition;
+    };
 
     new_consequence_dropdown.id       = "consequences_for_" + new_responseid;
     new_consequence_dropdown.name     = "consequence_dropdown";
     new_consequence_dropdown.onchange = createNewConsequence;
+    new_consequence_dropdown.disabled = true;
 
     new_fact_dropdown.id              = "facts_for_" + new_responseid;
     new_fact_dropdown.name            = "fact_dropdown";
     new_fact_dropdown.onchange        = createNewFact;
+    new_fact_dropdown.disabled        = true;
 
     new_delete_button.type = "button";
     new_delete_button.value = "Delete this Response";
@@ -283,6 +292,7 @@ function submit_scenario() {
     };
 
     console.log(data);
+    return data;
 }
 
 function testJson() {
