@@ -139,9 +139,10 @@ function createResponseForm(responseText, consequenceId) {
     /* create a new form-row to handle a new response. */
 
     var div = document.getElementById("responses");
-
+    
     var new_label                = document.createElement("label");
     var new_response_textbox     = document.createElement("input");
+    var condition                = (typeof responseText === "undefined");
     var new_consequence_dropdown = document.createElement("select");
     var new_fact_dropdown        = document.createElement("select");
     var new_delete_button        = document.createElement("input");
@@ -168,12 +169,12 @@ function createResponseForm(responseText, consequenceId) {
     new_consequence_dropdown.id       = "consequences_for_" + new_responseid;
     new_consequence_dropdown.name     = "consequence_dropdown";
     new_consequence_dropdown.onchange = createNewConsequence;
-    new_consequence_dropdown.disabled = true;
+    new_consequence_dropdown.disabled = condition;
 
     new_fact_dropdown.id              = "facts_for_" + new_responseid;
     new_fact_dropdown.name            = "fact_dropdown";
     new_fact_dropdown.onchange        = createNewFact;
-    new_fact_dropdown.disabled        = true;
+    new_fact_dropdown.disabled        = condition;
 
     new_delete_button.type = "button";
     new_delete_button.value = "Delete this Response";
