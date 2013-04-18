@@ -288,7 +288,7 @@ function loadScenario() {
                       var scenario = JSON.parse(msg)["body"];
                       if (scenario == null) {
                           console.warn("Loaded null body.");
-                          return
+                          return;
                       }
                       
                       /* Populate all needed response forms */
