@@ -1,4 +1,4 @@
-var adminURL = "http://gimli.morningside.edu/~meyersh/bgh/admin/admin.php";
+var adminURL = "http://fiery.morningside.edu/bgh/admin/admin.php";
 
 var numResponses = 0; // we start with one response initially. 
 
