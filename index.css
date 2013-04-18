@@ -18,13 +18,16 @@ small {
 }
 
 div.screen {
+    position:fixed;
+    
     width:70%;
     height:75%;
     padding-top:10%;
     padding-bottom:15%;
     padding-left:15%;
     padding-right:15%;
-    overflow:scroll;
+    overflow:none;
+    overflow-y:scroll;
 }
 
 ul#scenario_responses, ul.choice {
