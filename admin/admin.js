@@ -5,9 +5,12 @@ var numResponses = 0; // we start with one response initially.
 window.onload = function () {
     /* Initialize page onLoad. */
     setConsequenceOptions(document.getElementById("consequences_for_scenarios"));
+    setStoryOptions(document.getElementById("stories_dropdown"));
     createResponseForm(); // add response 0 to a blank/fresh scenario
 
-
+    document.getElementById("delete_this_story_button").onclick = deleteThisStory;
+    
+    document.getElementById("stories_dropdown").onchange = loadStory;
 
     // ALL consequences / scenario dropdowns available at:
     // document.getElementsByName("consequence_dropdown") and
@@ -28,6 +31,8 @@ var consequences = [{id: 0, 'descr':'A friend says to you, ...'},
 var facts = [{id: 0, 'descr': "You know, 2 out of 3 facts are..."},
              {id: 1, 'descr': "8 out of 10 dentists agree, ..."}];
 
+var stories = [{id: 0, "descr": "SHAUNS_STORY"},
+               {id: 1, "descr": "A_MIDSUMMERS_NIGHT"}];
 
 function newOption(value, text) {
     /* Create and return a new option element with value `value` and
@@ -53,7 +58,8 @@ function createNewConsequence() {
 
     var responseValue = document.getElementById(responseid).value;
 
-    console.log("Creating generic new scenario as a 'consequence' for response #" + responseid +  ".");
+    console.log("Creating generic new scenario as a 'consequence' for response #" 
+                + responseid +  ".");
     console.log("Default text: 'Response to " + responseValue + "'");
     console.log("Now, regenerate all consequence dialogs...");
     
@@ -134,6 +140,26 @@ function setFactOptions(obj) {
     }
 }
 
+function setStoryOptions(obj) {
+/* Request (ajax / etc) the present consequences, prepend two generic
+ * "null" and "new" options, and return an element set. */
+
+    // get the current selection
+    var current_value = obj.value;
+    
+    // clear the options
+    obj.options.length = 0;
+
+    // Insert std options
+    obj.add(newOption("null", "Displaying all stories"));
+    obj.add(newOption("new", "Create a new story"));
+
+    // add all imported consequences
+    for (var i = 0; i < stories.length; i++) {
+        var c_text = stories[i].id + " - " + stories[i].descr;
+        obj.add(newOption(stories[i].id, c_text));
+    }
+}
 
 function createResponseForm(responseText, consequenceId) {
     /* create a new form-row to handle a new response. */
@@ -203,20 +229,36 @@ function createResponseForm(responseText, consequenceId) {
     numResponses++;
 }
 
-function loadStory(obj) {
+function loadStory() {
     /* This is the onChange handler for the stories dropdown.
        obj.value is one of "null", "new", or the story ID (int) */
-    if (obj.value != "new") 
-        return; // abort until we know how to load
 
-    // TODO: add story loading code.
+    console.log(this);
 
-    var new_name = prompt("New story name:");
+    if (this.value == "new")  {
+        // TODO: add story loading code.
+        
+        var new_name = prompt("New story name:");
+        
+        // TODO: Sanitize name
+        new_name = new_name.replace(" ", "_");
+        
+        // Faking it here by pushing onto global stories var.
+        var new_id = stories.length;
+        stories.push({id:new_id, descr: new_name});
+        
+        setStoryOptions(this);
+        this.value = new_id;
+        console.log("Creating STORY: '" + new_name + "'");
+    }
 
-    // TODO: Sanitize name
-    new_name = new_name.replace(" ", "");
-
-    console.log("Creating STORY: '" + new_name + "'");
+    // Disable the delete button when a story is not selected
+    if (this.value == "null") {
+        document.getElementById("delete_this_story_button").disabled = true;
+    }
+    else {
+        document.getElementById("delete_this_story_button").disabled = false;
+    }
 }
 
 function loadScenario() {
@@ -251,11 +293,36 @@ function loadScenario() {
 
                  /* Populate all needed response forms */
                  for (var i = 0; i < scenario.responses.length; i++) {
-                     createResponseForm(scenario.responses[i].choice, scenario.responses[i].consequence);
+                     createResponseForm(scenario.responses[i].choice, 
+                                        scenario.responses[i].consequence);
                  }
 
                  tinyMCE.get("body_text").setContent(scenario.descr);
              });
+    
+    // Disable button when a scenario is not selected
+    if (this.value == "null") {
+        document.getElementById("delete_this_scenario_button").disabled = true;
+    }
+    else {
+        document.getElementById("delete_this_scenario_button").disabled = false;
+    }
+}
+
+function deleteThisStory() {
+    /* Delete the currently selected story (from
+     * id="stories_dropdown") */
+
+    var story = document.getElementById("stories_dropdown").value;
+
+    if (story == "null" || story == "new") 
+        return;
+
+    story = Number(story); // Cast to integer
+
+    console.log("Deleting story " + story);
+    // TODO: add ajax
+    
 }
 
 function responses() {
