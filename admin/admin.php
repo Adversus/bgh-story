@@ -15,6 +15,16 @@ $scenarios = json_decode(
           "consequence":1,
           "factoid": []}
      ]
+    },
+    {"descr": "At a restaurant, the waiter brings you your order. Broken glass has accidentally found its way into the meal and is possibly dangerous.",
+     "responses": [
+         {"choice": "Berate the waitor until they cry",
+          "consequence": 2,
+          "factoid": []}, 
+         {"choice": "Don't say anything and eat the food trying to pick out the glass.",
+          "consequence": 0,
+          "factoid": [1]}
+     ]
     }
 ]
 EOJSON
@@ -26,24 +36,62 @@ $stories = array("story_name" => "default",
                  "scenarios" => array(0));
 // End of fake-database
 
+/* code-cleaning functions */
+
+function action($action_name) {
+  /* Check if a $_POST["action"] == $action_name */
+  if (isset($_POST["action"]) && $_POST["action"] == $action_name) {
+    return true;
+  }
+  return false;
+}
+
 /*
  * Request handlers:
  */
 
-if ($_POST['action'] == "get_scenarios") {
-
-  print json_encode(array("response" => "get_scenarios",
-                          "body"     => $scenarios));
+if (action("create_story")) {
+  
 }
 
-if ($_POST['action'] == "get_scenario") {
+if (action("create_scenario")) {
+
+}
+
+if (action("create_fact")) {
+
+}
+
+if (action("create_response")) {
+
+}
+
+if (action("get_stories")) {
+
+}
+
+if (action("get_story")) {
+
+}
+
+if (action("get_scenario")) {
 // if (!isset($_POST['scenario_id'])) {return;}
 
  print json_encode(array("response" => "get_scenario",
                          "body"     => $scenarios[$_POST['scenario_id']]));
 }
 
-if ($_POST['action'] == "get_responses") {
+if (action("get_scenarios")) {
+
+  print json_encode(array("response" => "get_scenarios",
+                          "body"     => $scenarios));
+}
+
+if (action("get_fact")) {
+
+}
+
+if (action("get_responses")) {
   if (!isset($_POST['scenario_id'])) {
     return;
   }
@@ -52,7 +100,9 @@ if ($_POST['action'] == "get_responses") {
                           "body"     => $scenarios[$_GET['scenario_id']]["responses"]));
 }
 
+if (action("rename_story")) {
 
+}
 
 /*
  * Output some debugging information if no ACTION has been posted.
