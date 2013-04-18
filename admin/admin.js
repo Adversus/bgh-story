@@ -272,7 +272,6 @@ function loadScenario() {
         console.log("Creating a new consequence!");
         clearForms();
         createResponseForm();
-        return;
     }
 
     else {
