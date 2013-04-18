@@ -161,7 +161,7 @@ function setStoryOptions(obj) {
     }
 }
 
-function createResponseForm(responseText, consequenceId) {
+function createResponseForm(responseText, consequenceId, factId) {
     /* create a new form-row to handle a new response. */
 
     var div = document.getElementById("responses");
@@ -222,8 +222,16 @@ function createResponseForm(responseText, consequenceId) {
     div.appendChild(new_delete_button);
     div.appendChild(new_br);
 
+    // populate drop-downs
     setConsequenceOptions(new_consequence_dropdown);
     setFactOptions(new_fact_dropdown);
+
+    // pre-select an option if we're loading
+    if (consequenceId)
+        new_consequence_dropdown.value = consequenceId;
+
+    if (factId)
+        new_fact_dropdown.value = factId;
 
     console.log("Creating response #" + numResponses);
     numResponses++;
