@@ -265,40 +265,42 @@ function loadScenario() {
     /* Called by onChange from consequences_for_scenarios. */
     var obj = document.getElementById("consequences_for_scenarios");
 
-    if (obj.value == "null") 
-        return;
+    if (obj.value == "null") {
+    }
 
-    if (obj.value == "new") {
+    else if (obj.value == "new") {
         console.log("Creating a new consequence!");
         clearForms();
         createResponseForm();
         return;
     }
 
-    console.log("Loading scenario " + obj.value);
-
-    clearForms();
-
-    data = {action: "get_scenario",
-            scenario_id: obj.value};
-
-    sendData2(data, 
-             adminURL,
-             "POST", function(msg) {
-                 var scenario = JSON.parse(msg)["body"];
-                 if (scenario == null) {
-                     console.warn("Loaded null body.");
-                     return
-                 }
-
-                 /* Populate all needed response forms */
-                 for (var i = 0; i < scenario.responses.length; i++) {
-                     createResponseForm(scenario.responses[i].choice, 
-                                        scenario.responses[i].consequence);
-                 }
-
-                 tinyMCE.get("body_text").setContent(scenario.descr);
-             });
+    else {
+        console.log("Loading scenario " + obj.value);
+        
+        clearForms();
+        
+        data = {action: "get_scenario",
+                scenario_id: obj.value};
+        
+        sendData2(data, 
+                  adminURL,
+                  "POST", function(msg) {
+                      var scenario = JSON.parse(msg)["body"];
+                      if (scenario == null) {
+                          console.warn("Loaded null body.");
+                          return
+                      }
+                      
+                      /* Populate all needed response forms */
+                      for (var i = 0; i < scenario.responses.length; i++) {
+                          createResponseForm(scenario.responses[i].choice, 
+                                             scenario.responses[i].consequence);
+                      }
+                      
+                      tinyMCE.get("body_text").setContent(scenario.descr);
+                  });
+    }
     
     // Disable button when a scenario is not selected
     if (this.value == "null") {
