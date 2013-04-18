@@ -17,8 +17,6 @@ window.onload = function () {
     // document.getElementsByName("scenarios_dropdown")
 
     // ALL fact dropdowns available at document.getElementsbyName("fact_dropdown");
-    
-
 };
 
 /*
@@ -33,6 +31,14 @@ var facts = [{id: 0, 'descr': "You know, 2 out of 3 facts are..."},
 
 var stories = [{id: 0, "descr": "SHAUNS_STORY"},
                {id: 1, "descr": "A_MIDSUMMERS_NIGHT"}];
+
+function selectOptionValues(obj) {
+    var values = [];
+    for (var i = 0; i < obj.options.length; i++)
+        values.push(obj.options[i].value);
+
+    return values;
+}
 
 function newOption(value, text) {
     /* Create and return a new option element with value `value` and
@@ -228,10 +234,12 @@ function createResponseForm(responseText, consequenceId, factId) {
     setFactOptions(new_fact_dropdown);
 
     // pre-select an option if we're loading
-    if (consequenceId)
+    if (consequenceId && 
+        selectOptionValues(new_consequence_dropdown).indexOf(String(consequenceId)) >= 0)
         new_consequence_dropdown.value = consequenceId;
 
-    if (factId)
+    if (factId && 
+        selectOptionValues(new_fact_dropdown).indexOf(String(factId)) >= 0)
         new_fact_dropdown.value = factId;
 
     console.log("Creating response #" + numResponses);
