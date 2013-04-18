@@ -25,7 +25,7 @@ $scenarios = json_decode(
           "consequence": 0,
           "factoid": [1]}
      ]
-    },
+    }
 ]
 EOJSON
 ,true);
