@@ -15,7 +15,17 @@ $scenarios = json_decode(
           "consequence":1,
           "factoid": []}
      ]
-    }
+    },
+    {"descr": "At a restaurant, the waiter brings you your order. Broken glass has accidentally found its way into the meal and is possibly dangerous.",
+     "responses": [
+         {"choice": "Berate the waitor until they cry",
+          "consequence": 2,
+          "factoid": []}, 
+         {"choice": "Don't say anything and eat the food trying to pick out the glass.",
+          "consequence": 0,
+          "factoid": [1]}
+     ]
+    },
 ]
 EOJSON
 ,true);
