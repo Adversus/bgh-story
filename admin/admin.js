@@ -302,7 +302,7 @@ function loadScenario() {
     }
     
     // Disable button when a scenario is not selected
-    if (this.value == "null") {
+    if (obj.value == "null") {
         document.getElementById("delete_this_scenario_button").disabled = true;
     }
     else {
