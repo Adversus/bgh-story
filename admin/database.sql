@@ -1,5 +1,3 @@
-CREATE DATABASE  `interactive_story` ;
-
 CREATE TABLE  `interactive_story`.`responses` (
 `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
 `response_text` VARCHAR( 1024 ) NOT NULL COMMENT  'Text string for a given response',

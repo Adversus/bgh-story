@@ -35,10 +35,13 @@ scenarios = [
           'factoid': [0]}, 
          {'choice': "Do a sloppy job to get the project done quickly and return to your show.",
           'consequence': -1,
-          'factoid': [1]},
+          'factoid': [1]}
      ]
     }
 ];
+
+// Work-around for IE6 lack of console.log functionality.
+if (!window.console) console = {log: function() {}};
 
 function getScenario(id) {
     /* Given a scenario ID, retrieve that scenario object. This will
