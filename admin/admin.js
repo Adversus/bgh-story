@@ -105,6 +105,7 @@ function setConsequenceOptions(obj) {
     if (obj.name == "consequence_dropdown") {
         obj.add(newOption("null", "Choose a consequence"));
         obj.add(newOption("new", "Create a new consequence"));
+        obj.add(newOption("-1", "End Screen"));
     }
     if (obj.name == "scenarios_dropdown") {
         obj.add(newOption("null", "Choose a scenario to edit"));
