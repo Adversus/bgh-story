@@ -1,14 +1,18 @@
-factoids=[
-    "When an important, but boring, project interfers with a passion there may be a strong temptation to put off what you should be doing.", 
+var transitioning = false; // set to true while a transition is
+                           // occuring to prevent
+                           // double-button-presses.
+
+var factoids=[
+    "<p>Family Services doesn't keep bankers hours. They also keep extended hours on nights and weekends.</p>", 
     "It's not uncommon to try to just push-through after hearing a comment like this.",
-    "Many people say that...",
+    "<p>Many people do not call for help, even when they need it. While it is clear when to go in for physical help, it is not always plain when to request emotional help. This combined with a social stigma of \"getting help\" keeps many people from receiving beneficial assistance.</p>",
     "3 out of 4 dentists...",
     "etc",
     "blah"
 ];
 
-scenarios = [
-    {"descr": "A friend says to you, 'You havent seemed like yourself lately.'",
+var scenarios = [
+    {"descr": "<p>A friend says to you, 'You havent seemed like yourself lately.'</p><p>You realize they are right. You haven't been going out with friends or enjoying yourself like you used to.</p>",
      "responses": [
          {'choice': "Carry on",
           'consequence': 1, 
@@ -18,24 +22,34 @@ scenarios = [
           'factoid': []}
      ]
     },
-    {"descr": "At a restaurant, the waiter brings you your order. Broken glass has accidentally found its way into the meal and is possibly dangerous.",
+    {"descr": "<p>Two weeks pass. You're still not feeling better. You think you need to talk to someone... but who?</p>",
      "responses": [
-         {'choice': "Berate the waitor until they cry",
-          'consequence': 2,
-          'factoid': []}, 
-         {'choice': "Don't say anything and eat the food trying to pick out the glass.",
+         {'choice': "You can handle this on your own.",
           'consequence': 0,
-          'factoid': [1]}
+          'factoid': [2]}, 
+         {'choice': "My friend sees someone, I'll ask them.",
+          'consequence': 3,
+          'factoid': []}
      ]
     }, 
-    {"descr": "It's time to work on an important project. But, your favorite TV show is on.",
+    {"descr": "<p>Two weeks have passed and nothing has changed. You still don't feel like your normal self.</p>",
      "responses": [
-         {'choice': "Ignore the project and watch TV.",
+         {'choice': "...",
           'consequence': -1,
-          'factoid': [0]}, 
-         {'choice': "Do a sloppy job to get the project done quickly and return to your show.",
+          'factoid': [2]}, 
+         {'choice': "...",
           'consequence': -1,
           'factoid': [1]}
+     ]
+    },
+    {"descr": "<p>You call a good friend and they tell you to call Family Services. He is sure that they can help.</p>",
+     "responses": [
+         {'choice': "You get busy and put off calling. You can call tomorrow.",
+          'consequence': 0,
+          'factoid': []}, 
+         {'choice': "You call Family Services and make an appointment for next Thursday.",
+          'consequence': -1,
+          'factoid': [0]}
      ]
     }
 ];
@@ -53,6 +67,12 @@ function displayOnly(screen_name, callback) {
     /* Iterate through all screens marking display=none, then flip on
      * display for `screen_name`. `callback` may be null and is
      * executed while the animation is faded out. */
+
+    if (transitioning) return; // no nothing if in the middle of a
+                               // transition.
+
+    transitioning = true;
+
     screens = ["#start_screen","#end_screen", 
                "#scenario_screen", "#factoid_screen"];
 
@@ -63,7 +83,7 @@ function displayOnly(screen_name, callback) {
     if ($(screen_name).is(':visible')) {
         $(screen_name).fadeOut(1000, function() {
             if (callback) {callback();}
-            $(screen_name).fadeIn(1000);
+            $(screen_name).fadeIn(1000, function () {transitioning = false;});
         }); 
     }
     else {
@@ -71,7 +91,7 @@ function displayOnly(screen_name, callback) {
         for (var i = 0; i < screens.length; i++) {
             if (screens[i] != screen_name)
                 $(screens[i]).fadeOut(1000, function() {
-                    $(screen_name).fadeIn(1000);
+                    $(screen_name).fadeIn(1000, function () {transitioning = false;});
                 });
         }
     }
@@ -97,8 +117,6 @@ function displayOnly1(screen_name) {
 function displayScenario(id) {
     /* Given a scenario id, pull it up and display the appropriate screen. */
     console.log("displayScenario(" + id + ")");
-    
-
     
     function updateScenarioFields() {
         /* This function updates the fields of the scenario_screen */
