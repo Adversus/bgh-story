@@ -3,9 +3,9 @@ var transitioning = false; // set to true while a transition is
                            // double-button-presses.
 
 var factoids=[
-    "<p>Family Services doesn't keep bankers hours. They also keep extended hours on nights and weekends.</p>", 
-    "It's not uncommon to try to just push-through after hearing a comment like this.",
-    "<p>Many people do not call for help, even when they need it. While it is clear when to go in for physical help, it is not always plain when to request emotional help. This combined with a social stigma of \"getting help\" keeps many people from receiving beneficial assistance.</p>",
+    "<p>Family Services doesn't keep \"bankers hours\". They also keep extended hours on nights and weekends.</p>", 
+    "It's not uncommon to try to just ignore a comment like this.",
+    "<p>Many people do not call for help, even when they need it. While it is clear when to go in for physical help, it is not always plain when to request emotional help. This, combined with a social stigma of \"getting help\", keeps many people from receiving beneficial assistance.</p>",
     "3 out of 4 dentists...",
     "etc",
     "blah"
@@ -27,7 +27,7 @@ var scenarios = [
          {'choice': "You can handle this on your own.",
           'consequence': 0,
           'factoid': [2]}, 
-         {'choice': "My friend sees someone, I'll ask them.",
+         {'choice': "Your friend sees someone, you'll ask them.",
           'consequence': 3,
           'factoid': []}
      ]
