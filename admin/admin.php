@@ -157,13 +157,29 @@ if (action("get_fact")) {
 
 }
 
+/* 
+ * GET_RESPONSES
+ */
+
 if (action("get_responses")) {
   if (!isset($_POST['scenario_id'])) {
     return;
   }
+  $stmt = $db->prepare("SELECT (id, response_text, response_fact_id, parent_scenario_id, response_consequence_scenario_id) FROM responses WHERE id = ?");
+  $stmt->execute(array($_POST['scenario_id']));
+
+  $responses = array();
+
+  while ($row = $stmt->fetch()) {
+    array_push($responses,
+               array("id" => $row["id"],
+                     "choice" => $row["response_text"],
+                     "consequence" => $row["response_consequence_scenario_id"],
+                     "factoid" => $row["response_fact_id"]));
+  }
 
   print json_encode(array("response" => "get_responses",
-                          "body"     => $scenarios[$_GET['scenario_id']]["responses"]));
+                          "body"     => $responses));
 }
 
 if (action("rename_story")) {
