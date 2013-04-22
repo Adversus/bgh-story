@@ -31,4 +31,50 @@ function testDB() {
     
 }
 
+function addBody($body_text) {
+    global $db;
+
+    $stmt = $db->prepare("INSERT INTO bodies (id, text) VALUES (NULL, ?)");
+    $stmt->execute(array($body_text));
+    
+    return $db->lastInsertId();
+}
+
+function setBody($id, $body_text) {
+    global $db;
+
+    $stmt = $db->prepare("UPDATE bodies SET text = ? WHERE id = ?");
+    $stmt->execute(array($body_text, $id));
+}
+
+function getBody($id) {
+    global $db;
+    
+    $stmt = $db->prepare("SELECT text from bodies WHERE id = ?");
+    if ($stmt->execute(array($id))) {
+    $row = $stmt->fetch();
+    return $row["text"];
+    }
+
+    
+}
+
+function removeBody($id) {
+    global $db;
+
+    $stmt = $db->prepare("DELETE FROM bodies WHERE id = ?");
+    $stmt->execute(array($id));
+}
+
+if (!isset($_SERVER["REQUEST_METHOD"])) {
+ echo "addBody()\n";
+ $body_id = addBody("Test body!");
+
+ echo "body_id: $body_id\n";
+
+ echo "body_text: " . getBody($body_id) . "\n";
+
+ removeBody($body_id);
+}
+
 ?>

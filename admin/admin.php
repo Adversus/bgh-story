@@ -66,7 +66,7 @@ if (action("create_story")) {
 
  // Insert story row
  $stmt = $db->prepare("INSERT INTO STORIES (story_name) VALUES (?)");
- $stmt->execute($_POST["story_name"]);
+ $stmt->execute(array($_POST["story_name"]));
 
  // return story_id
    print json_encode(array("response" => "create_story",
@@ -89,23 +89,47 @@ if (action("create_scenario")) {
     $story_id = $_POST["story_id"];
 
     $stmt = $db->prepare("INSERT INTO SCENARIOS (story_id, scenario_body) VALUES (?, ?)");
-    $stmt->execute($story_id, $body_text);
+    $stmt->execute(array($story_id, $body_text));
   }
   else {
     $stmt = $db->prepare("INSERT INTO SCENARIOS (scenario_body) VALUES (?, ?)");
-    $stmt->execute($body_text);
+    $stmt->execute(array($body_text));
   }
   
   print json_encode(array("response" => "create_scenario",
                           "body" => array("scenario_id" => $db->lastInsertId())));
  }
 
+/* 
+ * CREATE_FACT
+ */
+
 if (action("create_fact")) {
+  $body_text = null;
+  if (isset($_POST["body_text"])) {
+    $body_text = $_POST["body_text"];
+  }
+
+  $body_id = addBody($body_text);
+
+  $stmt = $db->prepare("INSERT INTO facts (id, fact_body) VALUES (NULL, ?)");
+  $stmp->execute(array($body_id));
+
+  print json_encode(array("response" => "create_fact",
+                          "body" => array("fact_id" => $db->lastInsertId())));
 
  }
 
+/*
+ * CREATE_RESPONSE
+ */
+
+
 if (action("create_response")) {
 
+
+"INSERT INTO responses (id, response_text, response_fact_id, parent_scenario_id, response_consequence_scenario_id)
+VALUES (NULL, ..., ..., ..., ...);";
 }
 
 if (action("get_stories")) {
@@ -157,5 +181,46 @@ if (!isset($_POST['action'])) {
   print_r($_GET);
   return;
 }
+
+/* QUERIES AND INSERTS
+INSERT INTO stories (id, story_name, start_screen_body_id, end_screen_body_id, first_scenario_id)
+VALUES (NULL, $story_name, ..., ..., ...);
+
+INSERT INTO facts (id, fact_body) 
+VALUES (NULL, $fact_body);
+
+INSERT INTO bodies (id, text) 
+VALUES (NULL, ...);
+
+INSERT INTO scenarios (id, story_id, scenario_body_id) 
+VALUES (NULL, ..., ...,);
+
+INSERT INTO responses (id, response_text, response_fact_id, parent_scenario_id, response_consequence_scenario_id)
+VALUES (NULL, ..., ..., ..., ...);
+
+SELECT * 
+FROM stories;
+
+SELECT st.id, st. story_name, sc.scenario_body_id 
+FROM stories st, scenarios sc 
+WHERE st.id = sc.story_id 
+	AND $id = st.id;	//include responses?
+
+SELECT is_starting_scenario, parent_story, bo.text, re.response_text, re.response_consequence_scenario_id, re.response_fact_id, fa.fact_body
+FROM scenarios sc, bodies bo, responses re, facts fa
+WHERE $scenario_id = sc.id
+	AND fa.id = bo.id
+	AND re.id = bo.id;
+	
+SELECT * 
+FROM responses
+WHERE parent_scenario_id in (SELECT id
+							FROM scenarios
+							WHERE story_id = $story_id);
+							
+
+
+*/
+
 
 ?>
