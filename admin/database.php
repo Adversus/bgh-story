@@ -55,8 +55,6 @@ function getBody($id) {
     $row = $stmt->fetch();
     return $row["text"];
     }
-
-    
 }
 
 function removeBody($id) {
@@ -66,15 +64,61 @@ function removeBody($id) {
     $stmt->execute(array($id));
 }
 
+function getResponses($scenario_id) {
+  /* Given a scenario_id, return an array of dictionaries for each
+     response with `id`, `choice`, `consequence`, and `factoid`
+     attributes. */
+  global $db;
+  
+  $stmt = $db->prepare("SELECT id, response_text, response_fact_id, parent_scenario_id, response_consequence_scenario_id FROM responses WHERE parent_scenario_id = ?");
+  $stmt->execute(array($scenario_id));
+
+  $responses = array();
+
+  while ($row = $stmt->fetch()) {
+    array_push($responses,
+               array("id" => $row["id"],
+                     "choice" => $row["response_text"],
+                     "consequence" => $row["response_consequence_scenario_id"],
+                     "factoid" => $row["response_fact_id"]));
+  }
+  
+  return $responses;
+
+}
+
+function getStory($story_id = "ALL") {
+
+  global $db;
+  
+  if ($story_id == "ALL") {
+    $stmt = $db->prepare("SELECT scenarios.id,stories.story_name,bodies.text FROM stories,scenarios,bodies WHERE scenarios.scenario_body_id = bodies.id AND scenarios.story_id = stories.id");
+  }
+  else {
+    $stmt = $db->prepare("SELECT scenarios.id,stories.story_name,bodies.text FROM stories,scenarios,bodies WHERE scenarios.scenario_body_id = bodies.id AND scenarios.story_id = stories.id AND stories.id = ?");
+  }
+
+  //"select scenarios.id,stories.story_name, bodies.text from stories,scenarios,bodies where   scenarios.scenario_body_id = bodies.id and scenarios.story_id = stories.id and story_id = ?"
+
+  $stmt->execute(array($story_id));
+
+  $scenarios = array();
+  $story_descr = "";
+  while ($row = $stmt->fetch()) {
+    array_push($scenarios,
+               array("id" => $row["scenario_id"],
+                     "descr" => $row["text"]));
+    $story_descr = $row["story_name"];
+  }
+  
+  return array("story_id" => $story_id,
+               "story_name" => $story_name,
+               "scenarios" => $scenarios);
+
+}
+
 if (!isset($_SERVER["REQUEST_METHOD"])) {
- echo "addBody()\n";
- $body_id = addBody("Test body!");
-
- echo "body_id: $body_id\n";
-
- echo "body_text: " . getBody($body_id) . "\n";
-
- removeBody($body_id);
+  print_r(getStory());
 }
 
 ?>

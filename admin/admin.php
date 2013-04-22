@@ -5,7 +5,7 @@ include("database.php");
 
 // This variable holds our "database" until we get a real one. 
 // later functions "query" this data for the admin page.
-$scenarios = json_decode(
+/* $scenarios = json_decode(
 <<<EOJSON
 [
     {"descr": "A friend says to you, \"You havent seemed like yourself lately.\"",
@@ -31,7 +31,7 @@ $scenarios = json_decode(
     }
 ]
 EOJSON
-,true);
+,true); */
 
 // Fake stories table
 
@@ -58,19 +58,17 @@ function action($action_name) {
  */
 
 if (action("create_story")) {
-  /* Undefined behavior: duplicate story names. */
-
- if (!isset($_POST["story_name"])) {
-   return; // TODO: error handling
- }
-
- // Insert story row
- $stmt = $db->prepare("INSERT INTO STORIES (story_name) VALUES (?)");
- $stmt->execute(array($_POST["story_name"]));
-
- // return story_id
-   print json_encode(array("response" => "create_story",
-                           "body" => array("story_id" => $db->lastInsertId())));
+  if (!isset($_POST["story_name"])) {
+    return; // TODO: error handling
+  }
+  
+  // Insert story row
+  $stmt = $db->prepare("INSERT INTO STORIES (story_name) VALUES (?)");
+  $stmt->execute(array($_POST["story_name"]));
+  
+  // return story_id
+  print json_encode(array("response" => "create_story",
+                          "body" => array("story_id" => $db->lastInsertId())));
  }
 
 /*
@@ -132,23 +130,78 @@ if (action("create_response")) {
 VALUES (NULL, ..., ..., ..., ...);";
 }
 
-if (action("get_stories")) {
+/*
+ * GET_STORIES
+ */
 
-}
+if (action("get_stories")) {
+  $stmt = $db->prepare("SELECT id, story_name FROM stories");
+ 
+  $stories = array();
+
+  if ( $stmt->execute() ) {
+    while ($row = $stmt->fetch()) {
+      array_push($stories,
+                 array("id" => $row["id"],
+                       "descr" => $row["story_name"]));
+    }
+  }
+
+  print json_encode(array("response" => "get_stories",
+                          "body" => $stories));
+
+ }
+
+/* 
+ * GET_STORY
+ */
 
 if (action("get_story")) {
+  if (!isset($_POST["story_id"])) {
+    return;
+  }
+
+   $stmt = $db->prepare("SELECT id, story_name FROM stories WHERE id = ?");
+   $stmt->execute(array($_POST["story_id"]));
+   
+   
 
 }
+
+/*
+ * GET_SCENARIO
+ */
 
 if (action("get_scenario")) {
 // if (!isset($_POST['scenario_id'])) {return;}
+  $stmt = $db->prepare("SELECT scenarios.id, story_id, bodies.text FROM scenarios, bodies WHERE scenario_body_id = bodies.id AND scenarios.id = ?");
 
- print json_encode(array("response" => "get_scenario",
-                         "body"     => $scenarios[$_POST['scenario_id']]));
+  $stmt->execute(array($_POST['scenario_id']));
+  
+  $row = $stmt->fetch();
+  $scenarios = array("id" => $row["id"], 
+                     "descr" => $row["text"],
+                     "responses" => getResponses($row["id"]));
+  
+  print json_encode(array("response" => "get_scenario",
+                          "body"     => $scenarios));
+
 }
 
 if (action("get_scenarios")) {
 
+  $stmt = $db->prepare("SELECT scenarios.id, story_id, bodies.text FROM scenarios, bodies WHERE scenario_body_id = bodies.id");
+
+  $stmt->execute();
+  
+  $scenarios = array();
+  
+  while ($row = $stmt->fetch()) {
+    array_push($scenarios, 
+               array("id" => $row["id"], 
+                     "descr" => $row["text"],
+                     "responses" => getResponses($row["id"])));
+  }
   print json_encode(array("response" => "get_scenarios",
                           "body"     => $scenarios));
 }
@@ -165,18 +218,7 @@ if (action("get_responses")) {
   if (!isset($_POST['scenario_id'])) {
     return;
   }
-  $stmt = $db->prepare("SELECT (id, response_text, response_fact_id, parent_scenario_id, response_consequence_scenario_id) FROM responses WHERE id = ?");
-  $stmt->execute(array($_POST['scenario_id']));
-
-  $responses = array();
-
-  while ($row = $stmt->fetch()) {
-    array_push($responses,
-               array("id" => $row["id"],
-                     "choice" => $row["response_text"],
-                     "consequence" => $row["response_consequence_scenario_id"],
-                     "factoid" => $row["response_fact_id"]));
-  }
+  $responses = getResponses($_POST['scenario_id']);
 
   print json_encode(array("response" => "get_responses",
                           "body"     => $responses));

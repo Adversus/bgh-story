@@ -5,7 +5,7 @@ var numResponses = 0; // we start with one response initially.
 window.onload = function () {
     /* Initialize page onLoad. */
     setConsequenceOptions(document.getElementById("consequences_for_scenarios"));
-    setStoryOptions(document.getElementById("stories_dropdown"));
+    getStories();
     createResponseForm(); // add response 0 to a blank/fresh scenario
 
     document.getElementById("delete_this_story_button").onclick = deleteThisStory;
@@ -23,14 +23,34 @@ window.onload = function () {
  * END of window.onload stuff. 
  */
 
-var consequences = [{id: 0, 'descr':'A friend says to you, ...'},
-                    {id: 1, 'descr': 'You spend all night worrying, ...'}];
+var consequences = [{id: 1, 'descr':'A friend says to you, ...'},
+                    {id: 2, 'descr': 'You spend all night worrying, ...'}];
 
 var facts = [{id: 0, 'descr': "You know, 2 out of 3 facts are..."},
              {id: 1, 'descr': "8 out of 10 dentists agree, ..."}];
 
-var stories = [{id: 0, "descr": "SHAUNS_STORY"},
-               {id: 1, "descr": "A_MIDSUMMERS_NIGHT"}];
+var stories = [];
+/*  [{id: 0, "descr": "SHAUNS_STORY"},
+               {id: 1, "descr": "A_MIDSUMMERS_NIGHT"}]; */
+
+function getFacts() {
+    /* Make an ajax call to retrieve the facts. */
+}
+
+function getStories() {
+    /* Make an ajax call to retrieve the stories list. */
+    var data = {"action": "get_stories"};
+    sendData2(data, adminURL, "POST", function(msg) {
+        var body = JSON.parse(msg)["body"];
+        console.log(body);
+
+        // Update global stories list
+        stories = body;
+
+        // Force refresh the stories_dropdown
+        setStoryOptions(document.getElementById("stories_dropdown"));
+    });
+}
 
 function selectOptionValues(obj) {
     var values = [];
@@ -171,6 +191,11 @@ function setStoryOptions(obj) {
 function createResponseForm(responseId, responseText, consequenceId, factId) {
     /* create a new form-row to handle a new response. */
 
+    console.log("Creating response form responseID: " + responseId
+                + " responseText: " + responseText 
+                + " consequenceId: " + consequenceId
+                + " factId: " + factId);
+
     var div = document.getElementById("responses");
     
     var new_label                = document.createElement("label");
@@ -241,14 +266,16 @@ function createResponseForm(responseId, responseText, consequenceId, factId) {
     setConsequenceOptions(new_consequence_dropdown);
     setFactOptions(new_fact_dropdown);
 
-    // pre-select an option if we're loading
-    if (consequenceId && 
-        selectOptionValues(new_consequence_dropdown).indexOf(String(consequenceId)) >= 0)
+    // pre-select an option if we're loading and the option exists
+    if (typeof consequenceId != "undefined" && 
+        selectOptionValues(new_consequence_dropdown).indexOf(String(consequenceId)) >= 0) {
         new_consequence_dropdown.value = consequenceId;
+    }
 
-    if (factId && 
-        selectOptionValues(new_fact_dropdown).indexOf(String(factId)) >= 0)
+    if (typeof factId != "undefined" && 
+        selectOptionValues(new_fact_dropdown).indexOf(String(factId)) >= 0) {
         new_fact_dropdown.value = factId;
+    }
 
     console.log("Creating response #" + numResponses);
     numResponses++;
