@@ -1,6 +1,8 @@
 <?PHP
 header("Content-Type:text/plain");
 
+include("database.php");
+
 // This variable holds our "database" until we get a real one. 
 // later functions "query" this data for the admin page.
 $scenarios = json_decode(
@@ -51,17 +53,56 @@ function action($action_name) {
  * Request handlers:
  */
 
+/*
+ * CREATE_STORY 
+ */
+
 if (action("create_story")) {
-  
-}
+  /* Undefined behavior: duplicate story names. */
+
+ if (!isset($_POST["story_name"])) {
+   return; // TODO: error handling
+ }
+
+ // Insert story row
+ $stmt = $db->prepare("INSERT INTO STORIES (story_name) VALUES (?)");
+ $stmt->execute($_POST["story_name"]);
+
+ // return story_id
+   print json_encode(array("response" => "create_story",
+                           "body" => array("story_id" => $db->lastInsertId())));
+ }
+
+/*
+ * CREATE_SCENARIO
+ */
 
 if (action("create_scenario")) {
+  $body_text = "";
+  $story_id  = null;
 
-}
+  if (isset($_POST["body_text"])) {
+    $body_text = $_POST["body_text"];
+  }
+
+  if (isset($_POST["story_id"])) {
+    $story_id = $_POST["story_id"];
+
+    $stmt = $db->prepare("INSERT INTO SCENARIOS (story_id, scenario_body) VALUES (?, ?)");
+    $stmt->execute($story_id, $body_text);
+  }
+  else {
+    $stmt = $db->prepare("INSERT INTO SCENARIOS (scenario_body) VALUES (?, ?)");
+    $stmt->execute($body_text);
+  }
+  
+  print json_encode(array("response" => "create_scenario",
+                          "body" => array("scenario_id" => $db->lastInsertId())));
+ }
 
 if (action("create_fact")) {
 
-}
+ }
 
 if (action("create_response")) {
 
