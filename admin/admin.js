@@ -392,11 +392,20 @@ function submit_scenario() {
      * displayed in the gui. */
     
     var data = {
-        "scenario_id"   : Number(document.getElementById("consequences_for_scenarios").value),
-        "story_id"      : Number(document.getElementById("stories_dropdown").value),
+        "scenario_id"   : null,
+        "story_id"      : null,
         "scenario_text" : tinyMCE.get("body_text").getContent(),
         "responses"     : responses()
     };
+
+    var scenario_id = document.getElementById("consequences_for_scenarios").value;
+    var story_id    = document.getElementById("stories_dropdown").value;
+
+    if (scenario_id != "null")
+        data.scenario_id = Number(scenario_id);
+
+    if (story_id != "null")
+        data.story_id = Number(story_id);
 
     console.log(data);
     return data;
