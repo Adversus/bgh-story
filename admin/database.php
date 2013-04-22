@@ -2,9 +2,10 @@
 include("config.php");
 
 $db = NULL;
-$dsn = "mysql:host=$db_host;dbname=$db_name";
+
 try {
- $db = new PDO($dsn, $db_user, $db_pass);
+ $dsn = "mysql:host=$db_host;dbname=$db_name";
+ $db  = new PDO($dsn, $db_user, $db_pass);
 
  $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
  }
@@ -15,7 +16,7 @@ catch(PDOException $e) {
 }
 
 function testDB() {
-    global $db, $dsn;
+    global $db;
 
     $query = "SHOW TABLES";
     try {
@@ -26,11 +27,8 @@ function testDB() {
     catch(PDOException$e) {
     echo "An error occured while querying the database.\n";
     echo $e->getMessage() . "\n";
-    echo "DSN: $dsn\n";
     }
     
 }
-
-testDB();
 
 ?>
