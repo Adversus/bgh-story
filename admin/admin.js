@@ -168,12 +168,13 @@ function setStoryOptions(obj) {
     }
 }
 
-function createResponseForm(responseText, consequenceId, factId) {
+function createResponseForm(responseId, responseText, consequenceId, factId) {
     /* create a new form-row to handle a new response. */
 
     var div = document.getElementById("responses");
     
     var new_label                = document.createElement("label");
+    var new_hidden_id            = document.createElement("input");
     var new_response_textbox     = document.createElement("input");
     var condition                = (typeof responseText === "undefined");
     var new_consequence_dropdown = document.createElement("select");
@@ -185,6 +186,11 @@ function createResponseForm(responseText, consequenceId, factId) {
 
     new_label.appendChild(document.createTextNode("Response " + numResponses + ": "));
     new_label.for = new_responseid;
+
+    new_hidden_id.type               = "hidden";
+    new_hidden_id.id                 = "id_for_" + new_responseid;
+    new_hidden_id.name               = "response_id";
+    new_hidden_id.value              = typeof responseId === "undefined" ? "" : responseId;
 
     new_response_textbox.id          = new_responseid;
     new_response_textbox.name        = "response_textbox";
@@ -213,6 +219,7 @@ function createResponseForm(responseText, consequenceId, factId) {
     new_delete_button.value = "Delete this Response";
     new_delete_button.onclick = function() {
         div.removeChild(new_label);
+        div.removeChild(new_hidden_id);
         div.removeChild(new_response_textbox);
         div.removeChild(new_consequence_dropdown);
         div.removeChild(new_fact_dropdown);
@@ -223,6 +230,7 @@ function createResponseForm(responseText, consequenceId, factId) {
     }
 
     div.appendChild(new_label);
+    div.appendChild(new_hidden_id);
     div.appendChild(new_response_textbox);
     div.appendChild(new_consequence_dropdown);
     div.appendChild(new_fact_dropdown);
@@ -310,7 +318,8 @@ function loadScenario() {
                       
                       /* Populate all needed response forms */
                       for (var i = 0; i < scenario.responses.length; i++) {
-                          createResponseForm(scenario.responses[i].choice, 
+                          createResponseForm(scenario.responses[i].id,
+                                             scenario.responses[i].choice, 
                                              scenario.responses[i].consequence);
                       }
                       
@@ -351,15 +360,26 @@ function responses() {
 
     var response_textboxes = document.getElementsByName("response_textbox");
     for (var i = 0; i < response_textboxes.length; i++) {
-        var response_id = response_textboxes[i].id;
+        var response_num = response_textboxes[i].id; // responseN
+        var response_id  = document.getElementById("id_for_" + response_num).value;
         var response    = {};
-        var consequence = document.getElementById("consequences_for_" + response_id).value;
-        var fact        = document.getElementById("facts_for_" + response_id).value;
+        var consequence = Number(document.getElementById("consequences_for_" + response_num).value);
+        var fact        = document.getElementById("facts_for_" + response_num).value;
 
-        response.text = document.getElementById(response_id).value;
+        if (response_id == "")
+            response.id = null;
+        else
+            response.id = Number(response_id);
+
+        if (fact == "null")
+            fact = null;
+        else
+            fact = Number(fact);
+
+        response.text = document.getElementById(response_num).value;
 
         response.consequence = consequence;
-        response.fact        = fact != "null" ? fact : null;
+        response.fact        = fact;
 
         responses.push(response);
     }

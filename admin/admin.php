@@ -8,20 +8,21 @@ $scenarios = json_decode(
 [
     {"descr": "A friend says to you, \"You havent seemed like yourself lately.\"",
      "responses": [
-         {"choice": "Carry on",
+         {"id": 0,
+          "choice": "Carry on",
           "consequence": 1, 
           "factoid": [1]}, 
-         {"choice": "Ackowledge a problem",
+         {"id": 1, "choice": "Ackowledge a problem",
           "consequence":1,
           "factoid": []}
      ]
     },
     {"descr": "At a restaurant, the waiter brings you your order. Broken glass has accidentally found its way into the meal and is possibly dangerous.",
      "responses": [
-         {"choice": "Berate the waitor until they cry",
+         {"id":2, "choice": "Berate the waitor until they cry",
           "consequence": 2,
           "factoid": []}, 
-         {"choice": "Don't say anything and eat the food trying to pick out the glass.",
+         {"id":3, "choice": "Don't say anything and eat the food trying to pick out the glass.",
           "consequence": 0,
           "factoid": [1]}
      ]
