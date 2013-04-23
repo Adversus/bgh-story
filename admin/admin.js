@@ -136,7 +136,7 @@ function newOption(value, text) {
 function clearForms() {
     /* Clear the page input forms out: body_text and responseForms. */
     clearResponses();
-    tinyMCE.get("body_text").setContent("")
+    tinyMCE.get("body_text").setContent("");
 }
 
 function clearResponses() {
