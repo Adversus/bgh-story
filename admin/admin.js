@@ -4,19 +4,18 @@ var numResponses = 0; // we start with one response initially.
 
 window.onload = function () {
     /* Initialize page onLoad. */
-    setConsequenceOptions(document.getElementById("consequences_for_scenarios"));
+    getScenarios();
     getStories();
     createResponseForm(); // add response 0 to a blank/fresh scenario
 
     document.getElementById("delete_this_story_button").onclick = deleteThisStory;
-    
-    document.getElementById("stories_dropdown").onchange = loadStory;
+    document.getElementById("stories_dropdown").onchange = storiesDropdownOnchange;
+    document.getElementById("consequences_for_scenarios").onchange = scenariosDropdownOnchange;
 
-    // ALL consequences / scenario dropdowns available at:
+    // ALL consequences / scenario / fact dropdowns available at:
     // document.getElementsByName("consequence_dropdown") and
     // document.getElementsByName("scenarios_dropdown")
-
-    // ALL fact dropdowns available at document.getElementsbyName("fact_dropdown");
+    // document.getElementsbyName("fact_dropdown");
 };
 
 /*
@@ -30,8 +29,6 @@ var facts = [{id: 0, 'descr': "You know, 2 out of 3 facts are..."},
              {id: 1, 'descr': "8 out of 10 dentists agree, ..."}];
 
 var stories = [];
-/*  [{id: 0, "descr": "SHAUNS_STORY"},
-               {id: 1, "descr": "A_MIDSUMMERS_NIGHT"}]; */
 
 function getFacts() {
     /* Make an ajax call to retrieve the facts. */
@@ -52,6 +49,34 @@ function getStories() {
     });
 }
 
+function getScenarios() {
+    /* Make an ajax call to retrieve the scenarios for our current
+     * story. */
+
+    var current_story_selection = document.getElementById("stories_dropdown").value;
+    
+    var data = {"action": "get_scenarios",
+                "story_id": "ALL"};
+
+    if (current_story_selection != "null") {
+        data.story_id = Number(current_story_selection);
+    }
+    
+    sendData2(data, adminURL, "POST", function (msg) {
+        var body = JSON.parse(msg)["body"];
+        console.log(body);
+
+        // Update global scenarios list
+        consequences = body;
+
+        // Force refresh all scenarios dropdowns.
+        var scenario_dropdowns = document.getElementsByName("scenarios_dropdown");
+        for (var i = 0; i < scenario_dropdowns.length; i++) {
+            setConsequenceOptions(scenario_dropdowns[i]);
+        }
+    });
+}
+
 function selectOptionValues(obj) {
     var values = [];
     for (var i = 0; i < obj.options.length; i++)
@@ -67,39 +92,6 @@ function newOption(value, text) {
     new_option.value = value;
     new_option.innerHTML = text;
     return new_option;
-}
-
-function createNewConsequence() {
-    /* Called by dropdown "onChange" handler, so we have to be a
-     * little clever about identifying what we actually are. */
-
-    // `this` is the select, obj is the selected option.
-    var obj = this.options[this.selectedIndex];
-
-    if (this.value != "new") 
-        return;
-
-    var responseid = this.id.replace("consequences_for_", "");
-    console.log("responseid: " + this.id);
-
-    var responseValue = document.getElementById(responseid).value;
-
-    console.log("Creating generic new scenario as a 'consequence' for response #" 
-                + responseid +  ".");
-    console.log("Default text: 'Response to " + responseValue + "'");
-    console.log("Now, regenerate all consequence dialogs...");
-    
-}
-
-function createNewFact() {
-    /* Called by "fact" selector dropdown onChange. */
-
-    if (this.value != "new")
-        return;
-
-    var response_id = this.id.replace("facts_for_", "");
-    console.log("Creating new dropdown for " + document.getElementById(response_id).value);
-    return;
 }
 
 function clearForms() {
@@ -141,7 +133,7 @@ function setConsequenceOptions(obj) {
 
     // add all imported consequences
     for (var i = 0; i < consequences.length; i++) {
-        var c_text = consequences[i].id + " - " + consequences[i].descr;
+        var c_text = consequences[i].id + " - " + consequences[i].short;
         obj.add(newOption(consequences[i].id, c_text));
     }
 }
@@ -232,12 +224,12 @@ function createResponseForm(responseId, responseText, consequenceId, factId) {
 
     new_consequence_dropdown.id       = "consequences_for_" + new_responseid;
     new_consequence_dropdown.name     = "consequence_dropdown";
-    new_consequence_dropdown.onchange = createNewConsequence;
+    new_consequence_dropdown.onchange = ScenarioDropdownOnchange;
     new_consequence_dropdown.disabled = condition;
 
     new_fact_dropdown.id              = "facts_for_" + new_responseid;
     new_fact_dropdown.name            = "fact_dropdown";
-    new_fact_dropdown.onchange        = createNewFact;
+    new_fact_dropdown.onchange        = FactDropdownOnchange;
     new_fact_dropdown.disabled        = condition;
 
     new_delete_button.type = "button";
@@ -281,7 +273,7 @@ function createResponseForm(responseId, responseText, consequenceId, factId) {
     numResponses++;
 }
 
-function loadStory() {
+function storiesDropdownOnchange() {
     /* This is the onChange handler for the stories dropdown.
        obj.value is one of "null", "new", or the story ID (int) */
 
@@ -311,9 +303,11 @@ function loadStory() {
     else {
         document.getElementById("delete_this_story_button").disabled = false;
     }
+
+    getScenarios();
 }
 
-function loadScenario() {
+function scenariosDropdownOnchange() {
     /* Called by onChange from consequences_for_scenarios. */
     var obj = document.getElementById("consequences_for_scenarios");
 
@@ -361,6 +355,39 @@ function loadScenario() {
     else {
         document.getElementById("delete_this_scenario_button").disabled = false;
     }
+}
+
+function ScenarioDropdownOnchange() {
+    /* Called by dropdown "onChange" handler, so we have to be a
+     * little clever about identifying what we actually are. */
+
+    // `this` is the select, obj is the selected option.
+    var obj = this.options[this.selectedIndex];
+
+    if (this.value != "new") 
+        return;
+
+    var responseid = this.id.replace("consequences_for_", "");
+    console.log("responseid: " + this.id);
+
+    var responseValue = document.getElementById(responseid).value;
+
+    console.log("Creating generic new scenario as a 'consequence' for response #" 
+                + responseid +  ".");
+    console.log("Default text: 'Response to " + responseValue + "'");
+    console.log("Now, regenerate all consequence dialogs...");
+    
+}
+
+function FactDropdownOnchange() {
+    /* Called by "fact" selector dropdown onChange. */
+
+    if (this.value != "new")
+        return;
+
+    var response_id = this.id.replace("facts_for_", "");
+    console.log("Creating new dropdown for " + document.getElementById(response_id).value);
+    return;
 }
 
 function deleteThisStory() {
