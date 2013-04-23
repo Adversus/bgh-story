@@ -6,32 +6,32 @@ include("database.php");
 // This variable holds our "database" until we get a real one. 
 // later functions "query" this data for the admin page.
 /* $scenarios = json_decode(
-<<<EOJSON
-[
-    {"descr": "A friend says to you, \"You havent seemed like yourself lately.\"",
-     "responses": [
-         {"id": 0,
-          "choice": "Carry on",
-          "consequence": 1, 
-          "factoid": [1]}, 
-         {"id": 1, "choice": "Ackowledge a problem",
-          "consequence":1,
-          "factoid": []}
-     ]
-    },
-    {"descr": "At a restaurant, the waiter brings you your order. Broken glass has accidentally found its way into the meal and is possibly dangerous.",
-     "responses": [
-         {"id":2, "choice": "Berate the waitor until they cry",
-          "consequence": 2,
-          "factoid": []}, 
-         {"id":3, "choice": "Don't say anything and eat the food trying to pick out the glass.",
-          "consequence": 0,
-          "factoid": [1]}
-     ]
-    }
-]
-EOJSON
-,true); */
+   <<<EOJSON
+   [
+   {"descr": "A friend says to you, \"You havent seemed like yourself lately.\"",
+   "responses": [
+   {"id": 0,
+   "choice": "Carry on",
+   "consequence": 1, 
+   "factoid": [1]}, 
+   {"id": 1, "choice": "Ackowledge a problem",
+   "consequence":1,
+   "factoid": []}
+   ]
+   },
+   {"descr": "At a restaurant, the waiter brings you your order. Broken glass has accidentally found its way into the meal and is possibly dangerous.",
+   "responses": [
+   {"id":2, "choice": "Berate the waitor until they cry",
+   "consequence": 2,
+   "factoid": []}, 
+   {"id":3, "choice": "Don't say anything and eat the food trying to pick out the glass.",
+   "consequence": 0,
+   "factoid": [1]}
+   ]
+   }
+   ]
+   EOJSON
+   ,true); */
 
 // Fake stories table
 
@@ -126,9 +126,9 @@ if (action("create_fact")) {
 if (action("create_response")) {
 
 
-"INSERT INTO responses (id, response_text, response_fact_id, parent_scenario_id, response_consequence_scenario_id)
+  "INSERT INTO responses (id, response_text, response_fact_id, parent_scenario_id, response_consequence_scenario_id)
 VALUES (NULL, ..., ..., ..., ...);";
-}
+ }
 
 /*
  * GET_STORIES
@@ -161,19 +161,19 @@ if (action("get_story")) {
     return;
   }
 
-   $stmt = $db->prepare("SELECT id, story_name FROM stories WHERE id = ?");
-   $stmt->execute(array($_POST["story_id"]));
+  $stmt = $db->prepare("SELECT id, story_name FROM stories WHERE id = ?");
+  $stmt->execute(array($_POST["story_id"]));
    
    
 
-}
+ }
 
 /*
  * GET_SCENARIO
  */
 
 if (action("get_scenario")) {
-// if (!isset($_POST['scenario_id'])) {return;}
+  // if (!isset($_POST['scenario_id'])) {return;}
   $stmt = $db->prepare("SELECT scenarios.id, story_id, bodies.text FROM scenarios, bodies WHERE scenario_body_id = bodies.id AND scenarios.id = ?");
 
   $stmt->execute(array($_POST['scenario_id']));
@@ -186,7 +186,7 @@ if (action("get_scenario")) {
   print json_encode(array("response" => "get_scenario",
                           "body"     => $scenarios));
 
-}
+ }
 
 /*
  * GET_SCENARIOS
@@ -196,15 +196,24 @@ if (action("get_scenarios")) {
 
   print json_encode(array("response" => "get_scenarios",
                           "body"     => getStoryScenarios($_POST["story_id"])));
-}
+ }
 
 /*
- * GET_FACT
+ * GET_FACTS
  */
 
-if (action("get_fact")) {
+if (action("get_facts")) {
+  if (isset($_POST["fact_id"])) {
+    $fact_id = $_POST["fact_id"];
+  }
+  else {
+    $fact_id = "ALL";
+  }
 
-}
+  print json_encode(array("response" => "get_facts",
+                          "body" => getFacts($fact_id)));
+
+ }
 
 /* 
  * GET_RESPONSES
@@ -218,11 +227,11 @@ if (action("get_responses")) {
 
   print json_encode(array("response" => "get_responses",
                           "body"     => $responses));
-}
+ }
 
 if (action("rename_story")) {
 
-}
+ }
 
 /*
  * Output some debugging information if no ACTION has been posted.
@@ -234,43 +243,43 @@ if (!isset($_POST['action'])) {
   print "print_r(_GET):\n";
   print_r($_GET);
   return;
-}
+ }
 
 /* QUERIES AND INSERTS
-INSERT INTO stories (id, story_name, start_screen_body_id, end_screen_body_id, first_scenario_id)
-VALUES (NULL, $story_name, ..., ..., ...);
+   INSERT INTO stories (id, story_name, start_screen_body_id, end_screen_body_id, first_scenario_id)
+   VALUES (NULL, $story_name, ..., ..., ...);
 
-INSERT INTO facts (id, fact_body) 
-VALUES (NULL, $fact_body);
+   INSERT INTO facts (id, fact_body) 
+   VALUES (NULL, $fact_body);
 
-INSERT INTO bodies (id, text) 
-VALUES (NULL, ...);
+   INSERT INTO bodies (id, text) 
+   VALUES (NULL, ...);
 
-INSERT INTO scenarios (id, story_id, scenario_body_id) 
-VALUES (NULL, ..., ...,);
+   INSERT INTO scenarios (id, story_id, scenario_body_id) 
+   VALUES (NULL, ..., ...,);
 
-INSERT INTO responses (id, response_text, response_fact_id, parent_scenario_id, response_consequence_scenario_id)
-VALUES (NULL, ..., ..., ..., ...);
+   INSERT INTO responses (id, response_text, response_fact_id, parent_scenario_id, response_consequence_scenario_id)
+   VALUES (NULL, ..., ..., ..., ...);
 
-SELECT * 
-FROM stories;
+   SELECT * 
+   FROM stories;
 
-SELECT st.id, st. story_name, sc.scenario_body_id 
-FROM stories st, scenarios sc 
-WHERE st.id = sc.story_id 
-	AND $id = st.id;	//include responses?
+   SELECT st.id, st. story_name, sc.scenario_body_id 
+   FROM stories st, scenarios sc 
+   WHERE st.id = sc.story_id 
+   AND $id = st.id;	//include responses?
 
-SELECT is_starting_scenario, parent_story, bo.text, re.response_text, re.response_consequence_scenario_id, re.response_fact_id, fa.fact_body
-FROM scenarios sc, bodies bo, responses re, facts fa
-WHERE $scenario_id = sc.id
-	AND fa.id = bo.id
-	AND re.id = bo.id;
+   SELECT is_starting_scenario, parent_story, bo.text, re.response_text, re.response_consequence_scenario_id, re.response_fact_id, fa.fact_body
+   FROM scenarios sc, bodies bo, responses re, facts fa
+   WHERE $scenario_id = sc.id
+   AND fa.id = bo.id
+   AND re.id = bo.id;
 	
-SELECT * 
-FROM responses
-WHERE parent_scenario_id in (SELECT id
-							FROM scenarios
-							WHERE story_id = $story_id);
+   SELECT * 
+   FROM responses
+   WHERE parent_scenario_id in (SELECT id
+   FROM scenarios
+   WHERE story_id = $story_id);
 							
 
 
