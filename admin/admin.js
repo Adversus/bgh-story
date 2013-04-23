@@ -175,6 +175,11 @@ function setConsequenceOptions(obj) {
         var c_text = consequences[i].id + " - " + consequences[i].short;
         obj.add(newOption(consequences[i].id, c_text));
     }
+
+    // Set value to old value if that is still possible.
+    if (selectOptionValues(obj).indexOf(current_value) >= 0) {
+        obj.value = current_value;
+    }
 }
 
 function setFactOptions(obj) {
@@ -195,6 +200,11 @@ function setFactOptions(obj) {
     for (var i = 0; i < facts.length; i++) {
         var c_text = facts[i].id + " - " + facts[i].descr;
         obj.add(newOption(facts[i].id, c_text));
+    }
+
+    // Set value to old value if that is still possible.
+    if (selectOptionValues(obj).indexOf(current_value) >= 0) {
+        obj.value = current_value;
     }
 }
 
@@ -221,8 +231,18 @@ function setStoryOptions(obj) {
 
     // add all imported consequences
     for (var i = 0; i < stories.length; i++) {
+        if (stories[i].id == Number(document.getElementById("stories_dropdown").value) 
+            && obj.id == "move_scenario_dropdown") {
+            /* Skip the current Story Id if this is the MOVE-TO dropdown box. */
+            continue;
+        }
         var c_text = stories[i].id + " - " + stories[i].descr;
         obj.add(newOption(stories[i].id, c_text));
+    }
+
+    // Set value to old value if that is still possible.
+    if (selectOptionValues(obj).indexOf(current_value) >= 0) {
+        obj.value = current_value;
     }
 }
 
@@ -342,7 +362,9 @@ function moveScenarioDropdownOnchange() {
                "scenario_id": Number(scenario_id)};
 
     sendData2(data, adminURL, "POST", function(msg) {
-        getStories(); // just refresh the stories dropdowns.
+        document.getElementById("stories_dropdown").value = story_id;
+        getScenarios();
+        getStories();
     });
 
     return;
