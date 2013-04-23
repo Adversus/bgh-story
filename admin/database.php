@@ -185,4 +185,20 @@ if (!isset($_SERVER["REQUEST_METHOD"])) {
   print_r(getFacts());
  }
 
+function removeStory($story_id) {
+  /* Delete a story. The default story is 1.
+   * - Update scenarios: All scenarios in story_id move to default story.
+   * - Delete story_id and start + end bodies.
+   */
+  global $db;
+
+  // Move any scenarios
+  $stmt = $db->prepare("UPDATE scenarios SET story_id = :story_id WHERE story_id = :story_id");
+  $stmt->execute(array(":story_id" => $story_id));
+
+  // Delete story + start and end bodies
+  $stmt = $db->prepare("DELETE stories, start, end FROM stories LEFT JOIN bodies start ON stories.start_screen_body_id = start.id LEFT JOIN bodies end ON stories.end_screen_body_id = end.id WHERE stories.id = ?");
+  $stmt->execute(array($story_id));
+}
+
 ?>

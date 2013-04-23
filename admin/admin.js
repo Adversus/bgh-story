@@ -31,6 +31,25 @@ var facts = [{id: 0, 'descr': "You know, 2 out of 3 facts are..."},
 
 var stories = [];
 
+function requestNewStory(story_name) {
+    /* Make an ajax call requesting a new story. */
+    var data = {"action": "create_story",
+                "story_name": story_name};
+
+    sendData2(data, adminURL, "POST", function (msg) {
+        var stories_dropdown = document.getElementById("stories_dropdown");
+        var body = JSON.parse(msg)["body"];
+        console.log(body);
+        
+        // Update global stories list with new story. 
+        stories.push(body);
+        setStoryOptions(stories_dropdown);
+        stories_dropdown.value = body.id;
+
+    });
+       
+}
+
 function getFacts() {
     /* Make an ajax call to retrieve the facts. */
     var data = {"action": "get_facts"};
@@ -420,7 +439,15 @@ function deleteThisStory() {
     story = Number(story); // Cast to integer
 
     console.log("Deleting story " + story);
-    // TODO: add ajax
+
+    var data = {"action": "delete_story",
+                "story_id": story};
+
+    sendData2(data, adminURL, "POST", function (msg) {
+        // No response, really, but refresh the stories.
+        console.log(msg);
+        getStories();
+    });
     
 }
 

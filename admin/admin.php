@@ -63,12 +63,13 @@ if (action("create_story")) {
   }
   
   // Insert story row
-  $stmt = $db->prepare("INSERT INTO STORIES (story_name) VALUES (?)");
+  $stmt = $db->prepare("INSERT INTO stories (story_name) VALUES (?)");
   $stmt->execute(array($_POST["story_name"]));
   
   // return story_id
   print json_encode(array("response" => "create_story",
-                          "body" => array("story_id" => $db->lastInsertId())));
+                          "body" => array("descr" => $_POST["story_name"],
+                                          "id" => $db->lastInsertId())));
  }
 
 /*
@@ -231,6 +232,26 @@ if (action("get_responses")) {
 
 if (action("rename_story")) {
 
+ }
+
+/*
+ * DELETE_STORY
+ */
+if (action("delete_story")) {
+  if (!isset($_POST["story_id"])) {
+    return;
+  }
+  
+  if (intval($_POST["story_id"]) == 1) {
+    print json_encode(array("response" => "delete_story",
+                            "body" => "WILL NOT DELETE DEFAULT STORY"));   
+  }
+  else {
+    removeStory($_POST["story_id"]);
+    
+    print json_encode(array("response" => "delete_story",
+                            "body" => array("id" => $_POST["story_id"])));
+  }
  }
 
 /*
