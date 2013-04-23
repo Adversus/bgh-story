@@ -352,10 +352,11 @@ function storiesDropdownOnchange() {
     }
 
     getScenarios();
+    clearForms(); // Presently, clear the forms when stories are changed.
 }
 
-function scenariosDropdownOnchange() {
-    /* Called by onChange from consequences_for_scenarios. */
+function scenarioOverviewDropdownOnchange() {
+    /* Called by onChange from consequences_for_scenarios "scenario overview". */
     var obj = document.getElementById("consequences_for_scenarios");
 
     if (obj.value == "null") {
@@ -405,8 +406,9 @@ function scenariosDropdownOnchange() {
 }
 
 function ScenarioDropdownOnchange() {
-    /* Called by dropdown "onChange" handler, so we have to be a
-     * little clever about identifying what we actually are. */
+    /* Called by dropdown "onChange" handler for consequence
+     * dropdowns, so we have to be a little clever about identifying
+     * what we actually are. */
 
     // `this` is the select, obj is the selected option.
     var obj = this.options[this.selectedIndex];
