@@ -95,9 +95,11 @@ function getScenarios() {
     var data = {"action": "get_scenarios",
                 "story_id": "ALL"};
 
-    if (current_story_selection != "null") {
+    if (current_story_selection != ""
+        && current_story_selection != "null") {
         data.story_id = Number(current_story_selection);
     }
+
     
     sendData2(data, adminURL, "POST", function (msg) {
         var body = JSON.parse(msg)["body"];

@@ -196,7 +196,8 @@ if (action("get_scenario")) {
 if (action("get_scenarios")) {
 
   print json_encode(array("response" => "get_scenarios",
-                          "body"     => getStoryScenarios($_POST["story_id"])));
+                          "body"     => getStoryScenarios($_POST["story_id"]),
+                          "id"       => $_POST["story_id"]));
  }
 
 /*
