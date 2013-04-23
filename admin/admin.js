@@ -11,7 +11,8 @@ window.onload = function () {
 
     document.getElementById("delete_this_story_button").onclick = deleteThisStory;
     document.getElementById("stories_dropdown").onchange = storiesDropdownOnchange;
-    document.getElementById("consequences_for_scenarios").onchange = scenariosDropdownOnchange;
+    document.getElementById("consequences_for_scenarios").onchange = scenarioOverviewDropdownOnchange;
+    document.getElementById("move_scenario_dropdown").onchange = moveScenarioDropdownOnchange;
 
     // ALL consequences / scenario / fact dropdowns available at:
     // document.getElementsByName("consequence_dropdown") and
@@ -79,8 +80,9 @@ function getStories() {
         // Update global stories list
         stories = body;
 
-        // Force refresh the stories_dropdown
+        // Force refresh the stories_dropdowns
         setStoryOptions(document.getElementById("stories_dropdown"));
+        setStoryOptions(document.getElementById("move_scenario_dropdown"));
     });
 }
 
@@ -206,9 +208,16 @@ function setStoryOptions(obj) {
     // clear the options
     obj.options.length = 0;
 
+    console.log("setStoryOptions: " + obj.id);
+
     // Insert std options
-    obj.add(newOption("null", "Displaying all stories"));
-    obj.add(newOption("new", "Create a new story"));
+    if (obj.id == "move_scenario_dropdown") {
+        obj.add(newOption("null", "Select a story to move scenario into"));
+    }
+    else {
+        obj.add(newOption("null", "Displaying all stories"));
+        obj.add(newOption("new", "Create a new story"));
+    }
 
     // add all imported consequences
     for (var i = 0; i < stories.length; i++) {
@@ -308,6 +317,11 @@ function createResponseForm(responseId, responseText, consequenceId, factId) {
 
     console.log("Creating response #" + numResponses);
     numResponses++;
+
+}
+
+function moveScenarioDropdownOnchange() {
+    return;
 }
 
 function storiesDropdownOnchange() {
