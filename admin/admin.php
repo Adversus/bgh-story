@@ -188,23 +188,19 @@ if (action("get_scenario")) {
 
 }
 
+/*
+ * GET_SCENARIOS
+ */
+
 if (action("get_scenarios")) {
 
-  $stmt = $db->prepare("SELECT scenarios.id, story_id, bodies.text FROM scenarios, bodies WHERE scenario_body_id = bodies.id");
-
-  $stmt->execute();
-  
-  $scenarios = array();
-  
-  while ($row = $stmt->fetch()) {
-    array_push($scenarios, 
-               array("id" => $row["id"], 
-                     "descr" => $row["text"],
-                     "responses" => getResponses($row["id"])));
-  }
   print json_encode(array("response" => "get_scenarios",
-                          "body"     => $scenarios));
+                          "body"     => getStoryScenarios($_POST["story_id"])));
 }
+
+/*
+ * GET_FACT
+ */
 
 if (action("get_fact")) {
 

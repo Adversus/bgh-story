@@ -87,8 +87,25 @@ function getResponses($scenario_id) {
 
 }
 
-function getStory($story_id = "ALL") {
+function truncate($string, $length, $stopanywhere=false) {
+    //truncates a string to a certain char length, stopping on a word if not specified otherwise.
+    if (strlen($string) > $length) {
+        //limit hit!
+        $string = substr($string,0,($length -3));
+        if ($stopanywhere) {
+            //stop anywhere
+            $string .= '...';
+        } else{
+            //stop on a word.
+            $string = substr($string,0,strrpos($string,' ')).'...';
+        }
+    }
+    return $string;
+}
 
+function getStoryScenarios($story_id = "ALL") {
+  /* return all scenarios (w/o responses) for a given story (or ALL
+     stories) */
   global $db;
   
   if ($story_id == "ALL") {
@@ -103,22 +120,23 @@ function getStory($story_id = "ALL") {
   $stmt->execute(array($story_id));
 
   $scenarios = array();
-  $story_descr = "";
   while ($row = $stmt->fetch()) {
+    $short_text = truncate($row["text"], 40);
     array_push($scenarios,
-               array("id" => $row["scenario_id"],
-                     "descr" => $row["text"]));
+               array("id" => $row["id"],
+                     "descr" => $row["text"],
+                     "short" => $short_text,
+                     "responses" => getResponses($row["id"])));
+
     $story_descr = $row["story_name"];
   }
   
-  return array("story_id" => $story_id,
-               "story_name" => $story_name,
-               "scenarios" => $scenarios);
+  return $scenarios;
 
 }
 
 if (!isset($_SERVER["REQUEST_METHOD"])) {
-  print_r(getStory());
+  print_r(getStoryScenarios());
 }
 
 ?>
