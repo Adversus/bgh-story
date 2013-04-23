@@ -321,6 +321,30 @@ function createResponseForm(responseId, responseText, consequenceId, factId) {
 }
 
 function moveScenarioDropdownOnchange() {
+    /* This handler is triggered when the "move_scenario_dropdown"
+     * selection is changed. If the option is changed away from
+     * "null", an ajax request should be made to move the scenario to
+     * a new story. */
+
+    var scenario_id = document.getElementById("consequences_for_scenarios").value;
+    var story_id    = document.getElementById("move_scenario_dropdown").value;
+
+    if (scenario_id == "null" || story_id == "null") {
+        /* Nothing to do. Reset the selection */
+        this.value = "null";
+        return;
+    }
+
+    console.log("Moving scenario " + scenario_id + " to story " + story_id);
+
+    var data = {"action": "move_scenario",
+               "story_id": Number(story_id),
+               "scenario_id": Number(scenario_id)};
+
+    sendData2(data, adminURL, "POST", function(msg) {
+        getStories(); // just refresh the stories dropdowns.
+    });
+
     return;
 }
 

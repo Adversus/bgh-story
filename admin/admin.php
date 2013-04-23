@@ -235,6 +235,24 @@ if (action("rename_story")) {
  }
 
 /*
+ * MOVE_SCENARIO
+ */
+
+if (action("move_scenario")) {
+  if (!isset($_POST["story_id"]) || !isset($_POST["scenario_id"])) {
+    return; // nothing to do
+  }
+
+  $stmt = $db->prepare("UPDATE scenarios SET story_id = :story_id WHERE id = :scenario_id");
+  $stmt->execute(array(":story_id" => $_POST["story_id"],
+                       ":scenario_id" => $_POST["scenario_id"]));
+
+  print json_encode(array("response" => "get_responses",
+                          "body"     => "OK"));
+
+}
+
+/*
  * DELETE_STORY
  */
 if (action("delete_story")) {
