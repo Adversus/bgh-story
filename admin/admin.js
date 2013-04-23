@@ -324,12 +324,8 @@ function storiesDropdownOnchange() {
         // TODO: Sanitize name
         new_name = new_name.replace(" ", "_");
         
-        // Faking it here by pushing onto global stories var.
-        var new_id = stories.length;
-        stories.push({id:new_id, descr: new_name});
-        
-        setStoryOptions(this);
-        this.value = new_id;
+        requestNewStory(new_name);
+
         console.log("Creating STORY: '" + new_name + "'");
     }
 
