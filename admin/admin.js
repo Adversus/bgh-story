@@ -6,6 +6,7 @@ window.onload = function () {
     /* Initialize page onLoad. */
     getScenarios();
     getStories();
+    getFacts();
     createResponseForm(); // add response 0 to a blank/fresh scenario
 
     document.getElementById("delete_this_story_button").onclick = deleteThisStory;
@@ -32,6 +33,21 @@ var stories = [];
 
 function getFacts() {
     /* Make an ajax call to retrieve the facts. */
+    var data = {"action": "get_facts"};
+    sendData2(data, adminURL, "POST", function (msg) {
+        var body = JSON.parse(msg)["body"];
+        console.log(body);
+
+        // update global facts list
+        facts = body;
+
+        // refresh fact dropdowns
+        var fact_dropdowns = document.getElementsByName("fact_dropdown");
+        for (var i = 0; i < fact_dropdowns.length; i++) {
+            setFactOptions(fact_dropdowns[i]);
+        }
+    });
+    
 }
 
 function getStories() {
@@ -78,6 +94,8 @@ function getScenarios() {
 }
 
 function selectOptionValues(obj) {
+    /* Given a SELECT object, return an array of the OPTION
+     * values. */
     var values = [];
     for (var i = 0; i < obj.options.length; i++)
         values.push(obj.options[i].value);
