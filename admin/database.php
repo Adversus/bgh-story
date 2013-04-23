@@ -135,8 +135,32 @@ function getStoryScenarios($story_id = "ALL") {
 
 }
 
+function addFact($fact_text = "") {
+    global $db;
+
+    // Create a body-text entry for the fact and note its ID 
+    $body_id = addBody($fact_text);
+
+    $stmt = $db->prepare("INSERT INTO facts (id, fact_body) VALUES (NULL, ?)");
+    $stmt->execute(array($body_id));
+}
+
+function setFact($fact_id, $fact_text) {
+    global $db;
+
+    $stmt = $db->prepare("UPDATE facts INNER JOIN bodies ON facts.fact_body = bodies.id SET text = ? WHERE facts.id = ?");
+    $stmt->execute(array($fact_text, $fact_id));
+}
+
+function removeFact($fact_id) {
+    global $db;
+
+    $stmt = $db->prepare("DELETE facts, bodies FROM facts INNER JOIN bodies ON facts.fact_body = bodies.id WHERE facts.id = ?");
+    $stmt->execute(array($fact_id));
+}
+
 if (!isset($_SERVER["REQUEST_METHOD"])) {
-  print_r(getStoryScenarios());
+ print_r(getResponses(1));
 }
 
 ?>
