@@ -4,64 +4,64 @@ include("config.php");
 $db = NULL;
 
 try {
- $dsn = "mysql:host=$db_host;dbname=$db_name";
- $db  = new PDO($dsn, $db_user, $db_pass);
+  $dsn = "mysql:host=$db_host;dbname=$db_name";
+  $db  = new PDO($dsn, $db_user, $db_pass);
 
- $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+  $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
  }
 
 catch(PDOException $e) {
-    echo "An error occured while connecting to the database.\n";
-    echo $e->getMessage() . "\n";
+  echo "An error occured while connecting to the database.\n";
+  echo $e->getMessage() . "\n";
 }
 
 function testDB() {
-    global $db;
+  global $db;
 
-    $query = "SHOW TABLES";
-    try {
+  $query = "SHOW TABLES";
+  try {
     $stmt = $db->query($query);
     print_r($stmt->fetchAll());    
-    }
+  }
 
-    catch(PDOException$e) {
+  catch(PDOException$e) {
     echo "An error occured while querying the database.\n";
     echo $e->getMessage() . "\n";
-    }
+  }
     
 }
 
 function addBody($body_text) {
-    global $db;
+  global $db;
 
-    $stmt = $db->prepare("INSERT INTO bodies (id, text) VALUES (NULL, ?)");
-    $stmt->execute(array($body_text));
+  $stmt = $db->prepare("INSERT INTO bodies (id, text) VALUES (NULL, ?)");
+  $stmt->execute(array($body_text));
     
-    return $db->lastInsertId();
+  return $db->lastInsertId();
 }
 
 function setBody($id, $body_text) {
-    global $db;
+  global $db;
 
-    $stmt = $db->prepare("UPDATE bodies SET text = ? WHERE id = ?");
-    $stmt->execute(array($body_text, $id));
+  $stmt = $db->prepare("UPDATE bodies SET text = ? WHERE id = ?");
+  $stmt->execute(array($body_text, $id));
 }
 
 function getBody($id) {
-    global $db;
+  global $db;
     
-    $stmt = $db->prepare("SELECT text from bodies WHERE id = ?");
-    if ($stmt->execute(array($id))) {
+  $stmt = $db->prepare("SELECT text from bodies WHERE id = ?");
+  if ($stmt->execute(array($id))) {
     $row = $stmt->fetch();
     return $row["text"];
-    }
+  }
 }
 
 function removeBody($id) {
-    global $db;
+  global $db;
 
-    $stmt = $db->prepare("DELETE FROM bodies WHERE id = ?");
-    $stmt->execute(array($id));
+  $stmt = $db->prepare("DELETE FROM bodies WHERE id = ?");
+  $stmt->execute(array($id));
 }
 
 function getResponses($scenario_id) {
@@ -88,19 +88,19 @@ function getResponses($scenario_id) {
 }
 
 function truncate($string, $length, $stopanywhere=false) {
-    //truncates a string to a certain char length, stopping on a word if not specified otherwise.
-    if (strlen($string) > $length) {
-        //limit hit!
-        $string = substr($string,0,($length -3));
-        if ($stopanywhere) {
-            //stop anywhere
-            $string .= '...';
-        } else{
-            //stop on a word.
-            $string = substr($string,0,strrpos($string,' ')).'...';
-        }
+  //truncates a string to a certain char length, stopping on a word if not specified otherwise.
+  if (strlen($string) > $length) {
+    //limit hit!
+    $string = substr($string,0,($length -3));
+    if ($stopanywhere) {
+      //stop anywhere
+      $string .= '...';
+    } else{
+      //stop on a word.
+      $string = substr($string,0,strrpos($string,' ')).'...';
     }
-    return $string;
+  }
+  return $string;
 }
 
 function getStoryScenarios($story_id = "ALL") {
@@ -132,35 +132,57 @@ function getStoryScenarios($story_id = "ALL") {
   }
   
   return $scenarios;
-
 }
 
 function addFact($fact_text = "") {
-    global $db;
+  global $db;
 
-    // Create a body-text entry for the fact and note its ID 
-    $body_id = addBody($fact_text);
+  // Create a body-text entry for the fact and note its ID 
+  $body_id = addBody($fact_text);
 
-    $stmt = $db->prepare("INSERT INTO facts (id, fact_body) VALUES (NULL, ?)");
-    $stmt->execute(array($body_id));
+  $stmt = $db->prepare("INSERT INTO facts (id, fact_body) VALUES (NULL, ?)");
+  $stmt->execute(array($body_id));
 }
 
 function setFact($fact_id, $fact_text) {
-    global $db;
+  global $db;
 
-    $stmt = $db->prepare("UPDATE facts INNER JOIN bodies ON facts.fact_body = bodies.id SET text = ? WHERE facts.id = ?");
-    $stmt->execute(array($fact_text, $fact_id));
+  $stmt = $db->prepare("UPDATE facts INNER JOIN bodies ON facts.fact_body = bodies.id SET text = ? WHERE facts.id = ?");
+  $stmt->execute(array($fact_text, $fact_id));
+}
+
+function getFacts($fact_id = "ALL") {
+  global $db;
+  if ($fact_id == "ALL") {
+    $stmt = $db->prepare("SELECT facts.id, bodies.text FROM facts INNER JOIN bodies ON facts.fact_body = bodies.id");
+    $stmt->execute();
+  }
+  else {
+    $stmt = $db->prepare("SELECT facts.id, bodies.text FROM facts INNER JOIN bodies ON facts.fact_body = bodies.id WHERE facts.id = ?");
+    $stmt->execute(array($fact_id));
+  }
+
+  $results = array();
+  
+  while ($row = $stmt->fetch()) {
+    array_push($results,
+               array("id" => $row["id"],
+                     "descr" => $row["text"],
+                     "short" => truncate($row["text"], 40)));
+  }
+  
+  return $results;
 }
 
 function removeFact($fact_id) {
-    global $db;
+  global $db;
 
-    $stmt = $db->prepare("DELETE facts, bodies FROM facts INNER JOIN bodies ON facts.fact_body = bodies.id WHERE facts.id = ?");
-    $stmt->execute(array($fact_id));
+  $stmt = $db->prepare("DELETE facts, bodies FROM facts INNER JOIN bodies ON facts.fact_body = bodies.id WHERE facts.id = ?");
+  $stmt->execute(array($fact_id));
 }
 
 if (!isset($_SERVER["REQUEST_METHOD"])) {
- print_r(getResponses(1));
-}
+  print_r(getFacts());
+ }
 
 ?>
