@@ -426,6 +426,9 @@ function storiesDropdownOnchange() {
         document.getElementById("delete_this_story_button").disabled = false;
     }
 
+    // Reset scenario overview when changing story.
+    document.getElementById("consequences_for_scenarios").value = "null";
+
     getScenarios();
     clearForms(); // Presently, clear the forms when stories are changed.
 }
