@@ -252,4 +252,51 @@ if (!isset($_SERVER["REQUEST_METHOD"])) {
   print isValidStory(11) . "\n";
  }
 
+function getFactsUsedInStory($story_id) {
+  global $db;
+
+  $query = "SELECT response_fact_id, bodies.text FROM responses
+INNER JOIN facts ON facts.id = responses.response_fact_id
+INNER JOIN bodies ON facts.fact_body = bodies.id
+       WHERE
+             response_fact_id IS NOT NULL
+             AND
+             parent_scenario_id IN (
+             SELECT id FROM scenarios
+                    WHERE
+                    scenarios.story_id = ?
+                    )";
+
+  $stmt = $db->prepare($query);
+  $stmt->execute(array($story_id));
+
+  $facts = array();
+
+  while ($row = $stmt->fetch()) {
+    $facts[$row["response_fact_id"]] = $row["text"];
+  }
+
+  return $facts;
+}
+
+function getStoryStartText($story_id) {
+  global $db;
+
+  $stmt = $db->prepare("SELECT text FROM stories INNER JOIN bodies ON bodies.id = stories.start_screen_body_id AND stories.id = ?");
+  $stmt->execute(array($story_id));
+
+  $result = $stmt->fetch();
+  return $result["text"];
+}
+
+function getStoryEndText($story_id) {
+  global $db;
+
+  $stmt = $db->prepare("SELECT text FROM stories INNER JOIN bodies ON bodies.id = stories.end_screen_body_id AND stories.id = ?");
+  $stmt->execute(array($story_id));
+
+  $result = $stmt->fetch();
+  return $result["text"];
+}
+
 ?>

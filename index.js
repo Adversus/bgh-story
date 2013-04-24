@@ -2,57 +2,13 @@ var transitioning = false; // set to true while a transition is
                            // occuring to prevent
                            // double-button-presses.
 
-var factoids=[
-    "<p>Family Services doesn't keep \"bankers hours\". They also keep extended hours on nights and weekends.</p>",
-    "It's not uncommon to try to just ignore a comment like this.",
-    "<p>Many people do not call for help, even when they need it. While it is clear when to go in for physical help, it is not always plain when to request emotional help. This, combined with a social stigma of \"getting help\", keeps many people from receiving beneficial assistance.</p>",
-    "3 out of 4 dentists...",
-    "etc",
-    "blah"
-];
+window.onload = function() {
+    loadStory();
+};
 
-var scenarios = [
-    {"descr": "<p>A friend says to you, 'You havent seemed like yourself lately.'</p><p>You realize they are right. You haven't been going out with friends or enjoying yourself like you used to.</p>",
-     "responses": [
-         {'choice': "Carry on",
-          'consequence': 1,
-          'factoid': [1]},
-         {'choice': "Ackowledge a problem",
-          'consequence':1,
-          'factoid': []}
-     ]
-    },
-    {"descr": "<p>Two weeks pass. You're still not feeling better. You think you need to talk to someone... but who?</p>",
-     "responses": [
-         {'choice': "You can handle this on your own.",
-          'consequence': 0,
-          'factoid': [2]},
-         {'choice': "Your friend sees someone, you'll ask them.",
-          'consequence': 3,
-          'factoid': []}
-     ]
-    },
-    {"descr": "<p>Two weeks have passed and nothing has changed. You still don't feel like your normal self.</p>",
-     "responses": [
-         {'choice': "...",
-          'consequence': -1,
-          'factoid': [2]},
-         {'choice': "...",
-          'consequence': -1,
-          'factoid': [1]}
-     ]
-    },
-    {"descr": "<p>You call a good friend and they tell you to call Family Services. He is sure that they can help.</p>",
-     "responses": [
-         {'choice': "You get busy and put off calling. You can call tomorrow.",
-          'consequence': 0,
-          'factoid': []},
-         {'choice': "You call Family Services and make an appointment for next Thursday.",
-          'consequence': -1,
-          'factoid': [0]}
-     ]
-    }
-];
+// Global variables
+var factoids;
+var scenarios;
 
 // Work-around for IE6 lack of console.log functionality.
 if (!window.console) console = {log: function() {}};
@@ -67,6 +23,38 @@ function getScenario(id) {
     /* Given a scenario ID, retrieve that scenario object. This will
      * allow us some flexibility in how we store scenarios. */
     return scenarios[id];
+}
+
+function loadStory() {
+    /* Make an ajax call requesting the story data and set up all
+     * variables to begin. */
+
+    var story_id = 1;
+
+    if (loadPageVar("story") != "")
+        story_id = loadPageVar("story");
+
+    sendData("story="+story_id, "loadStory.php", "GET",
+             function (msg) {
+                 var response = JSON.parse(msg);
+                 console.log(response);
+                 factoids = response.facts;
+
+                 scenarios = {}
+                 for (var i = 0; i < response.scenarios.length; i++) {
+                     var scenario = response.scenarios[i];
+                     scenarios[scenario.id] = {descr: scenario.descr,
+                                               responses: scenario.responses,
+                                               id: scenario.id};
+                 }
+
+                 // Prime the default start scenario
+                 document.getElementById("accept_the_challenge_button").onclick = function() {displayScenario(response.start_scenario);};
+
+                 // Place the start and end text.
+                 document.getElementById("start_screen_text").innerHTML = response.start_screen;
+                 document.getElementById("end_screen_text").innerHTML = response.end_screen;
+             });
 }
 
 function displayOnly(screen_name, callback) {
@@ -156,8 +144,8 @@ function displayScenario(id) {
              * to each new_element.onclick handler.
              */
             var displayScenarioConsequence = function(response) {
-                if (response.factoid.length) {
-                    return function () {displayFactoid(response.factoid[0], response.consequence);};
+                if (response.factoid) {
+                    return function () {displayFactoid(response.factoid, response.consequence);};
                 }
                 else {
                     return function() {displayScenario(response.consequence);};
