@@ -391,8 +391,8 @@ function storiesDropdownOnchange() {
         console.log("Creating STORY: '" + new_name + "'");
     }
 
-    // Disable the delete button when a story is not selected
-    if (this.value == "null") {
+    // Disable the delete button when null or the DEFAULT story is selected.
+    if (this.value == "null" || this.value == "1") {
         document.getElementById("delete_this_story_button").disabled = true;
     }
     else {
