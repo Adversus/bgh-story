@@ -21,14 +21,14 @@ function testDB() {
   $query = "SHOW TABLES";
   try {
     $stmt = $db->query($query);
-    print_r($stmt->fetchAll());    
+    print_r($stmt->fetchAll());
   }
 
   catch(PDOException$e) {
     echo "An error occured while querying the database.\n";
     echo $e->getMessage() . "\n";
   }
-    
+
 }
 
 function addBody($body_text) {
@@ -36,7 +36,7 @@ function addBody($body_text) {
 
   $stmt = $db->prepare("INSERT INTO bodies (id, text) VALUES (NULL, ?)");
   $stmt->execute(array($body_text));
-    
+
   return $db->lastInsertId();
 }
 
@@ -49,7 +49,7 @@ function setBody($id, $body_text) {
 
 function getBody($id) {
   global $db;
-    
+
   $stmt = $db->prepare("SELECT text from bodies WHERE id = ?");
   if ($stmt->execute(array($id))) {
     $row = $stmt->fetch();
@@ -69,7 +69,7 @@ function getResponses($scenario_id) {
      response with `id`, `choice`, `consequence`, and `factoid`
      attributes. */
   global $db;
-  
+
   $stmt = $db->prepare("SELECT id, response_text, response_fact_id, parent_scenario_id, response_consequence_scenario_id FROM responses WHERE parent_scenario_id = ?");
   $stmt->execute(array($scenario_id));
 
@@ -82,7 +82,7 @@ function getResponses($scenario_id) {
                      "consequence" => $row["response_consequence_scenario_id"],
                      "factoid" => $row["response_fact_id"]));
   }
-  
+
   return $responses;
 
 }
@@ -145,14 +145,14 @@ function getStoryScenarios($story_id = "ALL") {
 
     $story_descr = $row["story_name"];
   }
-  
+
   return $scenarios;
 }
 
 function addFact($fact_text = "") {
   global $db;
 
-  // Create a body-text entry for the fact and note its ID 
+  // Create a body-text entry for the fact and note its ID
   $body_id = addBody($fact_text);
 
   $stmt = $db->prepare("INSERT INTO facts (id, fact_body) VALUES (NULL, ?)");
@@ -178,14 +178,14 @@ function getFacts($fact_id = "ALL") {
   }
 
   $results = array();
-  
+
   while ($row = $stmt->fetch()) {
     array_push($results,
                array("id" => $row["id"],
                      "descr" => $row["text"],
                      "short" => truncate($row["text"], 40)));
   }
-  
+
   return $results;
 }
 
