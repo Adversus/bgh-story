@@ -74,6 +74,25 @@ function requestNewScenario(scenario_text, story_id, callback) {
     });
 }
 
+function requestNewFact(fact_text, callback) {
+    /* Make an ajax call requesting a new fact with the given text. If
+     * provided, a callback is called with the newly created fact id
+     * as its only parameter. The PHP passes back the complete list of
+     * facts, so those are updated as well.*/
+
+    var data = {"action":    "create_fact",
+                "body_text": fact_text};
+
+    sendData2(data, adminURL, "POST", function(msg) {
+        var body = JSON.parse(msg)["body"];
+        facts = body.facts;
+        redrawFactDropdowns();
+
+        if (typeof callback !== "undefined")
+            callback(body.fact_id);
+    });
+}
+
 function getFacts() {
     /* Make an ajax call to retrieve the facts. */
     var data = {"action": "get_facts"};
@@ -115,6 +134,13 @@ function redrawScenarioDropdowns() {
     var consequence_dropdowns = document.getElementsByName("consequence_dropdown");
     for (var i = 0; i < consequence_dropdowns.length; i++) {
         setConsequenceOptions(consequence_dropdowns[i]);
+    }
+}
+
+function redrawFactDropdowns() {
+    var fact_dropdowns = document.getElementsByName("fact_dropdown");
+    for (var i = 0; i < fact_dropdowns.length; i++) {
+        setFactOptions(fact_dropdowns[i]);
     }
 }
 
@@ -334,7 +360,7 @@ function createResponseForm(responseId, responseText, consequenceId, factId) {
 
     new_fact_dropdown.id              = "facts_for_" + new_responseid;
     new_fact_dropdown.name            = "fact_dropdown";
-    new_fact_dropdown.onchange        = FactDropdownOnchange;
+    new_fact_dropdown.onchange        = factDropdownOnchange;
     new_fact_dropdown.disabled        = condition;
 
     new_delete_button.type = "button";
@@ -545,13 +571,21 @@ function ScenarioDropdownOnchange() {
 
 }
 
-function FactDropdownOnchange() {
+function factDropdownOnchange() {
     /* Called by "fact" selector dropdown onChange. */
 
     if (this.value != "new")
         return;
 
-    var response_id = this.id.replace("facts_for_", "");
+    var localResponseId = this.id.replace("facts_for_", ""); // responseX
+    var responseText   = document.getElementById(localResponseId).value;
+    var new_fact_text  = "Fact created for response '"+responseText+"'.";
+    var fact_dropdown  = this;
+
+    requestNewFact(new_fact_text, function(new_fact_id) {
+        fact_dropdown.value = String(new_fact_id);
+    });
+
     console.log("Creating new dropdown for " + document.getElementById(response_id).value);
     return;
 }

@@ -76,13 +76,11 @@ if (action("create_fact")) {
     $body_text = $_POST["body_text"];
   }
 
-  $body_id = addBody($body_text);
-
-  $stmt = $db->prepare("INSERT INTO facts (id, fact_body) VALUES (NULL, ?)");
-  $stmp->execute(array($body_id));
+  addFact($body_text);
 
   print json_encode(array("response" => "create_fact",
-                          "body" => array("fact_id" => $db->lastInsertId())));
+                          "body" => array("fact_id" => $db->lastInsertId(),
+                                          "facts" => getFacts("ALL"))));
 
  }
 
