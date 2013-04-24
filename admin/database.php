@@ -88,7 +88,8 @@ function getResponses($scenario_id) {
 }
 
 function setResponse($id, $parent, $text, $consequence, $fact) {
-  /* ID and FACT may be NULL. */
+  /* ID and FACT may be NULL. If ID is null, a new response is
+     created. Otherwise, an existing response is updated. */
   global $db;
 
   $stmt = $db->prepare("REPLACE INTO responses (id, response_text, response_fact_id, parent_scenario_id, response_consequence_scenario_id) VALUES (:id, :text, :fact, :parent, :consequence)");
