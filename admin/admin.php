@@ -266,11 +266,14 @@ if (action("update_scenario")) {
 
   // update responses
   $responses = json_decode($_POST["responses"]);
+  $response_ids = array();
   foreach ($responses as $response) {
 
     // Skip invalid responses (with empty consequences)
     if ($response->consequence == NULL)
       continue;
+
+    array_push($response_ids, $response->id);
 
     setResponse($response->id,
                 $_POST["scenario_id"],
@@ -278,6 +281,12 @@ if (action("update_scenario")) {
                 $response->consequence,
                 $response->fact);
   }
+
+  // delete any response-id not seen in the client submission from
+  // this scenario.
+  $qMarks = str_repeat('?,', count($response_ids) -1) . '?';
+  $stmt = $db->prepare("DELETE FROM responses WHERE parent_scenario_id = ? AND id not in ($qMarks)");
+  $stmt->execute(array_merge(array($_POST["scenario_id"]), $response_ids));
 
   print json_encode(array("response" => "update_scenario",
                           "body" => "OK"));
