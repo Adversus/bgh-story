@@ -552,10 +552,11 @@ function submitScenario() {
      * displayed in the gui. */
     
     var data = {
+        "action"        : "update_scenario",
         "scenario_id"   : null,
         "story_id"      : null,
         "scenario_text" : tinyMCE.get("body_text").getContent(),
-        "responses"     : responses()
+        "responses"     : JSON.stringify(responses())
     };
 
     var scenario_id = document.getElementById("consequences_for_scenarios").value;
@@ -568,6 +569,11 @@ function submitScenario() {
         data.story_id = Number(story_id);
 
     console.log(data);
+
+    sendData2(data, adminURL, "POST", function(msg) {
+        console.log(msg);
+    }, true);
+
     return data;
 }
 

@@ -87,6 +87,20 @@ function getResponses($scenario_id) {
 
 }
 
+function setResponse($id, $parent, $text, $consequence, $fact) {
+  /* ID and FACT may be NULL. */
+  global $db;
+
+  $stmt = $db->prepare("REPLACE INTO responses (id, response_text, response_fact_id, parent_scenario_id, response_consequence_scenario_id) VALUES (:id, :text, :fact, :parent, :consequence)");
+
+  $stmt->execute(array(":id" => $id,
+                       ":text" => $text,
+                       ":fact" => $fact,
+                       ":parent" => $parent,
+                       "consequence" => $consequence));
+
+}
+
 function truncate($string, $length, $stopanywhere=false) {
   //truncates a string to a certain char length, stopping on a word if not specified otherwise.
   if (strlen($string) > $length) {
@@ -200,5 +214,34 @@ function removeStory($story_id) {
   $stmt = $db->prepare("DELETE stories, start, end FROM stories LEFT JOIN bodies start ON stories.start_screen_body_id = start.id LEFT JOIN bodies end ON stories.end_screen_body_id = end.id WHERE stories.id = ?");
   $stmt->execute(array($story_id));
 }
+
+function isValidStory($story_id) {
+  global $db;
+
+  $stmt = $db->prepare("SELECT COUNT(*) FROM stories WHERE id = ?");
+  $stmt->execute(array($story_id));
+
+  $results = $stmt->fetch();
+  return $results[0];
+}
+
+function getScenarioStoryId($scenario_id) {
+  /* Given a scenario id, return the story_id if none, return 1
+     (default story.) */
+  global $db;
+
+  $stmt = $db->prepare("SELECT story_id FROM scenarios WHERE id = ?");
+  $success = $stmt->execute(array($scenario_id));
+
+  $result = $stmt->fetch();
+
+  // TODO: error checking
+  return $result["story_id"];
+
+}
+
+if (!isset($_SERVER["REQUEST_METHOD"])) {
+  print isValidStory(11) . "\n";
+ }
 
 ?>
