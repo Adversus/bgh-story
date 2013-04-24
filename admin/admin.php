@@ -267,6 +267,11 @@ if (action("update_scenario")) {
   // update responses
   $responses = json_decode($_POST["responses"]);
   foreach ($responses as $response) {
+
+    // Skip invalid responses (with empty consequences)
+    if ($response->consequence == NULL)
+      continue;
+
     setResponse($response->id,
                 $_POST["scenario_id"],
                 $response->text,
