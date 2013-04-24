@@ -299,6 +299,26 @@ if (action("delete_story")) {
  }
 
 /*
+ * DELETE_SCENARIO
+ */
+
+if (action("delete_scenario")) {
+  if (!isset($_POST["scenario_id"])) return;
+
+  // Delete the scenario
+  $stmt = $db->prepare("DELETE FROM scenarios WHERE id = ?");
+  $stmt->execute(array($_POST["scenario_id"]));
+
+  // And all its response options. (orphaned scenarios are still intact)
+  $stmt = $db->prepare("DELETE FROM responses WHERE parent_scenario_id = ?");
+  $stmt->execute(array($_POST["scenario_id"]));
+
+  print json_encode(array("response" => "delete_scenario",
+                          "body" => "OK"));
+
+}
+
+/*
  * Output some debugging information if no ACTION has been posted.
  */
 
