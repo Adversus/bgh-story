@@ -251,7 +251,33 @@ if (action("move_scenario")) {
   print json_encode(array("response" => "get_responses",
                           "body"     => "OK"));
 
-}
+ }
+
+/*
+ * UPDATE_SCENARIO
+ */
+
+if (action("update_scenario")) {
+
+  if ($_POST["scenario_id"] == "null") return;
+
+  // update body text
+  $stmt = $db->prepare("UPDATE scenarios INNER JOIN bodies ON scenarios.scenario_body_id = bodies.id SET text = ? WHERE scenarios.id = ?");
+  $stmt->execute(array($_POST["scenario_text"], $_POST["scenario_id"]));
+
+  // update responses
+  $responses = json_decode($_POST["responses"]);
+  foreach ($responses as $response) {
+    setResponse($response->id,
+                $_POST["scenario_id"],
+                $response->text,
+                $response->consequence,
+                $response->fact);
+  }
+
+  print json_encode(array("response" => "update_scenario",
+                          "body" => "OK"));
+ }
 
 /*
  * DELETE_STORY
