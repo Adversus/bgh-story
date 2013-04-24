@@ -355,7 +355,7 @@ function createResponseForm(responseId, responseText, consequenceId, factId) {
 
     new_consequence_dropdown.id       = "consequences_for_" + new_responseid;
     new_consequence_dropdown.name     = "consequence_dropdown";
-    new_consequence_dropdown.onchange = ScenarioDropdownOnchange;
+    new_consequence_dropdown.onchange = scenarioDropdownOnchange;
     new_consequence_dropdown.disabled = condition;
 
     new_fact_dropdown.id              = "facts_for_" + new_responseid;
@@ -531,7 +531,7 @@ function scenarioOverviewDropdownOnchange() {
     }
 }
 
-function ScenarioDropdownOnchange() {
+function scenarioDropdownOnchange() {
     /* Called by dropdown "onChange" handler for consequence
      * dropdowns, so we have to be a little clever about identifying
      * what we actually are. */
