@@ -199,7 +199,6 @@ function setConsequenceOptions(obj) {
         obj.add(newOption("new", "Create a new scenario"));
     }
 
-
     // add all imported consequences
     for (var i = 0; i < consequences.length; i++) {
         var c_text = consequences[i].id + " - " + consequences[i].short;

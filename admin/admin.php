@@ -216,7 +216,7 @@ if (action("get_facts")) {
 
  }
 
-/* 
+/*
  * GET_RESPONSES
  */
 
