@@ -13,6 +13,7 @@ window.onload = function () {
     document.getElementById("stories_dropdown").onchange = storiesDropdownOnchange;
     document.getElementById("consequences_for_scenarios").onchange = scenarioOverviewDropdownOnchange;
     document.getElementById("move_scenario_dropdown").onchange = moveScenarioDropdownOnchange;
+    document.getElementById("submit_scenario_button").onchange = submit_scenario;
 
     // ALL consequences / scenario / fact dropdowns available at:
     // document.getElementsByName("consequence_dropdown") and
