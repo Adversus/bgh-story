@@ -335,7 +335,7 @@ function createResponseForm(responseId, responseText, consequenceId, factId) {
 
     if (typeof factId != "undefined" && 
         selectOptionValues(new_fact_dropdown).indexOf(String(factId)) >= 0) {
-        new_fact_dropdown.value = factId;
+        new_fact_dropdown.value = String(factId);
     }
 
     console.log("Creating response #" + numResponses);
@@ -438,7 +438,8 @@ function scenarioOverviewDropdownOnchange() {
                       for (var i = 0; i < scenario.responses.length; i++) {
                           createResponseForm(scenario.responses[i].id,
                                              scenario.responses[i].choice, 
-                                             scenario.responses[i].consequence);
+                                             scenario.responses[i].consequence,
+                                             scenario.responses[i].factoid);
                       }
                       
                       tinyMCE.get("body_text").setContent(scenario.descr);
