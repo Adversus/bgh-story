@@ -1,6 +1,6 @@
 var adminURL = "http://fiery.morningside.edu/bgh/admin/admin.php";
 
-var numResponses = 0; // we start with one response initially. 
+var numResponses = 0; // we start with one response initially.
 
 window.onload = function () {
     /* Initialize page onLoad. */
@@ -10,6 +10,7 @@ window.onload = function () {
     createResponseForm(); // add response 0 to a blank/fresh scenario
 
     document.getElementById("delete_this_story_button").onclick = deleteThisStory;
+    document.getElementById("delete_this_scenario_button").onclick = deleteThisScenario;
     document.getElementById("stories_dropdown").onchange = storiesDropdownOnchange;
     document.getElementById("consequences_for_scenarios").onchange = scenarioOverviewDropdownOnchange;
     document.getElementById("move_scenario_dropdown").onchange = moveScenarioDropdownOnchange;
@@ -22,7 +23,7 @@ window.onload = function () {
 };
 
 /*
- * END of window.onload stuff. 
+ * END of window.onload stuff.
  */
 
 var consequences = [{id: 1, 'descr':'A friend says to you, ...'},
@@ -42,14 +43,26 @@ function requestNewStory(story_name) {
         var stories_dropdown = document.getElementById("stories_dropdown");
         var body = JSON.parse(msg)["body"];
         console.log(body);
-        
-        // Update global stories list with new story. 
+
+        // Update global stories list with new story.
         stories.push(body);
         setStoryOptions(stories_dropdown);
         stories_dropdown.value = body.id;
 
     });
-       
+
+}
+
+function requestNewScenario(scenario_text) {
+    /* Make an ajax call requesting a new scenario */
+    var data = {"action":        "create_scenario",
+                "scenario_text": ""};
+
+    if (typeof scenario_text !== "undefined")
+        data.scenario_text = scenario_text;
+
+
+
 }
 
 function getFacts() {
@@ -68,7 +81,7 @@ function getFacts() {
             setFactOptions(fact_dropdowns[i]);
         }
     });
-    
+
 }
 
 function getStories() {
@@ -92,7 +105,7 @@ function getScenarios() {
      * story. */
 
     var current_story_selection = document.getElementById("stories_dropdown").value;
-    
+
     var data = {"action": "get_scenarios",
                 "story_id": "ALL"};
 
@@ -101,7 +114,7 @@ function getScenarios() {
         data.story_id = Number(current_story_selection);
     }
 
-    
+
     sendData2(data, adminURL, "POST", function (msg) {
         var body = JSON.parse(msg)["body"];
         console.log(body);
@@ -157,7 +170,7 @@ function setConsequenceOptions(obj) {
 
     // get the current selection
     var current_value = obj.value;
-    
+
     // clear the options
     obj.options.length = 0;
 
@@ -191,7 +204,7 @@ function setFactOptions(obj) {
 
     // get the current selection
     var current_value = obj.value;
-    
+
     // clear the options
     obj.options.length = 0;
 
@@ -217,7 +230,7 @@ function setStoryOptions(obj) {
 
     // get the current selection
     var current_value = obj.value;
-    
+
     // clear the options
     obj.options.length = 0;
 
@@ -234,7 +247,7 @@ function setStoryOptions(obj) {
 
     // add all imported consequences
     for (var i = 0; i < stories.length; i++) {
-        if (stories[i].id == Number(document.getElementById("stories_dropdown").value) 
+        if (stories[i].id == Number(document.getElementById("stories_dropdown").value)
             && obj.id == "move_scenario_dropdown") {
             /* Skip the current Story Id if this is the MOVE-TO dropdown box. */
             continue;
@@ -253,12 +266,12 @@ function createResponseForm(responseId, responseText, consequenceId, factId) {
     /* create a new form-row to handle a new response. */
 
     console.log("Creating response form responseID: " + responseId
-                + " responseText: " + responseText 
+                + " responseText: " + responseText
                 + " consequenceId: " + consequenceId
                 + " factId: " + factId);
 
     var div = document.getElementById("responses");
-    
+
     var new_label                = document.createElement("label");
     var new_hidden_id            = document.createElement("input");
     var new_response_textbox     = document.createElement("input");
@@ -328,12 +341,12 @@ function createResponseForm(responseId, responseText, consequenceId, factId) {
     setFactOptions(new_fact_dropdown);
 
     // pre-select an option if we're loading and the option exists
-    if (typeof consequenceId != "undefined" && 
+    if (typeof consequenceId != "undefined" &&
         selectOptionValues(new_consequence_dropdown).indexOf(String(consequenceId)) >= 0) {
         new_consequence_dropdown.value = consequenceId;
     }
 
-    if (typeof factId != "undefined" && 
+    if (typeof factId != "undefined" &&
         selectOptionValues(new_fact_dropdown).indexOf(String(factId)) >= 0) {
         new_fact_dropdown.value = String(factId);
     }
@@ -381,12 +394,12 @@ function storiesDropdownOnchange() {
 
     if (this.value == "new")  {
         // TODO: add story loading code.
-        
+
         var new_name = prompt("New story name:");
-        
+
         // TODO: Sanitize name
         new_name = new_name.replace(" ", "_");
-        
+
         requestNewStory(new_name);
 
         console.log("Creating STORY: '" + new_name + "'");
@@ -419,13 +432,13 @@ function scenarioOverviewDropdownOnchange() {
 
     else {
         console.log("Loading scenario " + obj.value);
-        
+
         clearForms();
-        
+
         data = {action: "get_scenario",
                 scenario_id: obj.value};
-        
-        sendData2(data, 
+
+        sendData2(data,
                   adminURL,
                   "POST", function(msg) {
                       var scenario = JSON.parse(msg)["body"];
@@ -433,19 +446,19 @@ function scenarioOverviewDropdownOnchange() {
                           console.warn("Loaded null body.");
                           return;
                       }
-                      
+
                       /* Populate all needed response forms */
                       for (var i = 0; i < scenario.responses.length; i++) {
                           createResponseForm(scenario.responses[i].id,
-                                             scenario.responses[i].choice, 
+                                             scenario.responses[i].choice,
                                              scenario.responses[i].consequence,
                                              scenario.responses[i].factoid);
                       }
-                      
+
                       tinyMCE.get("body_text").setContent(scenario.descr);
                   });
     }
-    
+
     // Disable button when a scenario is not selected
     if (obj.value == "null") {
         document.getElementById("delete_this_scenario_button").disabled = true;
@@ -463,7 +476,7 @@ function ScenarioDropdownOnchange() {
     // `this` is the select, obj is the selected option.
     var obj = this.options[this.selectedIndex];
 
-    if (this.value != "new") 
+    if (this.value != "new")
         return;
 
     var responseid = this.id.replace("consequences_for_", "");
@@ -471,11 +484,11 @@ function ScenarioDropdownOnchange() {
 
     var responseValue = document.getElementById(responseid).value;
 
-    console.log("Creating generic new scenario as a 'consequence' for response #" 
+    console.log("Creating generic new scenario as a 'consequence' for response #"
                 + responseid +  ".");
     console.log("Default text: 'Response to " + responseValue + "'");
     console.log("Now, regenerate all consequence dialogs...");
-    
+
 }
 
 function FactDropdownOnchange() {
@@ -495,7 +508,7 @@ function deleteThisStory() {
 
     var story = document.getElementById("stories_dropdown").value;
 
-    if (story == "null" || story == "new") 
+    if (story == "null" || story == "new")
         return;
 
     story = Number(story); // Cast to integer
@@ -575,7 +588,7 @@ function responses() {
 function submitScenario() {
     /* Package up and POST the details of the scenario as it is
      * displayed in the gui. */
-    
+
     var data = {
         "action"        : "update_scenario",
         "scenario_id"   : null,
@@ -613,6 +626,6 @@ function testJson() {
 
     sendData2(data,
               adminURL,
-              "POST", 
+              "POST",
               null);
 }
