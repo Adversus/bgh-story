@@ -13,7 +13,7 @@ window.onload = function () {
     document.getElementById("stories_dropdown").onchange = storiesDropdownOnchange;
     document.getElementById("consequences_for_scenarios").onchange = scenarioOverviewDropdownOnchange;
     document.getElementById("move_scenario_dropdown").onchange = moveScenarioDropdownOnchange;
-    document.getElementById("submit_scenario_button").onchange = submit_scenario;
+    document.getElementById("submit_scenario_button").onclick = submitScenario;
 
     // ALL consequences / scenario / fact dropdowns available at:
     // document.getElementsByName("consequence_dropdown") and
@@ -547,7 +547,7 @@ function responses() {
     return responses;
 }
 
-function submit_scenario() {
+function submitScenario() {
     /* Package up and POST the details of the scenario as it is
      * displayed in the gui. */
     
