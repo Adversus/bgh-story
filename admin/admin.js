@@ -179,8 +179,8 @@ function clearResponses() {
 }
 
 function setConsequenceOptions(obj) {
-/* Request (ajax / etc) the present consequences, prepend two generic
- * "null" and "new" options, and return an element set. */
+    /* Request (ajax / etc) the present consequences, prepend two generic
+     * "null" and "new" options, and return an element set. */
 
     // get the current selection
     var current_value = obj.value;
@@ -212,8 +212,8 @@ function setConsequenceOptions(obj) {
 }
 
 function setFactOptions(obj) {
-/* Request (ajax / etc) the present consequences, prepend two generic
- * "null" and "new" options, and return an element set. */
+    /* Request (ajax / etc) the present consequences, prepend two generic
+     * "null" and "new" options, and return an element set. */
 
     // get the current selection
     var current_value = obj.value;
@@ -238,8 +238,8 @@ function setFactOptions(obj) {
 }
 
 function setStoryOptions(obj) {
-/* Request (ajax / etc) the present consequences, prepend two generic
- * "null" and "new" options, and return an element set. */
+    /* Request (ajax / etc) the present consequences, prepend two generic
+     * "null" and "new" options, and return an element set. */
 
     // get the current selection
     var current_value = obj.value;
@@ -315,6 +315,13 @@ function createResponseForm(responseId, responseText, consequenceId, factId) {
 
         new_fact_dropdown.disabled        = condition;
         new_consequence_dropdown.disabled = condition;
+
+        if (condition) {
+            new_response_textbox.className = "error-border";
+        }
+        else {
+            new_response_textbox.className = "";
+        }
     };
 
     new_consequence_dropdown.id       = "consequences_for_" + new_responseid;
@@ -387,8 +394,8 @@ function moveScenarioDropdownOnchange() {
     console.log("Moving scenario " + scenario_id + " to story " + story_id);
 
     var data = {"action": "move_scenario",
-               "story_id": Number(story_id),
-               "scenario_id": Number(scenario_id)};
+                "story_id": Number(story_id),
+                "scenario_id": Number(scenario_id)};
 
     sendData2(data, adminURL, "POST", function(msg) {
         document.getElementById("stories_dropdown").value = story_id;
@@ -492,6 +499,10 @@ function ScenarioDropdownOnchange() {
     // `this` is the select, obj is the selected option.
     var obj = this.options[this.selectedIndex];
     var dropdown = this;
+
+    // clear error display if it is set away from null.
+    if (this.value != "null")
+        this.className = "";
 
     if (this.value != "new")
         return;
@@ -615,6 +626,37 @@ function responses() {
     return responses;
 }
 
+function countAndDisplayErrors() {
+    var errors = 0;
+
+    /* Highlight empty consequences */
+    var consequence_dropdowns = document.getElementsByName("consequence_dropdown");
+    for (var i = 0; i < consequence_dropdowns.length; i++) {
+        var dropdown = consequence_dropdowns[i];
+        if (dropdown.disabled == false && (dropdown.value == "null" || dropdown.value == "new")) {
+            errors++;
+            dropdown.className = "error-border";
+        }
+        else {
+            dropdown.className = "";
+        }
+    }
+
+    var response_textboxes = document.getElementsByName("response_textbox");
+    for (var i = 0; i < response_textboxes.length; i++) {
+        var textbox = response_textboxes[i];
+        if (textbox.value == "") {
+            errors++
+            textbox.className = "error-border";
+        }
+        else {
+            textbox.className = "";
+        }
+    }
+
+    return errors;
+}
+
 function submitScenario() {
     /* Package up and POST the details of the scenario as it is
      * displayed in the gui. */
@@ -636,17 +678,20 @@ function submitScenario() {
     if (story_id != "null")
         data.story_id = Number(story_id);
 
-    console.log(data);
+    if (countAndDisplayErrors() == 0) {
 
-    sendData2(data, adminURL, "POST", function(msg) {
-        console.log(msg);
-    }, true);
+        console.log(data);
 
-    return data;
+        sendData2(data, adminURL, "POST", function(msg) {
+            console.log(msg);
+        }, true);
+
+        return data;
+    }
 }
 
 function testJson() {
-/* Testing some submission code. This is pretty awesome. */
+    /* Testing some submission code. This is pretty awesome. */
 
     var data = {json: JSON.stringify([1,2,3]),
                 shaun: 1,

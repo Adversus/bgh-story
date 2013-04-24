@@ -12,3 +12,11 @@ label {
 select {
     width:17em;
 }
+
+.error-border {
+    border: 2px solid red;
+    /*border-radius: 7px;*/
+    border-color: red;
+    box-shadow:0 0 10px red;
+
+}
