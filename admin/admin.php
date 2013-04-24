@@ -3,38 +3,6 @@ header("Content-Type:text/plain");
 
 include("database.php");
 
-// This variable holds our "database" until we get a real one.
-// later functions "query" this data for the admin page.
-/* $scenarios = json_decode(
-   <<<EOJSON
-   [
-   {"descr": "A friend says to you, \"You havent seemed like yourself lately.\"",
-   "responses": [
-   {"id": 0,
-   "choice": "Carry on",
-   "consequence": 1,
-   "factoid": [1]},
-   {"id": 1, "choice": "Ackowledge a problem",
-   "consequence":1,
-   "factoid": []}
-   ]
-   },
-   {"descr": "At a restaurant, the waiter brings you your order. Broken glass has accidentally found its way into the meal and is possibly dangerous.",
-   "responses": [
-   {"id":2, "choice": "Berate the waitor until they cry",
-   "consequence": 2,
-   "factoid": []},
-   {"id":3, "choice": "Don't say anything and eat the food trying to pick out the glass.",
-   "consequence": 0,
-   "factoid": [1]}
-   ]
-   }
-   ]
-   EOJSON
-   ,true); */
-
-// Fake stories table
-
 $stories = array("story_name" => "default",
                  "scenarios" => array(0));
 // End of fake-database
