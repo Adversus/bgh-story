@@ -264,9 +264,15 @@ if (action("update_scenario")) {
 
   // delete any response-id not seen in the client submission from
   // this scenario.
-  $qMarks = str_repeat('?,', count($response_ids) -1) . '?';
-  $stmt = $db->prepare("DELETE FROM responses WHERE parent_scenario_id = ? AND id not in ($qMarks)");
-  $stmt->execute(array_merge(array($_POST["scenario_id"]), $response_ids));
+  if (count($responses) == 0) {
+    $stmt = $db->prepare("DELETE FROM responses WHERE parent_scenario_id = ?");
+    $stmt->execute(array($_POST["scenario_id"]));
+  }
+  else {
+    $qMarks = str_repeat('?,', count($response_ids) -1) . '?';
+    $stmt = $db->prepare("DELETE FROM responses WHERE parent_scenario_id = ? AND id not in ($qMarks)");
+    $stmt->execute(array_merge(array($_POST["scenario_id"]), $response_ids));
+  }
 
   // Set start_scenario if flagged.
   if ($_POST["start_scenario"] == "true") {
