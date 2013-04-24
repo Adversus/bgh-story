@@ -510,7 +510,31 @@ function deleteThisStory() {
         console.log(msg);
         getStories();
     });
-    
+
+}
+
+function deleteThisScenario() {
+    /* Delete the currently selected story (from
+     * id="stories_dropdown") */
+
+    var scenario = document.getElementById("consequences_for_scenarios").value;
+
+    if (scenario == "null" || scenario == "new")
+        return;
+
+    scenario = Number(scenario); // Cast to integer
+
+    console.log("Deleting scenario " + scenario);
+
+    var data = {"action": "delete_scenario",
+                "scenario_id": scenario};
+
+    sendData2(data, adminURL, "POST", function (msg) {
+        // No response, really, but refresh the stories.
+        console.log(msg);
+        getScenarios();
+    });
+
 }
 
 function responses() {
