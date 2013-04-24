@@ -57,6 +57,12 @@ var scenarios = [
 // Work-around for IE6 lack of console.log functionality.
 if (!window.console) console = {log: function() {}};
 
+function loadPageVar (sVar) {
+    /* Courtesty MDN: Read a query string (sVar) from the
+     * window.location.search and return its value. */
+    return unescape(window.location.search.replace(new RegExp("^(?:.*[&\\?]" + escape(sVar).replace(/[\.\+\*]/g, "\\$&") + "(?:\\=([^&]*))?)?.*$", "i"), "$1"));
+}
+
 function getScenario(id) {
     /* Given a scenario ID, retrieve that scenario object. This will
      * allow us some flexibility in how we store scenarios. */
