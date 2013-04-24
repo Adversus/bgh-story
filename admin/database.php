@@ -195,10 +195,6 @@ function removeFact($fact_id) {
   $stmt->execute(array($fact_id));
 }
 
-if (!isset($_SERVER["REQUEST_METHOD"])) {
-  print_r(getFacts());
- }
-
 function removeStory($story_id) {
   /* Delete a story. The default story is 1.
    * - Update scenarios: All scenarios in story_id move to default story.
