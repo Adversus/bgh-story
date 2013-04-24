@@ -3,7 +3,7 @@ header("Content-Type:text/plain");
 
 include("database.php");
 
-// This variable holds our "database" until we get a real one. 
+// This variable holds our "database" until we get a real one.
 // later functions "query" this data for the admin page.
 /* $scenarios = json_decode(
    <<<EOJSON
@@ -12,8 +12,8 @@ include("database.php");
    "responses": [
    {"id": 0,
    "choice": "Carry on",
-   "consequence": 1, 
-   "factoid": [1]}, 
+   "consequence": 1,
+   "factoid": [1]},
    {"id": 1, "choice": "Ackowledge a problem",
    "consequence":1,
    "factoid": []}
@@ -23,7 +23,7 @@ include("database.php");
    "responses": [
    {"id":2, "choice": "Berate the waitor until they cry",
    "consequence": 2,
-   "factoid": []}, 
+   "factoid": []},
    {"id":3, "choice": "Don't say anything and eat the food trying to pick out the glass.",
    "consequence": 0,
    "factoid": [1]}
@@ -54,18 +54,18 @@ function action($action_name) {
  */
 
 /*
- * CREATE_STORY 
+ * CREATE_STORY
  */
 
 if (action("create_story")) {
   if (!isset($_POST["story_name"])) {
     return; // TODO: error handling
   }
-  
+
   // Insert story row
   $stmt = $db->prepare("INSERT INTO stories (story_name) VALUES (?)");
   $stmt->execute(array($_POST["story_name"]));
-  
+
   // return story_id
   print json_encode(array("response" => "create_story",
                           "body" => array("descr" => $_POST["story_name"],
@@ -137,7 +137,7 @@ VALUES (NULL, ..., ..., ..., ...);";
 
 if (action("get_stories")) {
   $stmt = $db->prepare("SELECT id, story_name FROM stories");
- 
+
   $stories = array();
 
   if ( $stmt->execute() ) {
@@ -153,7 +153,7 @@ if (action("get_stories")) {
 
  }
 
-/* 
+/*
  * GET_STORY
  */
 
@@ -164,8 +164,8 @@ if (action("get_story")) {
 
   $stmt = $db->prepare("SELECT id, story_name FROM stories WHERE id = ?");
   $stmt->execute(array($_POST["story_id"]));
-   
-   
+
+
 
  }
 
@@ -178,12 +178,12 @@ if (action("get_scenario")) {
   $stmt = $db->prepare("SELECT scenarios.id, story_id, bodies.text FROM scenarios, bodies WHERE scenario_body_id = bodies.id AND scenarios.id = ?");
 
   $stmt->execute(array($_POST['scenario_id']));
-  
+
   $row = $stmt->fetch();
-  $scenarios = array("id" => $row["id"], 
+  $scenarios = array("id" => $row["id"],
                      "descr" => $row["text"],
                      "responses" => getResponses($row["id"]));
-  
+
   print json_encode(array("response" => "get_scenario",
                           "body"     => $scenarios));
 
@@ -286,14 +286,14 @@ if (action("delete_story")) {
   if (!isset($_POST["story_id"])) {
     return;
   }
-  
+
   if (intval($_POST["story_id"]) == 1) {
     print json_encode(array("response" => "delete_story",
-                            "body" => "WILL NOT DELETE DEFAULT STORY"));   
+                            "body" => "WILL NOT DELETE DEFAULT STORY"));
   }
   else {
     removeStory($_POST["story_id"]);
-    
+
     print json_encode(array("response" => "delete_story",
                             "body" => array("id" => $_POST["story_id"])));
   }
@@ -315,24 +315,24 @@ if (!isset($_POST['action'])) {
    INSERT INTO stories (id, story_name, start_screen_body_id, end_screen_body_id, first_scenario_id)
    VALUES (NULL, $story_name, ..., ..., ...);
 
-   INSERT INTO facts (id, fact_body) 
+   INSERT INTO facts (id, fact_body)
    VALUES (NULL, $fact_body);
 
-   INSERT INTO bodies (id, text) 
+   INSERT INTO bodies (id, text)
    VALUES (NULL, ...);
 
-   INSERT INTO scenarios (id, story_id, scenario_body_id) 
+   INSERT INTO scenarios (id, story_id, scenario_body_id)
    VALUES (NULL, ..., ...,);
 
    INSERT INTO responses (id, response_text, response_fact_id, parent_scenario_id, response_consequence_scenario_id)
    VALUES (NULL, ..., ..., ..., ...);
 
-   SELECT * 
+   SELECT *
    FROM stories;
 
-   SELECT st.id, st. story_name, sc.scenario_body_id 
-   FROM stories st, scenarios sc 
-   WHERE st.id = sc.story_id 
+   SELECT st.id, st. story_name, sc.scenario_body_id
+   FROM stories st, scenarios sc
+   WHERE st.id = sc.story_id
    AND $id = st.id;	//include responses?
 
    SELECT is_starting_scenario, parent_story, bo.text, re.response_text, re.response_consequence_scenario_id, re.response_fact_id, fa.fact_body
@@ -340,13 +340,13 @@ if (!isset($_POST['action'])) {
    WHERE $scenario_id = sc.id
    AND fa.id = bo.id
    AND re.id = bo.id;
-	
-   SELECT * 
+
+   SELECT *
    FROM responses
    WHERE parent_scenario_id in (SELECT id
    FROM scenarios
    WHERE story_id = $story_id);
-							
+
 
 
 */
