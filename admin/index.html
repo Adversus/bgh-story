@@ -21,18 +21,20 @@
       <!-- /TinyMCE -->
 
       <link REL=StyleSheet HREF="admin.css" TYPE="text/css" MEDIA=screen>
-      
+
     </head>
     <body>
       <form method="post" action="admin.php">
         <h2>Scenario Manager</h2>
-        <p> 
+        <p>
           <label for="stories_dropdown">Story overview:</label>
           <select name="stories_dropdown" id="stories_dropdown" > </select>
-          <input type="button" id="delete_this_story_button" 
+          <input type="button" id="delete_this_story_button"
                  value="Delete this Story" disabled/>
+          <input type="button" id="rename_this_story_button"
+                 value="Rename this Story" disabled/>
           <br/>
-          
+
           <label for="consequences_for_scenarios">Scenario overview:</label>
           <select name="scenarios_dropdown" id="consequences_for_scenarios">
           </select>

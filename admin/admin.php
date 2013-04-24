@@ -202,7 +202,17 @@ if (action("get_responses")) {
                           "body"     => $responses));
  }
 
+/*
+ * RENAME_STORY
+ */
+
 if (action("rename_story")) {
+  $stmt = $db->prepare("UPDATE stories SET story_name = ? WHERE id = ?");
+  $stmt->execute(array($_POST["story_name"], $_POST["story_id"]));
+
+  print json_encode(array("response" => "rename_story",
+                          "body"     => "OK"));
+
 
  }
 

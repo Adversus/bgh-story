@@ -10,6 +10,7 @@ window.onload = function () {
     createResponseForm(); // add response 0 to a blank/fresh scenario
 
     document.getElementById("delete_this_story_button").onclick = deleteThisStory;
+    document.getElementById("rename_this_story_button").onclick = renameThisStory;
     document.getElementById("delete_this_scenario_button").onclick = deleteThisScenario;
     document.getElementById("stories_dropdown").onchange = storiesDropdownOnchange;
     document.getElementById("consequences_for_scenarios").onchange = scenarioOverviewDropdownOnchange;
@@ -430,9 +431,11 @@ function storiesDropdownOnchange() {
     // Disable the delete button when null or the DEFAULT story is selected.
     if (this.value == "null" || this.value == "1") {
         document.getElementById("delete_this_story_button").disabled = true;
+        document.getElementById("rename_this_story_button").disabled = true;
     }
     else {
         document.getElementById("delete_this_story_button").disabled = false;
+        document.getElementById("rename_this_story_button").disabled = false;
     }
 
     // Reset scenario overview when changing story.
@@ -575,6 +578,30 @@ function deleteThisStory() {
         getStories();
     });
 
+}
+
+function renameThisStory() {
+    /* onClick handler for Rename This Story button. */
+
+    var story = document.getElementById("stories_dropdown").value;
+
+    if (story == "null" || story == "new")
+        return;
+
+    story = Number(story); // Cast to integer
+
+    var new_name = prompt("New story name");
+
+    var data = {"action": "rename_story",
+                "story_id": story,
+                "story_name": new_name};
+
+    sendData2(data, adminURL, "POST",
+             function(msg) {
+                 getStories();
+             });
+
+    console.log("Deleting story " + story);
 }
 
 function deleteThisScenario() {
