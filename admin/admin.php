@@ -174,17 +174,21 @@ if (action("get_story")) {
 
 if (action("get_scenario")) {
   // if (!isset($_POST['scenario_id'])) {return;}
+
+  $is_start = getStoryStartScenario( getScenarioStoryId( $_POST["scenario_id"]) ) == $_POST["scenario_id"];
+
   $stmt = $db->prepare("SELECT scenarios.id, story_id, bodies.text FROM scenarios, bodies WHERE scenario_body_id = bodies.id AND scenarios.id = ?");
 
   $stmt->execute(array($_POST['scenario_id']));
 
   $row = $stmt->fetch();
-  $scenarios = array("id" => $row["id"],
-                     "descr" => $row["text"],
-                     "responses" => getResponses($row["id"]));
+  $scenario = array("id" => $row["id"],
+                    "descr" => $row["text"],
+                    "start_screen" => $is_start,
+                    "responses" => getResponses($row["id"]));
 
   print json_encode(array("response" => "get_scenario",
-                          "body"     => $scenarios));
+                          "body"     => $scenario));
 
  }
 
@@ -288,8 +292,16 @@ if (action("update_scenario")) {
   $stmt = $db->prepare("DELETE FROM responses WHERE parent_scenario_id = ? AND id not in ($qMarks)");
   $stmt->execute(array_merge(array($_POST["scenario_id"]), $response_ids));
 
+  // Set start_scenario if flagged.
+  if ($_POST["start_scenario"] == "true") {
+    $stmt = $db->prepare("UPDATE stories SET first_scenario_id = ? WHERE id = ?");
+    $stmt->execute(array($_POST["scenario_id"],
+                         getScenarioStoryId($_POST["scenario_id"])));
+  }
+
+
   print json_encode(array("response" => "update_scenario",
-                          "body" => "OK"));
+                          "body"     => "OK"));
  }
 
 /*

@@ -118,11 +118,22 @@ function truncate($string, $length, $stopanywhere=false) {
   return $string;
 }
 
+function getStoryStartScenario($story_id) {
+  global $db;
+
+  $stmt = $db->prepare("SELECT first_scenario_id FROM stories WHERE id = ?");
+  $stmt->execute(array($story_id));
+
+  $result = $stmt->fetch();
+
+  return $result["first_scenario_id"];
+}
+
 function getStoryScenarios($story_id = "ALL") {
   /* return all scenarios (w/o responses) for a given story (or ALL
      stories) */
   global $db;
-  
+
   if ($story_id == "ALL") {
     $stmt = $db->prepare("SELECT scenarios.id,stories.story_name,bodies.text FROM stories,scenarios,bodies WHERE scenarios.scenario_body_id = bodies.id AND scenarios.story_id = stories.id");
   }

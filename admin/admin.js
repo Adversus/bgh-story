@@ -167,6 +167,8 @@ function clearForms() {
     /* Clear the page input forms out: body_text and responseForms. */
     clearResponses();
     tinyMCE.get("body_text").setContent("");
+
+    document.getElementById("default_scenario_checkbox").checked = false;
 }
 
 function clearResponses() {
@@ -458,17 +460,26 @@ function scenarioOverviewDropdownOnchange() {
 
         clearForms();
 
-        data = {action: "get_scenario",
-                scenario_id: obj.value};
+        var data = {action: "get_scenario",
+                    scenario_id: obj.value};
+
+        var story_id = document.getElementById("stories_dropdown").value;
+
+        if (story_id != "null" && story_id != "new") {
+            data.story_id = story_id;
+        }
 
         sendData2(data,
                   adminURL,
                   "POST", function(msg) {
                       var scenario = JSON.parse(msg)["body"];
+
                       if (scenario == null) {
                           console.warn("Loaded null body.");
                           return;
                       }
+
+                      document.getElementById("default_scenario_checkbox").checked = scenario.start_screen;
 
                       /* Populate all needed response forms */
                       for (var i = 0; i < scenario.responses.length; i++) {
@@ -666,7 +677,8 @@ function submitScenario() {
         "scenario_id"   : null,
         "story_id"      : null,
         "scenario_text" : tinyMCE.get("body_text").getContent(),
-        "responses"     : JSON.stringify(responses())
+        "responses"     : JSON.stringify(responses()),
+        "start_scenario": document.getElementById("default_scenario_checkbox").checked
     };
 
     var scenario_id = document.getElementById("consequences_for_scenarios").value;
