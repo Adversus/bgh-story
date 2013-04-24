@@ -78,7 +78,7 @@ if (action("create_story")) {
 
 if (action("create_scenario")) {
   $body_text = "";
-  $story_id  = null;
+  $story_id  = 1;
 
   if (isset($_POST["body_text"])) {
     $body_text = $_POST["body_text"];
@@ -86,20 +86,19 @@ if (action("create_scenario")) {
 
   if (isset($_POST["story_id"])) {
     $story_id = $_POST["story_id"];
+  }
 
-    $stmt = $db->prepare("INSERT INTO SCENARIOS (story_id, scenario_body) VALUES (?, ?)");
-    $stmt->execute(array($story_id, $body_text));
-  }
-  else {
-    $stmt = $db->prepare("INSERT INTO SCENARIOS (scenario_body) VALUES (?, ?)");
-    $stmt->execute(array($body_text));
-  }
-  
+  $body_id = addBody($body_text);
+
+  $stmt = $db->prepare("INSERT INTO scenarios (story_id, scenario_body_id) VALUES (?, ?)");
+  $stmt->execute(array($story_id, $body_id));
+
   print json_encode(array("response" => "create_scenario",
-                          "body" => array("scenario_id" => $db->lastInsertId())));
+                          "body" => array("scenario_id" => $db->lastInsertId(),
+                                          "scenarios"   => getStoryScenarios($story_id))));
  }
 
-/* 
+/*
  * CREATE_FACT
  */
 

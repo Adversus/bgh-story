@@ -53,16 +53,24 @@ function requestNewStory(story_name) {
 
 }
 
-function requestNewScenario(scenario_text) {
-    /* Make an ajax call requesting a new scenario */
-    var data = {"action":        "create_scenario",
-                "scenario_text": ""};
+function requestNewScenario(scenario_text, story_id, callback) {
+    /* Make an ajax call requesting a new scenario `callback` function
+     * is called and passed scenario_id of new scenario. Additionally,
+     * admin.php passes back the new list of scenarios so we update
+     * that and re-draw the dropdowns while we're at it.' */
 
-    if (typeof scenario_text !== "undefined")
-        data.scenario_text = scenario_text;
+    var data = {"action":    "create_scenario",
+                "story_id":  Number(story_id),
+                "body_text": scenario_text};
 
+    sendData2(data, adminURL, "POST", function(msg) {
+        var body = JSON.parse(msg)["body"];
+        consequences = body.scenarios;
+        redrawScenarioDropdowns();
 
-
+        if (typeof callback !== "undefined")
+            callback(body.scenario_id);
+    });
 }
 
 function getFacts() {
@@ -100,6 +108,15 @@ function getStories() {
     });
 }
 
+function redrawScenarioDropdowns() {
+    setConsequenceOptions(document.getElementById("consequences_for_scenarios"));
+
+    var consequence_dropdowns = document.getElementsByName("consequence_dropdown");
+    for (var i = 0; i < consequence_dropdowns.length; i++) {
+        setConsequenceOptions(consequence_dropdowns[i]);
+    }
+}
+
 function getScenarios() {
     /* Make an ajax call to retrieve the scenarios for our current
      * story. */
@@ -123,10 +140,7 @@ function getScenarios() {
         consequences = body;
 
         // Force refresh all scenarios dropdowns.
-        var scenario_dropdowns = document.getElementsByName("scenarios_dropdown");
-        for (var i = 0; i < scenario_dropdowns.length; i++) {
-            setConsequenceOptions(scenario_dropdowns[i]);
-        }
+        redrawScenarioDropdowns();
     });
 }
 
@@ -475,6 +489,7 @@ function ScenarioDropdownOnchange() {
 
     // `this` is the select, obj is the selected option.
     var obj = this.options[this.selectedIndex];
+    var dropdown = this;
 
     if (this.value != "new")
         return;
@@ -484,8 +499,20 @@ function ScenarioDropdownOnchange() {
 
     var responseValue = document.getElementById(responseid).value;
 
+    var story_id = 1;
+    var story_dropdown = document.getElementById("stories_dropdown");
+
+    if (story_dropdown.value != "null" && story_dropdown.value != "new")
+        story_id = Number(story_dropdown.value);
+
     console.log("Creating generic new scenario as a 'consequence' for response #"
                 + responseid +  ".");
+
+    requestNewScenario("Scenario for " + responseValue, story_id, function(new_scenario_id) {
+        dropdown.value = String(new_scenario_id);
+        console.log("This is: " + dropdown);
+    });
+
     console.log("Default text: 'Response to " + responseValue + "'");
     console.log("Now, regenerate all consequence dialogs...");
 
@@ -546,6 +573,7 @@ function deleteThisScenario() {
         // No response, really, but refresh the stories.
         console.log(msg);
         getScenarios();
+        clearForms();
     });
 
 }
