@@ -482,6 +482,17 @@ function scenarioOverviewDropdownOnchange() {
         console.log("Creating a new consequence!");
         clearForms();
         createResponseForm();
+
+        var story_id = 1;
+        var stories_dropdown = document.getElementById("stories_dropdown").value;
+        if (stories_dropdown != "null" && stories_dropdown != "new")
+            story_id = stories_dropdown;
+
+        // Request and update form with a newly minted scenario
+        requestNewScenario("", story_id, function (new_scenario_id) {
+            obj.value = String(new_scenario_id);
+        });
+
     }
 
     else {
