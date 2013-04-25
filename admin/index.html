@@ -1,82 +1,134 @@
 <!DOCTYPE html>
-  <html lang="en">
-    <head>
-      <meta charset="utf-8">
-      <title>Interactive Story Editor</title>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Interactive Story Editor</title>
 
-      <script type="text/javascript" src="admin.js"></script>
-      <script type="text/javascript" src="../ajax.js"></script>
+    <script type="text/javascript" src="admin.js"></script>
+    <script type="text/javascript" src="../ajax.js"></script>
 
-      <!-- TinyMCE -->
-      <script type="text/javascript" src="tiny_mce/tiny_mce.js"></script>
-      <script type="text/javascript">
-      tinyMCE.init({
-        mode : "textareas",
-        theme : "advanced",
-        theme_advanced_buttons1: "bold,italic,underline,link,undo,redo",
-        content_css : "tiny_mce_content.css",
+    <!-- TinyMCE -->
+    <script type="text/javascript" src="tiny_mce/tiny_mce.js"></script>
+    <script type="text/javascript">
+    tinyMCE.init({
+      mode : "textareas",
+      theme : "advanced",
+      theme_advanced_buttons1: "bold,italic,underline,link,undo,redo",
+      content_css : "tiny_mce_content.css",
 
-      });
-      </script>
-      <!-- /TinyMCE -->
+    });
+    </script>
+    <!-- /TinyMCE -->
 
-      <link REL=StyleSheet HREF="admin.css" TYPE="text/css" MEDIA=screen>
+    <link REL=StyleSheet HREF="admin.css" TYPE="text/css" MEDIA=screen>
 
-    </head>
-    <body>
-      <form method="post" action="admin.php">
-        <h2>Scenario Manager</h2>
-        <p>
-          <label for="stories_dropdown">Story overview:</label>
-          <select name="stories_dropdown" id="stories_dropdown" > </select>
-          <input type="button" id="delete_this_story_button"
-                 value="Delete this Story" disabled/>
-          <input type="button" id="rename_this_story_button"
-                 value="Rename this Story" disabled/>
-          <br/>
+  </head>
+  <body>
+    <form method="post" action="admin.php">
+      <h2>Scenario Manager</h2>
+	  <div id="inAccordian">
+        <section>
+          <a href="#head_controls" id="head_controls">
+            <h1>...</h1>
+          </a>
+          <p>
+            <label for="stories_dropdown">Story overview:</label>
+            <select name="stories_dropdown" id="stories_dropdown" > </select>
+            <input type="button" id="delete_this_story_button"
+                   value="Delete this Story" disabled/>
+            <input type="button" id="rename_this_story_button"
+                   value="Rename this Story" disabled/>
+            <br/>
 
-          <label for="consequences_for_scenarios">Scenario overview:</label>
-          <select name="scenarios_dropdown" id="consequences_for_scenarios">
-          </select>
-          <input type="button" id="delete_this_scenario_button"
-                 value="Delete this Scenario" disabled/>
-        </p>
+            <label for="consequences_for_scenarios">Scenario overview:</label>
+            <select name="scenarios_dropdown" id="consequences_for_scenarios">
+            </select>
+            <input type="button" id="delete_this_scenario_button"
+                   value="Delete this Scenario" disabled/>
+          </p>
+        </section>
 
-        <h3>Scenario Options:</h3>
+		<section>
+ 		  <a href=#start id=start>
+			<h1>Start Screen Text</h1>
+		  </a>
+		  <p>
+			<textarea id="start_text" name="start_text" rows="9" cols="80" 
+             		  style="width: 80%" >
+        	</textarea>
+        	<input type="submit" id="end_text_save" value="Save"/>
+          </p>
+		</section>
+		<section>
+		  <a href=#end id=end>
+			<h1>End Screen Text</h1>
+		  </a>
+		  <p>
+			<textarea id="end_text" name="end_text" rows="9" cols="80" 
+             		  style="width: 80%" >
+        	</textarea>
+        	<input type="submit" id="end_text_save" value="Save"/>
+          </p>
+		</section>
+		<section>
+		  <a href=#fact id=fact>
+			<h1>Fact Text</h1>
+		  </a>
+		  <p>
+            <select name="fact_dropdown"></select>
+            <input type="button" value="Delete this Fact"/>
+        	<input type="button" id="end_text_save" value="Save"/>
+			<textarea id="fact_text" name="fact_text" rows="9" cols="80" 
+             		  style="width: 80%" >
+        	</textarea>
 
-        <label for="default_scenario_checkbox">
-          <input type="checkbox" value="default_scenario_for_story"
-                 id="default_scenario_checkbox" name="default_scenario_checkbox">
+          </p>
+		</section>
+        <section>
+          <a href="#scenario_opts" id=fact>
+            <h1>Scenario:</h1>
+          </a>
+
+          <p>
+            <label for="default_scenario_checkbox">
+              <input type="checkbox" value="default_scenario_for_story"
+                     id="default_scenario_checkbox" name="default_scenario_checkbox">
 
           is the start scenario.</label>
 
-        <select name="stories_dropdown" id="move_scenario_dropdown"> </select>
+              <select name="stories_dropdown" id="move_scenario_dropdown"> </select>
 
-        <h3>Scenario Body:</h3>
+              <h3>Scenario Body:</h3>
 
-        <textarea id="body_text" name="body_text" rows="9" cols="80"
-                  style="width: 80%" >
-        </textarea>
+              <textarea id="body_text" name="body_text" rows="9" cols="80"
+                        style="width: 80%" >
+              </textarea>
 
-        <h3>"What will you do?" Responses</h3>
+              <h3>"What will you do?" Responses</h3>
 
-        <p>
-          <input type="button" id="add_response_button"
-                 onClick="createResponseForm();" value="Add Response"/>
+              <div id="para">
+                <input type="button" id="add_response_button"
+                       onClick="createResponseForm();" value="Add Response"/>
 
           (Recommended max of two responses)
-        </p>
-        <div id="responses">
-        </div>
+              </div>
 
-        <hr/>
+              <div id="responses"> </div>
 
-        <p>
-          <input type="button" name="save" value="Save Scenario" id="submit_scenario_button" />
-          <input type="reset" name="reset" value="Reset" />
-          <input type="button" name="test_json" value="Test JSON POST" onClick="testJson();" />
-        </p>
-      </form>
+              <hr/>
 
-    </body>
-  </html>
+              <div id="para">
+                <input type="button" name="save" value="Save Scenario" id="submit_scenario_button" />
+                <input type="reset" name="reset" value="Reset" />
+                <input type="button" name="test_json" value="Test JSON POST" onClick="testJson();" />
+              </div>
+    </form>
+          </p>
+        </section>
+
+	  </div>
+
+
+
+  </body>
+</html>
