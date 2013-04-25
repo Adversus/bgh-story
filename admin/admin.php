@@ -31,8 +31,8 @@ if (action("create_story")) {
   }
 
   // Insert story row
-  $stmt = $db->prepare("INSERT INTO stories (story_name) VALUES (?)");
-  $stmt->execute(array($_POST["story_name"]));
+  $stmt = $db->prepare("INSERT INTO stories (story_name, start_screen_body_id, end_screen_body_id) VALUES (?, ?, ?)");
+  $stmt->execute(array($_POST["story_name"], addBody(""), addBody("")));
 
   // return story_id
   print json_encode(array("response" => "create_story",
@@ -165,7 +165,10 @@ if (action("get_scenario")) {
 if (action("get_scenarios")) {
 
   print json_encode(array("response" => "get_scenarios",
-                          "body"     => getStoryScenarios($_POST["story_id"]),
+                          "body"     => 
+                          array("scenarios"  => getStoryScenarios($_POST["story_id"]),
+                                "start_text" => getStoryStartText($_POST["story_id"]),
+                                "end_text"   => getStoryEndText($_POST["story_id"])),
                           "id"       => $_POST["story_id"]));
  }
 
@@ -231,6 +234,32 @@ if (action("move_scenario")) {
                           "body"     => "OK"));
 
  }
+
+/*
+ * UPDATE_FACT
+ */
+
+if (action("update_fact")) {
+ if (!isset($_POST["fact_id"]))
+     return;
+
+ setFact($_POST["fact_id"], $_POST["fact_text"]);
+}
+
+
+
+/* 
+ * UPDATE_STORY
+ */
+
+if (action("update_story")) {
+ if (!isset($_POST["story_id"]))
+     return;
+
+ setStoryStartText($_POST["story_id"], $_POST["scenario_start_text"]);
+ setStoryEndText($_POST["story_id"], $_POST["scenario_end_text"]);
+
+}
 
 /*
  * UPDATE_SCENARIO

@@ -16,6 +16,8 @@ window.onload = function () {
     document.getElementById("consequences_for_scenarios").onchange = scenarioOverviewDropdownOnchange;
     document.getElementById("move_scenario_dropdown").onchange = moveScenarioDropdownOnchange;
     document.getElementById("submit_scenario_button").onclick = submitScenario;
+    document.getElementById("start_text_save_button").onclick = submitStory;
+    document.getElementById("end_text_save_button").onclick = submitStory;
 
     // ALL consequences / scenario / fact dropdowns available at:
     // document.getElementsByName("consequence_dropdown") and
@@ -164,7 +166,17 @@ function getScenarios() {
         console.log(body);
 
         // Update global scenarios list
-        consequences = body;
+        consequences = body.scenarios;
+
+        if (body.start_text)
+            tinyMCE.get("start_text").setContent(body.start_text);
+        else
+            tinyMCE.get("start_text").setContent("");
+
+        if (body.end_text)
+            tinyMCE.get("end_text").setContent(body.end_text);
+        else
+            tinyMCE.get("end_text").setContent("");
 
         // Force refresh all scenarios dropdowns.
         redrawScenarioDropdowns();
@@ -585,8 +597,11 @@ function scenarioDropdownOnchange() {
 function factDropdownOnchange() {
     /* Called by "fact" selector dropdown onChange. */
 
-    if (this.value != "new")
+    if (this.value != "new" && this.value != "null") {
         return;
+    }
+
+    if (this.value == "new") {
 
     var localResponseId = this.id.replace("facts_for_", ""); // responseX
     var responseText   = document.getElementById(localResponseId).value;
@@ -599,6 +614,7 @@ function factDropdownOnchange() {
 
     console.log("Creating new dropdown for " + document.getElementById(response_id).value);
     return;
+    }
 }
 
 function deleteThisStory() {
@@ -740,6 +756,22 @@ function countAndDisplayErrors() {
     return errors;
 }
 
+function submitStory() {
+    var data = {
+        "action"        : "update_story",
+        "story_id" : document.getElementById("stories_dropdown").value,
+        "scenario_start_text" : tinyMCE.get("start_text").getContent(),
+        "scenario_end_text"   : tinyMCE.get("end_text").getContent()
+        }
+
+    if (data.story_id == "null" || data.story_id == "new") return;
+    
+    sendData2(data, adminURL, "POST", function(msg) {
+        console.log(msg);
+    });
+
+}
+
 function submitScenario() {
     /* Package up and POST the details of the scenario as it is
      * displayed in the gui. */
@@ -749,6 +781,8 @@ function submitScenario() {
         "scenario_id"   : null,
         "story_id"      : null,
         "scenario_text" : tinyMCE.get("body_text").getContent(),
+        "scenario_start_text" : tinyMCE.get("start_text").getContent(),
+        "scenario_end_text"   : tinyMCE.get("end_text").getContent(),
         "responses"     : JSON.stringify(responses()),
         "start_scenario": document.getElementById("default_scenario_checkbox").checked
     };

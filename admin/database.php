@@ -289,6 +289,14 @@ function getStoryStartText($story_id) {
   return $result["text"];
 }
 
+function setStoryStartText($story_id, $story_text) {
+ global $db;
+
+  $stmt = $db->prepare("UPDATE stories  INNER JOIN bodies ON bodies.id = stories.start_screen_body_id set text = ? WHERE stories.id = ?");
+  $stmt->execute(array($story_text, $story_id));
+
+}
+
 function getStoryEndText($story_id) {
   global $db;
 
@@ -298,5 +306,15 @@ function getStoryEndText($story_id) {
   $result = $stmt->fetch();
   return $result["text"];
 }
+
+function setStoryEndText($story_id, $story_text) {
+ global $db;
+
+  $stmt = $db->prepare("UPDATE stories  INNER JOIN bodies ON bodies.id = stories.end_screen_body_id set text = ? WHERE stories.id = ?");
+  $stmt->execute(array($story_text, $story_id));
+
+}
+
+
 
 ?>
