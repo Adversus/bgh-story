@@ -117,8 +117,12 @@ function displayScenario(id) {
 
         var scenario = getScenario(id);
 
+        var displayIdentifier = "";
+        if (loadPageVar("debugging"))
+            var displayIdentifier = "<small>(id = " + id + ")</small> ";
+
         document.getElementById("scenario_description").innerHTML =
-            "<small>(id = " + id + ")</small> " + scenario.descr;
+            displayIdentifier + scenario.descr;
 
         var ul = document.getElementById("scenario_responses");
 
@@ -134,11 +138,12 @@ function displayScenario(id) {
 
             var new_element = document.createElement("li");
 
+            var displayConsequence = "";
+            if (loadPageVar("debugging"))
+                displayConsequence = "(" + response.consequence + ")";
+
             new_element.appendChild(
-                document.createTextNode(response.choice
-                                        + "("
-                                        + response.consequence
-                                        + ")"));
+                document.createTextNode(response.choice + displayConsequence));
 
             /* We have to do this so that a unique consequence id is bound
              * to each new_element.onclick handler.
