@@ -325,7 +325,7 @@ function createResponseForm(responseId, responseText, consequenceId, factId) {
 
     var new_responseid = "response" + numResponses;
 
-    new_label.appendChild(document.createTextNode("Response " + numResponses + ": "));
+    new_label.appendChild(document.createTextNode("Response: "));
     new_label.for = new_responseid;
 
     new_hidden_id.type               = "hidden";
