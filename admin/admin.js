@@ -470,10 +470,12 @@ function storiesDropdownOnchange() {
     if (this.value == "null" || this.value == "1") {
         document.getElementById("delete_this_story_button").disabled = true;
         document.getElementById("rename_this_story_button").disabled = true;
+        setTabs();
     }
     else {
         document.getElementById("delete_this_story_button").disabled = false;
         document.getElementById("rename_this_story_button").disabled = false;
+        setTabs();
     }
 
     // Reset scenario overview when changing story.
@@ -548,9 +550,11 @@ function scenarioOverviewDropdownOnchange() {
     // Disable button when a scenario is not selected
     if (obj.value == "null") {
         document.getElementById("delete_this_scenario_button").disabled = true;
+        setTabs();
     }
     else {
         document.getElementById("delete_this_scenario_button").disabled = false;
+        setTabs();
     }
 }
 
@@ -821,4 +825,23 @@ function testJson() {
               adminURL,
               "POST",
               null);
+}
+
+function setTabs() {
+    /* Set the appropriate tabs as active and disabled depending on
+     * the values of the stories_dropdown and
+     * consequences_for_scenarios (scenario overview) dropdowns. */
+
+    var selected_story = document.getElementById("stories_dropdown").value;
+    var selected_scenario = document.getElementById("consequences_for_scenarios").value;
+
+    var t = [];
+    if (selected_story == "null" || selected_story == "new")
+        t.push(1,2);
+
+    if (selected_scenario == "null" || selected_scenario == "new")
+        t.push(3);
+
+    $("#tabs").tabs({disabled: t});
+
 }
