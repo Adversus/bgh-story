@@ -8,6 +8,7 @@ window.onload = function () {
     getStories();
     getFacts();
     createResponseForm(); // add response 0 to a blank/fresh scenario
+    setTabs(); // display appropriate tabs.
 
     document.getElementById("delete_this_story_button").onclick = deleteThisStory;
     document.getElementById("rename_this_story_button").onclick = renameThisStory;
