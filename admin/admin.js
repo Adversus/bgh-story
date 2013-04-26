@@ -769,7 +769,7 @@ function submitStory() {
         }
 
     if (data.story_id == "null" || data.story_id == "new") return;
-    
+
     sendData2(data, adminURL, "POST", function(msg) {
         console.log(msg);
     });
