@@ -3,11 +3,11 @@ header('Content-type: application/json');
 
 include("admin/database.php");
 
-if (!isset($_GET["story_id"])){
+if (!isset($_GET["story"])){
   $story_id = 1;
  }
  else {
-   $story_id = $_GET["story_id"];
+   $story_id = $_GET["story"];
  }
 
 if (isValidStory($story_id)) {
