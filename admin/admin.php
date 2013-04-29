@@ -3,10 +3,6 @@ header("Content-Type:text/plain");
 
 include("database.php");
 
-$stories = array("story_name" => "default",
-                 "scenarios" => array(0));
-// End of fake-database
-
 /* code-cleaning functions */
 
 function action($action_name) {
@@ -165,7 +161,7 @@ if (action("get_scenario")) {
 if (action("get_scenarios")) {
 
   print json_encode(array("response" => "get_scenarios",
-                          "body"     => 
+                          "body"     =>
                           array("scenarios"  => getStoryScenarios($_POST["story_id"]),
                                 "start_text" => getStoryStartText($_POST["story_id"]),
                                 "end_text"   => getStoryEndText($_POST["story_id"])),
@@ -248,7 +244,7 @@ if (action("update_fact")) {
 
 
 
-/* 
+/*
  * UPDATE_STORY
  */
 
