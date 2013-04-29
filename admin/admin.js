@@ -833,21 +833,6 @@ function submitScenario() {
     }
 }
 
-function testJson() {
-    /* Testing some submission code. This is pretty awesome. */
-
-    var data = {json: JSON.stringify([1,2,3]),
-                shaun: 1,
-                mike: 2};
-
-    data.nested = JSON.stringify(data);
-
-    sendData2(data,
-              adminURL,
-              "POST",
-              null);
-}
-
 function setTabs() {
     /* Set the appropriate tabs as active and disabled depending on
      * the values of the stories_dropdown and
