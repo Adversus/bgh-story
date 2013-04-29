@@ -48,12 +48,14 @@ function requestNewStory(story_name) {
 
     sendData2(data, adminURL, "POST", function (msg) {
         var stories_dropdown = document.getElementById("stories_dropdown");
+        var move_scenario_dropdown = document.getElementById("move_scenario_dropdown");
         var body = JSON.parse(msg)["body"];
         console.log(body);
 
         // Update global stories list with new story.
         stories.push(body);
         setStoryOptions(stories_dropdown);
+        setStoryOptions(move_scenario_dropdown);
         stories_dropdown.value = body.id;
         updateStoriesUrls();
 
@@ -495,6 +497,8 @@ function storiesDropdownOnchange() {
 
     // Reset scenario overview when changing story.
     document.getElementById("consequences_for_scenarios").value = "null";
+    setStoryOptions(document.getElementById("move_scenario_dropdown"));
+
 
     getScenarios();
     clearForms(); // Presently, clear the forms when stories are changed.
@@ -520,6 +524,7 @@ function scenarioOverviewDropdownOnchange() {
         // Request and update form with a newly minted scenario
         requestNewScenario("", story_id, function (new_scenario_id) {
             obj.value = String(new_scenario_id);
+            setTabs();
         });
 
     }
@@ -821,6 +826,7 @@ function submitScenario() {
 
         sendData2(data, adminURL, "POST", function(msg) {
             console.log(msg);
+            getScenarios();
         }, true);
 
         return data;
