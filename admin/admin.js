@@ -8,7 +8,6 @@ window.onload = function () {
     getStories();
     getFacts();
     createResponseForm(); // add response 0 to a blank/fresh scenario
-    setTabs(); // display appropriate tabs.
 
     document.getElementById("delete_this_story_button").onclick = deleteThisStory;
     document.getElementById("rename_this_story_button").onclick = renameThisStory;
@@ -52,6 +51,7 @@ function requestNewStory(story_name) {
         stories.push(body);
         setStoryOptions(stories_dropdown);
         stories_dropdown.value = body.id;
+        updateStoriesUrls();
 
     });
 
@@ -128,6 +128,12 @@ function getStories() {
         // Force refresh the stories_dropdowns
         setStoryOptions(document.getElementById("stories_dropdown"));
         setStoryOptions(document.getElementById("move_scenario_dropdown"));
+
+        // Update stories URL
+        updateStoryUrls();
+
+        // Update active tabs
+        setTabs();
     });
 }
 
@@ -181,6 +187,9 @@ function getScenarios() {
 
         // Force refresh all scenarios dropdowns.
         redrawScenarioDropdowns();
+
+        // Update active tabs
+        setTabs();
     });
 }
 
@@ -453,6 +462,7 @@ function storiesDropdownOnchange() {
        obj.value is one of "null", "new", or the story ID (int) */
 
     console.log(this);
+    updateStoryUrls();
 
     if (this.value == "new")  {
         // TODO: add story loading code.
@@ -845,4 +855,25 @@ function setTabs() {
 
     $("#tabs").tabs({disabled: t});
 
+}
+
+function updateStoryUrls() {
+    /* Take adminURL and populate the `story_url` and
+     * `story_url_debugging` <tt>'s. */
+
+    var stories_dropdown = document.getElementById("stories_dropdown");
+    var story_url_tt = document.getElementById("story_url");
+    var story_url_debugging_tt = document.getElementById("story_url_debugging");
+
+    var story_url = adminURL.replace("admin/admin.php", "");
+
+    if (stories_dropdown.value != "null" && stories_dropdown.value != "new" && stories_dropdown.value != "1")
+        var story_url = story_url + "?story=" + stories_dropdown.value;
+
+    story_url_tt.innerHTML = story_url;
+
+    if (stories_dropdown.value == 1)
+        story_url_debugging.innerHTML = story_url + "?debugging=true";
+    else
+        story_url_debugging.innerHTML = story_url + "&debugging=true";
 }
