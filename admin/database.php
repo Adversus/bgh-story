@@ -205,6 +205,9 @@ function removeFact($fact_id) {
 
   $stmt = $db->prepare("DELETE facts, bodies FROM facts INNER JOIN bodies ON facts.fact_body = bodies.id WHERE facts.id = ?");
   $stmt->execute(array($fact_id));
+
+  $stmt = $db->prepare("UPDATE responses SET response_fact_id = NULL WHERE response_fact_id = ?");
+  $stmt->execute(array($fact_id));
 }
 
 function removeStory($story_id) {
