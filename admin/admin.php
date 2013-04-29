@@ -81,18 +81,6 @@ if (action("create_fact")) {
  }
 
 /*
- * CREATE_RESPONSE
- */
-
-
-if (action("create_response")) {
-
-
-  "INSERT INTO responses (id, response_text, response_fact_id, parent_scenario_id, response_consequence_scenario_id)
-VALUES (NULL, ..., ..., ..., ...);";
- }
-
-/*
  * GET_STORIES
  */
 
