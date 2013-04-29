@@ -218,7 +218,7 @@ function removeStory($story_id) {
   global $db;
 
   // Move any scenarios
-  $stmt = $db->prepare("UPDATE scenarios SET story_id = :story_id WHERE story_id = :story_id");
+  $stmt = $db->prepare("UPDATE scenarios SET story_id = 1 WHERE story_id = :story_id");
   $stmt->execute(array(":story_id" => $story_id));
 
   // Delete story + start and end bodies
