@@ -364,7 +364,7 @@ function createResponseForm(responseId, responseText, consequenceId, factId) {
     new_response_textbox.id          = new_responseid;
     new_response_textbox.name        = "response_textbox";
     new_response_textbox.value       = responseText ? responseText : "";
-    new_response_textbox.placeholder = new_responseid + " text";
+    new_response_textbox.placeholder = "Response text.";
     new_response_textbox.required    = true;
     new_response_textbox.oninput     = function () {
         /* Disable consequence & fact selection when textbox is empty. */
