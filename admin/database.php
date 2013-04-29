@@ -248,10 +248,6 @@ function getScenarioStoryId($scenario_id) {
 
 }
 
-if (!isset($_SERVER["REQUEST_METHOD"])) {
-  print isValidStory(11) . "\n";
- }
-
 function getFactsUsedInStory($story_id) {
   global $db;
 
@@ -315,6 +311,10 @@ function setStoryEndText($story_id, $story_text) {
 
 }
 
+
+if (!isset($_SERVER["REQUEST_METHOD"])) {
+ print_r( getFacts("ALL"));
+ }
 
 
 ?>

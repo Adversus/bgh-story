@@ -300,6 +300,21 @@ if (action("update_scenario")) {
  }
 
 /*
+ * DELETE_FACT
+ */
+
+if (action("delete_fact")) {
+  if (!isset($_POST["fact_id"]))
+    return;
+
+  removeFact($_POST["fact_id"]);
+
+  print json_encode(array("response" => "delete_fact",
+                          "body"     => "OK"));
+ }
+
+
+/*
  * DELETE_STORY
  */
 if (action("delete_story")) {

@@ -19,6 +19,10 @@ window.onload = function () {
     document.getElementById("start_text_save_button").onclick = submitStory;
     document.getElementById("end_text_save_button").onclick = submitStory;
 
+    document.getElementById("fact_editor_dropdown").onclick = factEditorDropdownOnchange;
+    document.getElementById("delete_this_fact_button").onclick = deleteThisFactOnclick;
+    document.getElementById("fact_save_button").onclick = factSaveButtonOnClick;
+
     // ALL consequences / scenario / fact dropdowns available at:
     // document.getElementsByName("consequence_dropdown") and
     // document.getElementsByName("scenarios_dropdown")
@@ -278,7 +282,7 @@ function setFactOptions(obj) {
 
     // add all imported consequences
     for (var i = 0; i < facts.length; i++) {
-        var c_text = facts[i].id + " - " + facts[i].descr;
+        var c_text = facts[i].id + " - " + facts[i].short;
         obj.add(newOption(facts[i].id, c_text));
     }
 
@@ -876,4 +880,61 @@ function updateStoryUrls() {
         story_url_debugging.innerHTML = story_url + "?debugging=true";
     else
         story_url_debugging.innerHTML = story_url + "&debugging=true";
+}
+
+function factEditorDropdownOnchange() {
+    if (this.value == "null") {
+        return;
+    }
+
+    if (this.value == "new") {
+
+        var fact_dropdown  = this;
+        var new_fact_text  = "";
+
+        requestNewFact(new_fact_text, function(new_fact_id) {
+            fact_dropdown.value = String(new_fact_id);
+        });
+
+    }
+
+    else { // load an existing fact
+        var data = {"action": "get_facts",
+                   "fact_id": this.value};
+
+        sendData2(data, adminURL, "POST", function(msg) {
+            var body = JSON.parse(msg)["body"];
+            tinyMCE.get("fact_text").setContent(body[0].descr);
+        })
+    }
+}
+
+function deleteThisFactOnclick() {
+    var current_fact = document.getElementById("fact_editor_dropdown").value
+
+    if (current_fact == "null" || current_fact == "new")
+        return;
+
+    var data = {"action": "delete_fact",
+               "fact_id":current_fact};
+
+    sendData2(data, adminURL, "POST", function() {
+        getFacts(); // update all fact lists
+        tinyMCE.get("fact_text").setContent("");
+    });
+}
+
+function factSaveButtonOnClick() {
+    var current_fact = document.getElementById("fact_editor_dropdown").value
+
+    if (current_fact == "null" || current_fact == "new")
+        return;
+
+    var data = {"action": "update_fact",
+                "fact_id":current_fact,
+                "fact_text": tinyMCE.get("fact_text").getContent()};
+
+    sendData2(data, adminURL, "POST", function() {
+        getFacts(); // update all fact lists
+    });
 }

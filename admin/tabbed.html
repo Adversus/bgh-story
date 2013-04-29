@@ -116,7 +116,7 @@
         </section>
 
         <section id="scenario_tab">
-          <a href="#scenario_opts" id=fact>
+          <a href="#scenario_opts" id="scenario">
             <h1>Scenario:</h1>
           </a>
 
@@ -161,9 +161,9 @@
             <h1>Fact Text</h1>
           </a>
           <p>
-            <select name="fact_dropdown"></select>
-            <input type="button" value="Delete this Fact"/>
-            <input type="button" id="end_text_save" value="Save"/>
+            <select name="fact_dropdown" id="fact_editor_dropdown"></select>
+            <input type="button" id="delete_this_fact_button" value="Delete this Fact"/>
+            <input type="button" id="fact_save_button" value="Save"/>
             <textarea id="fact_text" name="fact_text" rows="12" cols="80"
                       style="width: 80%" >
             </textarea>
