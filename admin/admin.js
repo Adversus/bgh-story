@@ -456,11 +456,32 @@ function moveScenarioDropdownOnchange() {
 
     sendData2(data, adminURL, "POST", function(msg) {
         document.getElementById("stories_dropdown").value = story_id;
+        setStoryButtons();
+
         getScenarios();
         getStories();
     });
 
     return;
+}
+
+function setStoryButtons() {
+/* Disable / enable the DELETE THIS STORY and RENAME THIS STORY
+ * dynamically. */
+
+    var stories_dropdown = document.getElementById("stories_dropdown");
+
+    // Disable the delete button when null or the DEFAULT story is selected.
+    if (stories_dropdown.value == "null" || stories_dropdown.value == "1") {
+        document.getElementById("delete_this_story_button").disabled = true;
+        document.getElementById("rename_this_story_button").disabled = true;
+        setTabs();
+    }
+    else {
+        document.getElementById("delete_this_story_button").disabled = false;
+        document.getElementById("rename_this_story_button").disabled = false;
+        setTabs();
+    }
 }
 
 function storiesDropdownOnchange() {
@@ -484,16 +505,7 @@ function storiesDropdownOnchange() {
     }
 
     // Disable the delete button when null or the DEFAULT story is selected.
-    if (this.value == "null" || this.value == "1") {
-        document.getElementById("delete_this_story_button").disabled = true;
-        document.getElementById("rename_this_story_button").disabled = true;
-        setTabs();
-    }
-    else {
-        document.getElementById("delete_this_story_button").disabled = false;
-        document.getElementById("rename_this_story_button").disabled = false;
-        setTabs();
-    }
+    setStoryButtons();
 
     // Reset scenario overview when changing story.
     document.getElementById("consequences_for_scenarios").value = "null";
@@ -647,6 +659,9 @@ function deleteThisStory() {
 
     var story = document.getElementById("stories_dropdown").value;
 
+    // Reset the drop down box immediately after deleting.
+    document.getElementById("stories_dropdown").value = "null";
+
     if (story == "null" || story == "new")
         return;
 
@@ -661,6 +676,7 @@ function deleteThisStory() {
         // No response, really, but refresh the stories.
         console.log(msg);
         getStories();
+        getScenarios();
     });
 
 }
