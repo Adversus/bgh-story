@@ -843,6 +843,7 @@ function submitScenario() {
         sendData2(data, adminURL, "POST", function(msg) {
             console.log(msg);
             getScenarios();
+            scenarioOverviewDropdownOnchange();
         }, true);
 
         return data;

@@ -70,7 +70,7 @@ function getResponses($scenario_id) {
      attributes. */
   global $db;
 
-  $stmt = $db->prepare("SELECT id, response_text, response_fact_id, parent_scenario_id, response_consequence_scenario_id FROM responses WHERE parent_scenario_id = ?");
+  $stmt = $db->prepare("SELECT id, response_text, response_fact_id, parent_scenario_id, response_consequence_scenario_id FROM responses WHERE parent_scenario_id = ? ORDER BY id ASC");
   $stmt->execute(array($scenario_id));
 
   $responses = array();
@@ -98,7 +98,7 @@ function setResponse($id, $parent, $text, $consequence, $fact) {
                        ":text" => $text,
                        ":fact" => $fact,
                        ":parent" => $parent,
-                       "consequence" => $consequence));
+                       ":consequence" => $consequence));
 
 }
 
