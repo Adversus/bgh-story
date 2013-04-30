@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -8,14 +7,25 @@
     <script type="text/javascript" src="admin.js"></script>
     <script type="text/javascript" src="../ajax.js"></script>
 
+    <!-- jQuery Tabs -->
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.2/themes/smoothness/jquery-ui.css" />
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+    <script>
+    $(function() {
+      $( "#tabs" ).tabs();
+    });
+    </script>
+
     <!-- TinyMCE -->
     <script type="text/javascript" src="tiny_mce/tiny_mce.js"></script>
     <script type="text/javascript">
     tinyMCE.init({
       mode : "textareas",
       theme : "advanced",
-      theme_advanced_buttons1: "bold,italic,underline,link,undo,redo",
+      theme_advanced_buttons1: "bold,italic,underline,link,image,undo,redo",
       content_css : "tiny_mce_content.css",
+      height : "320"
 
     });
     </script>
@@ -25,68 +35,89 @@
 
   </head>
   <body>
+    <h1>Scenario Manager</h1>
     <form method="post" action="admin.php">
-      <h2>Scenario Manager</h2>
-	  <div id="inAccordian">
-        <section>
-          <a href="#head_controls" id="head_controls">
-            <h1>...</h1>
+      <section>
+        <label for="stories_dropdown">Story overview:</label>
+        <select name="stories_dropdown" id="stories_dropdown" > </select>
+        <input type="button" id="delete_this_story_button"
+               value="Delete this Story" disabled/>
+        <input type="button" id="rename_this_story_button"
+               value="Rename this Story" disabled/>
+        <br/>
+
+        <label for="consequences_for_scenarios">Scenario overview:</label>
+        <select name="scenarios_dropdown" id="consequences_for_scenarios">
+        </select>
+        <input type="button" id="delete_this_scenario_button"
+               value="Delete this Scenario" disabled/>
+
+      </section>
+
+      <div id="tabs">
+        <ul>
+          <li><a href="#help_tab">Start</a></li>
+          <li><a href="#start_screen_tab">Story Start Screen Editor</a></li>
+          <li><a href="#end_screen_tab">Story End Screen Editor</a></li>
+          <li><a href="#scenario_tab">Scenario Editor</a></li>
+          <li><a href="#fact_tab">Fact Editor</a></li>
+          <li><a href="#publish_tab">Publish</a></li>
+
+        </ul>
+        <section id="help_tab">
+          <p>
+            The scenario manager will allow editing all dynamic facets
+            of an interactive story. These facets are:
+            <ul>
+              <li>Stories<br/>
+                Stories are a collection of scenarios which appear
+                together. They are named for easy idenfication and all
+                scenarios belong to exactly one story.</li>
+              <li>Scenarios<br/>
+                Each prompt for action is called a scenario. Each
+                scenario any number of possible responses which lead
+                to another scenario. </li>
+              <li>Responses<br/>
+                A response is a piece of text that is displayed after
+                a given scenario that may be chosen "in response" to
+                the scenario. It points to the next scenario and,
+                optionally, references a fact.</li>
+              <li>Facts<br/>
+                A fact is an optional piece of a response that is
+                displayed between clicking on a response and the next
+                scenario.</li>
+              <li>Starting and Ending Screens<br/>
+                Each story has a dedicated piece of text at the start
+                introducing the story and a dedicated piece at the
+                end.</li>
+            </ul>
+            </p>
+        </section>
+        <section id="start_screen_tab">
+          <a href=#start id=start>
+            <h1>Start Screen Text</h1>
           </a>
           <p>
-            <label for="stories_dropdown">Story overview:</label>
-            <select name="stories_dropdown" id="stories_dropdown" > </select>
-            <input type="button" id="delete_this_story_button"
-                   value="Delete this Story" disabled/>
-            <input type="button" id="rename_this_story_button"
-                   value="Rename this Story" disabled/>
-            <br/>
-
-            <label for="consequences_for_scenarios">Scenario overview:</label>
-            <select name="scenarios_dropdown" id="consequences_for_scenarios">
-            </select>
-            <input type="button" id="delete_this_scenario_button"
-                   value="Delete this Scenario" disabled/>
+            <textarea id="start_text" name="start_text" rows="12" cols="80"
+                      style="width: 80%" >
+            </textarea>
+            <input type="button" id="start_text_save_button" value="Save"/>
+          </p>
+        </section>
+        <section id="end_screen_tab">
+          <a href=#end id=end>
+            <h1>End Screen Text</h1>
+          </a>
+          <p>
+            <textarea id="end_text" name="end_text" rows="12" cols="80"
+                      style="width: 80%" >
+            </textarea>
+            <input type="button" id="end_text_save_button" value="Save"/>
           </p>
         </section>
 
-		<section>
- 		  <a href=#start id=start>
-			<h1>Start Screen Text</h1>
-		  </a>
-		  <p>
-			<textarea id="start_text" name="start_text" rows="9" cols="80" 
-             		  style="width: 80%" >
-        	</textarea>
-        	<input type="button" id="start_text_save_button" value="Save"/>
-          </p>
-		</section>
-		<section>
-		  <a href=#end id=end>
-			<h1>End Screen Text</h1>
-		  </a>
-		  <p>
-			<textarea id="end_text" name="end_text" rows="9" cols="80" 
-             		  style="width: 80%" >
-        	</textarea>
-        	<input type="button" id="end_text_save_button" value="Save"/>
-          </p>
-		</section>
-		<section>
-		  <a href=#fact id=fact>
-			<h1>Fact Text</h1>
-		  </a>
-		  <p>
-            <select name="fact_dropdown"></select>
-            <input type="button" value="Delete this Fact"/>
-        	<input type="button" id="end_text_save" value="Save"/>
-			<textarea id="fact_text" name="fact_text" rows="9" cols="80" 
-             		  style="width: 80%" >
-        	</textarea>
-
-          </p>
-		</section>
-        <section>
-          <a href="#scenario_opts" id=fact>
+        <section id="scenario_tab">
+          <a href="#scenario_opts" id="scenario">
             <h1>Scenario:</h1>
           </a>
 
@@ -101,7 +132,7 @@
 
               <h3>Scenario Body:</h3>
 
-              <textarea id="body_text" name="body_text" rows="9" cols="80"
+              <textarea id="body_text" name="body_text" rows="12" cols="80"
                         style="width: 80%" >
               </textarea>
 
@@ -121,13 +152,37 @@
               <div id="para">
                 <input type="button" name="save" value="Save Scenario" id="submit_scenario_button" />
                 <input type="reset" name="reset" value="Reset" />
-                <input type="button" name="test_json" value="Test JSON POST" onClick="testJson();" />
               </div>
-    </form>
+
           </p>
         </section>
+        <section id="fact_tab">
+          <a href=#fact id=fact>
+            <h1>Fact Text</h1>
+          </a>
+          <p>
+            <select name="fact_dropdown" id="fact_editor_dropdown"></select>
+            <input type="button" id="delete_this_fact_button" value="Delete this Fact"/>
+            <input type="button" id="fact_save_button" value="Save"/>
+            <textarea id="fact_text" name="fact_text" rows="12" cols="80"
+                      style="width: 80%" >
+            </textarea>
 
-	  </div>
+          </p>
+        </section>
+        <section id="publish_tab">
+          <a href="#publish_tab" id="publish">
+            <h1>Publishing Options</h1>
+          </a>
+          <p>URL for the selected story:<br/>
+            <tt id="story_url">NULL</tt>
+          </p>
+          <p>URL with verbose testing information:<br/>
+            <tt id="story_url_debugging">NULL</tt>
+          </p>
+        </section>
+    </form>
+      </div>
 
 
 
