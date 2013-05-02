@@ -461,6 +461,7 @@ function moveScenarioDropdownOnchange() {
 
         getScenarios();
         getStories();
+        updateStoryUrls();
     });
 
     return;
