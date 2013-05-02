@@ -119,7 +119,7 @@ function displayScenario(id) {
 
         var displayIdentifier = "";
         if (loadPageVar("debugging"))
-            var displayIdentifier = "<small>(id = " + id + ")</small> ";
+            var displayIdentifier = "(id = " + id + ") ";
 
         document.getElementById("scenario_description").innerHTML =
             displayIdentifier + scenario.descr;
