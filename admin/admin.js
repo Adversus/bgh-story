@@ -659,26 +659,27 @@ function deleteThisStory() {
 
     var story = document.getElementById("stories_dropdown").value;
 
-    // Reset the drop down box immediately after deleting.
-    document.getElementById("stories_dropdown").value = "null";
-
     if (story == "null" || story == "new")
         return;
 
-    story = Number(story); // Cast to integer
+    if (confirm("OK to delete this story?")) {
+        // Reset the drop down box immediately after deleting.
+        document.getElementById("stories_dropdown").value = "null";
 
-    console.log("Deleting story " + story);
+        story = Number(story); // Cast to integer
 
-    var data = {"action": "delete_story",
-                "story_id": story};
+        console.log("Deleting story " + story);
 
-    sendData2(data, adminURL, "POST", function (msg) {
-        // No response, really, but refresh the stories.
-        console.log(msg);
-        getStories();
-        getScenarios();
-    });
+        var data = {"action": "delete_story",
+                    "story_id": story};
 
+        sendData2(data, adminURL, "POST", function (msg) {
+            // No response, really, but refresh the stories.
+            console.log(msg);
+            getStories();
+            getScenarios();
+        });
+    }
 }
 
 function renameThisStory() {
