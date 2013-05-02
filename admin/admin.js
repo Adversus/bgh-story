@@ -14,6 +14,7 @@ window.onload = function () {
     document.getElementById("delete_this_scenario_button").onclick = deleteThisScenario;
     document.getElementById("stories_dropdown").onchange = storiesDropdownOnchange;
     document.getElementById("consequences_for_scenarios").onchange = scenarioOverviewDropdownOnchange;
+    document.getElementById("reset_scenario").onclick = scenarioOverviewDropdownOnchange;
     document.getElementById("move_scenario_dropdown").onchange = moveScenarioDropdownOnchange;
     document.getElementById("submit_scenario_button").onclick = submitScenario;
     document.getElementById("start_text_save_button").onclick = submitStory;
