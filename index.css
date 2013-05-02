@@ -19,7 +19,7 @@ small {
 
 div.screen {
     position:fixed;
-    
+
     width:70%;
     height:75%;
     padding-top:10%;
@@ -101,4 +101,14 @@ hr {
 /*    top: 0%;
     left: 0%;
     padding-top:10%; */
+}
+
+a {
+color: white;
+border-bottom: 1px solid white
+}
+
+a:hover {
+color: grey;
+border-bottom-color: grey
 }
