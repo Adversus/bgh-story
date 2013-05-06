@@ -1,0 +1,8 @@
+<?PHP
+
+$db_host  = "localhost";
+$db_user  = "youruser";
+$db_pass  = "somepassword";
+$db_name  = "thedatabase";
+
+?>
