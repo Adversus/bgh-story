@@ -13,6 +13,17 @@ function action($action_name) {
   return false;
 }
 
+/* if magic_quotes are on, $_POST variables will escape quotes with
+   slashes which is not what we want. This detects magit_qoute
+   stripping and if it is enabled, removes all slashes from the $_POST
+   strings. */
+
+if (get_magic_quotes_gpc()) {
+  foreach($_POST as $key => $value) {
+    $_POST[$key] = stripslashes($value);
+  }
+}
+
 /*
  * Request handlers:
  */
@@ -363,6 +374,20 @@ if (!isset($_POST['action'])) {
   print_r($_POST);
   print "print_r(_GET):\n";
   print_r($_GET);
+  if (isset($_POST["debug"])) {
+    print "debug _POST debug:\n";
+    print_r(json_decode($_POST["debug"]));
+
+    print "\nURL decoded:\n";
+    print_r(urldecode($_POST["debug"]));
+
+    print "\nURL2 decoded:\n";
+    print_r(urldecode(urldecode($_POST["debug"])));
+
+    print "\nURL decoded + json_decoded:\n";
+    print_r(json_decode(str_replace("\\", "", urldecode($_POST["debug"]))));
+  }
+
   return;
  }
 
