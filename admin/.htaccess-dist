@@ -1,0 +1,4 @@
+AuthType Basic
+AuthName "Story Editor"
+AuthUserFile /absolute/path/to/.htpasswd
+Require valid-user
