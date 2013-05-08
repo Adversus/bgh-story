@@ -48,7 +48,7 @@ to the database.
 .htpasswd. For convenience there is a php file that looks up and
 displays this information under admin/htaccess-path.php
 
-##Database Initialization
+## Database Initialization
 
 The database is configured using the schema under
 `admin/database.sql`. The database names may need to be updating
