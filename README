@@ -1,8 +1,8 @@
-#BGH Interactive Story
+# BGH Interactive Story
 
 Technical configuration notes:
 
-##Authentication
+## Authentication
 
 The administration URL is `${BASE_URL}/admin/` and is protected using
 HTTP BASIC authentication. This is done with an .htpasswd file which
@@ -18,7 +18,7 @@ http://www.htaccesstools.com/htpasswd-generator/
 Online htpasswd documentation:
 http://httpd.apache.org/docs/2.2/programs/htpasswd.html
 
-##Passwords
+## Passwords
 
 Presently, there are two passwords for access and maintenance to
 Interactive Story sites:
@@ -31,7 +31,7 @@ Interactive Story sites:
    `admin/.htpasswd` and `admin/.htaccess` (Examples are provided in
    and .htaccess-dist)
 
-##Site Configuration
+## Site Configuration
 
 To install, or move, the site there are a few configuration parameters
 that must be kept up-to-date for the site to function. These are:
@@ -59,7 +59,7 @@ updated the first order of business is to log on to the site manager
 and create a new story entitled, “DEFAULT_STORY”. This will have the
 ID of 1 (one) and is significant in the rest of the program.
 
-##Programming and Updating
+## Programming and Updating
 
 The full source code for the site (including schema) is kept in a GIT
 repository and hosted on github.com at
