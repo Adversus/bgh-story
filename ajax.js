@@ -5,6 +5,9 @@
  *
  */
 
+// Work-around for IE6 lack of console.log functionality.
+if (!window.console) console = {log: function() {}, info: function() {}};
+
 function getXMLHttpReq()
 {
     var req = null;
@@ -12,7 +15,7 @@ function getXMLHttpReq()
     if (window.XMLHttpRequest)
         req = new XMLHttpRequest();
     else if (window.ActiveXObject)
-        req = new ActiveXObject(Microsoft.XMLHTTP);
+        req = new ActiveXObject("Microsoft.XMLHTTP");
     return req;
 }
 
