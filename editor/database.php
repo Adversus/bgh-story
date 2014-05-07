@@ -1,323 +1,621 @@
 <?PHP
-include("config.php");
+//************************ Setup ************************//
+//** Import database config
+if (!isset($pagePrefix)){
+	$pagePrefix = '';
+}
+include($pagePrefix . "config.php");
 
 $db = NULL;
+$story_id = 0;
+$story_name = "(New Graph)";
+$story_public = 0;
+$story_boxes = array();
+$story_choices = array();
+$delete_boxes = array();
+$delete_choices = array();
 
+//** Initial connection
 try {
+  global $db_host, $db_name, $db_user, $db_pass;
   $dsn = "mysql:host=$db_host;dbname=$db_name";
   $db  = new PDO($dsn, $db_user, $db_pass);
 
   $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
- }
-
+}
 catch(PDOException $e) {
   echo "An error occured while connecting to the database.\n";
   echo $e->getMessage() . "\n";
 }
 
-function testDB() {
-  global $db;
+//************************ Classes ************************//
 
-  $query = "SHOW TABLES";
-  try {
-    $stmt = $db->query($query);
-    print_r($stmt->fetchAll());
-  }
-
-  catch(PDOException$e) {
-    echo "An error occured while querying the database.\n";
-    echo $e->getMessage() . "\n";
-  }
-
+class box {
+	var $ID = -1;
+	var $StoryID = -1;
+	var $Title = "";
+	var $Text = "";
+	var $x = 0;
+	var $y = 0;
+	
+	public function __construct($str = "") {
+		if ($str != ""){
+			$this->deserialize($str);
+		}
+	}
+	public function setup($row){
+		$this->ID = $row['id'];
+		$this->StoryID = $row['story_id'];
+		$this->Title = $row['title'];
+		$this->Text = $row['text'];
+		$this->x = $row['x'];
+		$this->y = $row['y'];
+	}
+	public function serialize(){
+		$str = "{B,";
+		$str .= $this->ID . ",";
+		$str .= addStorySlashes($this->Title) . ",";
+		$str .= addStorySlashes($this->Text) . ",";
+		$str .= $this->x . ",";
+		$str .= $this->y;
+		$str .= "}";
+		return $str;
+	}
+	public function deserialize($str){
+		$readState = 0;
+		$readValue = "";
+		$ln = strlen($str);
+		
+		for ($c=0; $c<$ln; $c++){
+			if ($readState == 0){
+				if ($c+2>=$ln){
+					break; //** Not large enough to read
+				}
+				if ($str[$c] == "{" && $str[$c+1] == "B" && $str[$c+2] == ","){
+					$c+=2; //** Advance 2 + 1 from for loop
+					$readState++;
+					continue;
+				}
+			} else {
+				if ($str[$c] == "," && $str[$c-1] != "\\"){
+					if ($readState == 1){
+						$this->ID = intval($readValue);
+					} else if ($readState == 2){
+						$this->Title = dropStorySlashes($readValue);
+					} else if ($readState == 3){
+						$this->Text = dropStorySlashes($readValue);
+					} else if ($readState == 4){
+						$this->x = intval($readValue);
+					}
+					$readValue = "";
+					$readState++;
+				} else if ($readState == 5 && $str[$c] == "}" && $str[$c-1] != "\\"){
+					$this->y = intval($readValue);
+					break;
+				} else {
+					$readValue .= $str[$c];
+				}
+			}
+		}
+	}
+	public function saveToDB(){
+		global $db, $story_choices;
+		$isValid = false;
+		
+		//** Check if this exists
+		if ($this->ID > 0){
+			$isValid = isValidElement($this->ID, 'boxes');
+		}
+		
+		//** Add content to db
+		if (!$isValid){
+			//** Insert into db because it doesn't exist
+			$stmt = $db->prepare("INSERT INTO boxes ( story_id, title, text, x, y ) VALUES (?, ?, ?, ?, ?)");
+			$stmt->execute(array($this->StoryID, $this->Title, $this->Text, $this->x, $this->y));
+			
+			$lastID = $this->ID;
+			$this->ID = $db->lastInsertId();
+			foreach ($story_choices as $obj){
+				if ($obj->Box1 == $lastID){
+					$obj->Box1 = $this->ID;
+				}
+				if ($obj->Box2 == $lastID){
+					$obj->Box2 = $this->ID;
+				}
+			}
+		} else {
+			//** Update preexisting database entry
+			$stmt = $db->prepare("UPDATE boxes SET title = ?, text=?, x=?, y=? WHERE id=?");
+			$stmt->execute(array($this->Title, $this->Text, $this->x, $this->y, $this->ID));
+		}
+	}
 }
 
-function addBody($body_text) {
-  global $db;
-
-  $stmt = $db->prepare("INSERT INTO bodies (id, text) VALUES (NULL, ?)");
-  $stmt->execute(array($body_text));
-
-  return $db->lastInsertId();
+class choice {
+	var $ID = -1;
+	var $StoryID = -1;
+	var $Choice = "";
+	var $Fact = "";
+	var $Box1 = -1;
+	var $Box2 = -1;
+	public function __construct($str = "") {
+		if ($str != ""){
+			$this->deserialize($str);
+		}
+	}
+	public function setup($row){
+		$this->ID = $row['id'];
+		$this->StoryID = $row['story_id'];
+		$this->Choice = $row['choice'];
+		$this->Fact = $row['fact'];
+		$this->Box1 = $row['box1_id'];
+		$this->Box2 = $row['box2_id'];
+	}
+	public function serialize(){
+		$str = "{L,";
+		$str .= $this->ID . ",";
+		$str .= addStorySlashes($this->Choice) . ",";
+		$str .= addStorySlashes($this->Fact) . ",";
+		$str .= $this->Box1 . ",";
+		$str .= $this->Box2;
+		$str .= "}";
+		return $str;
+	}
+	public function deserialize($str){
+		$readState = 0;
+		$readValue = "";
+		$ln = strlen($str);
+		
+		for ($c=0; $c<$ln; $c++){
+			if ($readState == 0){
+				if ($c+2>=$ln){
+					break; //** Not large enough to read
+				}
+				if ($str[$c] == "{" && $str[$c+1] == "L" && $str[$c+2] == ","){
+					$c+=2; //** Advance 2 + 1 from for loop
+					$readState++;
+					continue;
+				}
+			} else {
+				if ($str[$c] == "," && $str[$c-1] != "\\"){
+					if ($readState == 1){
+						$this->ID = intval($readValue);
+					} else if ($readState == 2){
+						$this->Choice = dropStorySlashes($readValue);
+					} else if ($readState == 3){
+						$this->Fact = dropStorySlashes($readValue);
+					} else if ($readState == 4){
+						$this->Box1 = intval($readValue);
+					}
+					$readValue = "";
+					$readState++;
+				} else if ($readState == 5 && $str[$c] == "}" && $str[$c-1] != "\\"){
+					$this->Box2 = intval($readValue);
+					break;
+				} else {
+					$readValue .= $str[$c];
+				}
+			}
+		}
+	}
+	public function saveToDB(){
+		global $db;
+		$isValid = false;
+		
+		//** Check if this exists
+		if ($this->ID > 0){
+			$isValid = isValidElement($this->ID, 'choices');
+		}
+		
+		//** Add content to db
+		if (!$isValid){
+			//** Insert into db because it doesn't exist
+			$stmt = $db->prepare("INSERT INTO choices ( story_id, choice, fact, box1_id, box2_id ) VALUES (?, ?, ?, ?, ?)");
+			$stmt->execute(array($this->StoryID, $this->Choice, $this->Fact, $this->Box1, $this->Box2));
+			$this->ID = $db->lastInsertId();
+		} else {
+			//** Update preexisting database entry
+			$stmt = $db->prepare("UPDATE choices SET choice = ?, fact=?, box1_id=?, box2_id=? WHERE id=?");
+			$stmt->execute(array($this->Choice, $this->Fact, $this->Box1, $this->Box2, $this->ID));
+		}
+	}
 }
 
-function setBody($id, $body_text) {
-  global $db;
+//************************ Utility Methods ************************//
 
-  $stmt = $db->prepare("UPDATE bodies SET text = ? WHERE id = ?");
-  $stmt->execute(array($body_text, $id));
+function loadStory($sID){
+	//** Retrieve all boxes and choices for the story
+	global $db;
+	global $story_id;
+	global $story_name;
+	global $story_public;
+	global $story_boxes;
+	global $story_choices;
+	
+	$story_id = $sID;
+	
+	//** Retrieve story
+	$stmt = $db->prepare('SELECT * FROM stories WHERE id = ? LIMIT 1');
+	$stmt->execute(array($story_id));
+	$story = $stmt->fetchAll(PDO::FETCH_ASSOC);
+	$story_name = $story[0]['story_name'];
+	$story_public = $story[0]['is_public'];
+	
+	//** Retrieve boxes
+	$stmt1 = $db->prepare("SELECT * FROM boxes WHERE story_id=?");
+	$stmt1->execute(array($story_id));
+	$result = $stmt1->fetchAll(PDO::FETCH_ASSOC);
+	empty($story_boxes);
+	foreach ($result as $row){
+		//** Create new instances of the box class for every box in the story
+		$newBox = new box;
+		$newBox->setup($row);
+		array_push($story_boxes, $newBox);
+	}
+	
+	
+	//** Retrieve choices
+	$stmt2 = $db->prepare("SELECT * FROM choices WHERE story_id=?");
+	$stmt2->execute(array($story_id));
+	$result = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+	empty($story_choices);
+	foreach ($result as $row){
+		//** Create new instances of the choice class for every choice in the story
+		$newChoice = new choice;
+		$newChoice->setup($row);
+		array_push($story_choices, $newChoice);
+	}
 }
 
-function getBody($id) {
-  global $db;
-
-  $stmt = $db->prepare("SELECT text from bodies WHERE id = ?");
-  if ($stmt->execute(array($id))) {
-    $row = $stmt->fetch();
-    return $row["text"];
-  }
+function saveStory(){
+	global $db;
+	global $story_id;
+	global $story_name;
+	global $story_public;
+	global $story_boxes;
+	global $story_choices;
+	
+	if ($story_id < 0){
+		//** Create new story in db
+		$stmt = $db->prepare("INSERT INTO stories (story_name, is_public) VALUES (?, ?)");
+		$result = $stmt->execute(array(addStorySlashes($story_name), $story_public));
+		$story_id = $db->lastInsertId();
+		
+		//** Update object story_ids
+		foreach ($story_boxes as $obj){
+			$obj->StoryID = $story_id;
+		}
+		foreach ($story_choices as $obj){
+			$obj->StoryID = $story_id;
+		}
+	} else {
+		$stmt = $db->prepare("UPDATE stories SET story_name = ?, is_public = ? WHERE id = ?");
+		$stmt->execute(array(addStorySlashes($story_name), $story_public, $story_id));
+	}
+	
+	foreach ($story_boxes as $obj){
+		$obj->saveToDB();
+	}
+	foreach ($story_choices as $obj){
+		$obj->saveToDB();
+	}
+	
+	//** Clean up deleted boxes
+	$delBoxes = array();
+	foreach ($story_boxes as $obj){
+		array_push($delBoxes, $obj->ID);
+	}
+	$vals = implode(',', array_fill(0, count($delBoxes), '?')); //** Borrowed form stack overflow
+	$stmt = $db->prepare("DELETE FROM boxes WHERE id NOT IN ( " . $vals . " )");
+	$stmt->execute($delBoxes);
+	
+	//** Clean up deleted choices
+	$delChoices = array();
+	foreach ($story_choices as $obj){
+		array_push($delChoices, $obj->ID);
+	}
+	$vals = implode(',', array_fill(0, count($delChoices), '?')); //** Borrowed form stack overflow
+	$stmt = $db->prepare("DELETE FROM choices WHERE id NOT IN ( " . $vals . " )");
+	$stmt->execute($delChoices);
 }
 
-function removeBody($id) {
+function loadFirstPage($story_id){
+	global $db;
+	
+	//loadPage($pageID);
+}
+
+function loadPage($id, $isStart = false){
+	//** Variant on loadStory that retrieves a single page and its choices
+	global $db;
+	global $story_boxes;
+	global $story_choices;
+	
+	//** Retrieve boxes
+	if (!$isStart){
+		$stmt1 = $db->prepare("SELECT * FROM boxes WHERE id=?");
+	} else {
+		$stmt1 = $db->prepare("SELECT * FROM boxes WHERE story_id=? AND title='Start'");
+	}
+	$stmt1->execute(array($id));
+	$result = $stmt1->fetchAll(PDO::FETCH_ASSOC);
+	empty($story_boxes);
+	foreach ($result as $row){
+		//** Create new instances of the box class for every box in the story
+		$newBox = new box;
+		$newBox->setup($row);
+		array_push($story_boxes, $newBox);
+	}
+	$id = $story_boxes[0]->ID;
+	
+	//** Retrieve choices
+	$stmt2 = $db->prepare("SELECT * FROM choices WHERE box1_id=?");
+	$stmt2->execute(array($id));
+	$result = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+	empty($story_choices);
+	foreach ($result as $row){
+		//** Create new instances of the choice class for every choice in the story
+		$newChoice = new choice;
+		$newChoice->setup($row);
+		array_push($story_choices, $newChoice);
+	}
+}
+
+function isValidElement($id, $table) { //** Adapted from isValidStory (database.php:226)
   global $db;
 
-  $stmt = $db->prepare("DELETE FROM bodies WHERE id = ?");
+  $stmt = $db->prepare("SELECT COUNT(*) FROM " . $table . " WHERE id = ?");
   $stmt->execute(array($id));
-}
 
-function getResponses($scenario_id) {
-  /* Given a scenario_id, return an array of dictionaries for each
-     response with `id`, `choice`, `consequence`, and `factoid`
-     attributes. */
-  global $db;
-
-  $stmt = $db->prepare("SELECT id, response_text, response_fact_id, parent_scenario_id, response_consequence_scenario_id FROM responses WHERE parent_scenario_id = ? ORDER BY id ASC");
-  $stmt->execute(array($scenario_id));
-
-  $responses = array();
-
-  while ($row = $stmt->fetch()) {
-    array_push($responses,
-               array("id" => $row["id"],
-                     "choice" => $row["response_text"],
-                     "consequence" => $row["response_consequence_scenario_id"],
-                     "factoid" => $row["response_fact_id"]));
-  }
-
-  return $responses;
-
-}
-
-function setResponse($id, $parent, $text, $consequence, $fact) {
-  /* ID and FACT may be NULL. If ID is null, a new response is
-     created. Otherwise, an existing response is updated. */
-  global $db;
-
-  $stmt = $db->prepare("REPLACE INTO responses (id, response_text, response_fact_id, parent_scenario_id, response_consequence_scenario_id) VALUES (:id, :text, :fact, :parent, :consequence)");
-
-  $stmt->execute(array(":id" => $id,
-                       ":text" => $text,
-                       ":fact" => $fact,
-                       ":parent" => $parent,
-                       ":consequence" => $consequence));
-
-}
-
-function truncate($string, $length, $stopanywhere=false) {
-  //truncates a string to a certain char length, stopping on a word if not specified otherwise.
-  if (strlen($string) > $length) {
-    //limit hit!
-    $string = substr($string,0,($length -3));
-    if ($stopanywhere) {
-      //stop anywhere
-      $string .= '...';
-    } else{
-      //stop on a word.
-      $string = substr($string,0,strrpos($string,' ')).'...';
-    }
-  }
-  return $string;
-}
-
-function getStoryStartScenario($story_id) {
-  global $db;
-
-  $stmt = $db->prepare("SELECT first_scenario_id FROM stories WHERE id = ?");
-  $stmt->execute(array($story_id));
-
-  $result = $stmt->fetch();
-
-  return $result["first_scenario_id"];
-}
-
-function getStoryScenarios($story_id = "ALL") {
-  /* return all scenarios (w/o responses) for a given story (or ALL
-     stories) */
-  global $db;
-
-  if ($story_id == "ALL") {
-    $stmt = $db->prepare("SELECT scenarios.id,stories.story_name,bodies.text FROM stories,scenarios,bodies WHERE scenarios.scenario_body_id = bodies.id AND scenarios.story_id = stories.id");
-  }
-  else {
-    $stmt = $db->prepare("SELECT scenarios.id,stories.story_name,bodies.text FROM stories,scenarios,bodies WHERE scenarios.scenario_body_id = bodies.id AND scenarios.story_id = stories.id AND stories.id = ? ORDER BY id ASC");
-  }
-
-  //"select scenarios.id,stories.story_name, bodies.text from stories,scenarios,bodies where   scenarios.scenario_body_id = bodies.id and scenarios.story_id = stories.id and story_id = ?"
-
-  $stmt->execute(array($story_id));
-
-  $scenarios = array();
-  while ($row = $stmt->fetch()) {
-    $short_text = truncate($row["text"], 40);
-    array_push($scenarios,
-               array("id" => $row["id"],
-                     "descr" => $row["text"],
-                     "short" => $short_text,
-                     "responses" => getResponses($row["id"])));
-
-    $story_descr = $row["story_name"];
-  }
-
-  return $scenarios;
-}
-
-function addFact($fact_text = "") {
-  global $db;
-
-  // Create a body-text entry for the fact and note its ID
-  $body_id = addBody($fact_text);
-
-  $stmt = $db->prepare("INSERT INTO facts (id, fact_body) VALUES (NULL, ?)");
-  $stmt->execute(array($body_id));
-}
-
-function setFact($fact_id, $fact_text) {
-  global $db;
-
-  $stmt = $db->prepare("UPDATE facts INNER JOIN bodies ON facts.fact_body = bodies.id SET text = ? WHERE facts.id = ?");
-  $stmt->execute(array($fact_text, $fact_id));
-}
-
-function getFacts($fact_id = "ALL") {
-  global $db;
-  if ($fact_id == "ALL") {
-    $stmt = $db->prepare("SELECT facts.id, bodies.text FROM facts INNER JOIN bodies ON facts.fact_body = bodies.id");
-    $stmt->execute();
-  }
-  else {
-    $stmt = $db->prepare("SELECT facts.id, bodies.text FROM facts INNER JOIN bodies ON facts.fact_body = bodies.id WHERE facts.id = ?");
-    $stmt->execute(array($fact_id));
-  }
-
-  $results = array();
-
-  while ($row = $stmt->fetch()) {
-    array_push($results,
-               array("id" => $row["id"],
-                     "descr" => $row["text"],
-                     "short" => truncate($row["text"], 40)));
-  }
-
+  $results = $stmt->fetch(PDO::FETCH_ASSOC);
   return $results;
 }
 
-function removeFact($fact_id) {
-  global $db;
-
-  $stmt = $db->prepare("DELETE facts, bodies FROM facts INNER JOIN bodies ON facts.fact_body = bodies.id WHERE facts.id = ?");
-  $stmt->execute(array($fact_id));
-
-  $stmt = $db->prepare("UPDATE responses SET response_fact_id = NULL WHERE response_fact_id = ?");
-  $stmt->execute(array($fact_id));
+function deleteBoxList($str){
+	$readState = 0;
+	$readValue = "";
+	$ln = strlen($str);
+	$boxList = array();
+	
+	//** Parse string object
+	for ($c=0; $c<$ln; $c++){
+		if ($readState == 0){
+			if ($c+2>=$ln){
+				break; //** Not large enough to read
+			}
+			if ($str[$c] == "{" && $str[$c+1] == "A" && $str[$c+2] == ","){
+				$c+=2; //** Advance 2 + 1 from for loop
+				$readState++;
+				continue;
+			}
+		} else {
+			if ($str[$c] == "," && $str[$c-1] != "\\"){
+				array_push($boxList, intval($readValue));
+				$readValue = "";
+			} else if ($str[$c] == "}" && $str[$c-1] != "\\"){
+				break;
+			} else {
+				$readValue .= $str[$c];
+			}
+		}
+	}
+	
+	//** Delete objects in list
+	$vals = implode(',', array_fill(0, count($boxList), '?')); //** Borrowed form stack overflow
+	$stmt = $db->prepare("DELETE FROM boxes WHERE id IN ( " . $vals . " )");
+	$stmt->execute($boxList);
 }
 
-function removeStory($story_id) {
-  /* Delete a story. The default story is 1.
-   * - Update scenarios: All scenarios in story_id move to default story.
-   * - Delete story_id and start + end bodies.
-   */
-  global $db;
-
-  // Move any scenarios
-  $stmt = $db->prepare("UPDATE scenarios SET story_id = 1 WHERE story_id = :story_id");
-  $stmt->execute(array(":story_id" => $story_id));
-
-  // Delete story + start and end bodies
-  $stmt = $db->prepare("DELETE stories, start, end FROM stories LEFT JOIN bodies start ON stories.start_screen_body_id = start.id LEFT JOIN bodies end ON stories.end_screen_body_id = end.id WHERE stories.id = ?");
-  $stmt->execute(array($story_id));
+function deleteChoiceList($str){
+	$readState = 0;
+	$readValue = "";
+	$ln = strlen($str);
+	$choiceList = array();
+	
+	//** Parse string object
+	for ($c=0; $c<$ln; $c++){
+		if ($readState == 0){
+			if ($c+2>=$ln){
+				break; //** Not large enough to read
+			}
+			if ($str[$c] == "{" && $str[$c+1] == "B" && $str[$c+2] == ","){
+				$c+=2; //** Advance 2 + 1 from for loop
+				$readState++;
+				continue;
+			}
+		} else {
+			if ($str[$c] == "," && $str[$c-1] != "\\"){
+				array_push($choiceList, intval($readValue));
+				$readValue = "";
+			} else if ($str[$c] == "}" && $str[$c-1] != "\\"){
+				break;
+			} else {
+				$readValue .= $str[$c];
+			}
+		}
+	}
+	
+	if (count($choiceList) < 1){return;}
+	
+	//** Delete objects in list
+	$vals = implode(',', array_fill(0, count($choiceList), '?')); //** Borrowed form stack overflow
+	$stmt = $db->prepare("DELETE FROM choices WHERE id IN ( " . $vals . " )");
+	$stmt->execute($boxList);
 }
 
-function isValidStory($story_id) {
-  global $db;
-
-  $stmt = $db->prepare("SELECT COUNT(*) FROM stories WHERE id = ?");
-  $stmt->execute(array($story_id));
-
-  $results = $stmt->fetch();
-  return $results[0];
+function dropStorySlashes($str){
+	$ln = strlen($str);
+	$newString = "";
+	$hasSlashes = false;
+	
+	for ($ch=0; $ch<$ln; $ch++){
+		if ($str[$ch] == "\\"){
+			//** Found slash
+			if ($hasSlashes == true){
+				//** Second slash, add slash to string
+				$newString .= $str[$ch];
+				$hasSlashes = false;
+			} else {
+				//** Keep track of this slash
+				$hasSlashes = true;
+			}
+		} else {
+			//** Append character
+			$newString .= $str[$ch];
+			$hasSlashes = false;
+		}
+	}
+	return $newString;
 }
 
-function getScenarioStoryId($scenario_id) {
-  /* Given a scenario id, return the story_id if none, return 1
-     (default story.) */
-  global $db;
-
-  $stmt = $db->prepare("SELECT story_id FROM scenarios WHERE id = ?");
-  $success = $stmt->execute(array($scenario_id));
-
-  $result = $stmt->fetch();
-
-  // TODO: error checking
-  return $result["story_id"];
-
+function addStorySlashes($str){
+	$ln = strlen($str);
+	$newString = "";
+	
+	for ($ch=0; $ch<$ln; $ch++){
+		if ($str[$ch] == "{" || $str[$ch] == "}" || $str[$ch] == "," || $str[$ch] == "\\"){
+			$newString .= "\\";
+		}
+		$newString .= $str[$ch];
+	}
+	return $newString;
 }
 
-function getFactsUsedInStory($story_id) {
-  global $db;
-
-  $query = "SELECT response_fact_id, bodies.text FROM responses
-INNER JOIN facts ON facts.id = responses.response_fact_id
-INNER JOIN bodies ON facts.fact_body = bodies.id
-       WHERE
-             response_fact_id IS NOT NULL
-             AND
-             parent_scenario_id IN (
-             SELECT id FROM scenarios
-                    WHERE
-                    scenarios.story_id = ?
-                    )";
-
-  $stmt = $db->prepare($query);
-  $stmt->execute(array($story_id));
-
-  $facts = array();
-
-  while ($row = $stmt->fetch()) {
-    $facts[$row["response_fact_id"]] = $row["text"];
-  }
-
-  return $facts;
+function parseInput($input){
+	global $story_id;
+	global $story_name;
+	global $story_public;
+	global $story_boxes;
+	global $story_choices;
+	
+	if ($input == ""){ return null; }
+	$ln = strlen($input);
+	$objNum = 0;
+	$lineNum = 0;
+	$boxNum = 0;
+	
+	$readState = 0;
+	$readObj = "";
+	
+	$story_id = 0;
+	$story_name = '';
+	$story_public = 0;
+	$story_boxes = array();
+	$story_choices = array();
+	for ($c=0; $c<$ln; $c++){
+		//** Get graph ID & Name
+		if ($readState == 0){
+			if ($input[$c] == "," && (($c == 0) || ($input[$c-1] != "\\"))){
+				$readState++;
+				$story_id = intval($readObj);
+				$readObj = "";
+			} else {
+				$readObj .= $input[$c];
+				continue;
+			}
+		} else if ($readState == 1){
+			if ($input[$c] == "," && (($c == 0) || ($input[$c-1] != "\\"))){
+				$readState++;
+				$story_name = $readObj;
+				$readObj = "";
+			} else {
+				$readObj .= $input[$c];
+				continue;
+			}
+		} else if ($readState == 2){
+			if ($input[$c] == "{" && ($input[$c-1] != "\\")){
+				$readState++;
+				$story_public = intval($readObj);
+				$readObj = "";
+				//** This state doesn't advance so the object can be started in the same loop
+			} else {
+				$readObj .= $input[$c];
+				continue;
+			}
+		}
+		
+		//** Get Objects
+		if ($readState == 3){
+			if ($input[$c] == "{" && ($input[$c-1] != "\\")){
+				$readState++;
+				$readObj = $input[$c];
+			}
+		} else if ($readState == 4){
+			$readObj .= $input[$c];
+			if ($input[$c] == "}"){
+				if ($c > 0 && ($input[$c-1] != "\\")){
+					//** End of object
+					if ($readObj[1] == "B"){
+						$newBox = new box;
+						$newBox->deserialize($readObj);
+						$newBox->StoryID = $story_id;
+						array_push($story_boxes, $newBox);
+					} else if ($readObj[1] == "L"){
+						$newLine = new choice;
+						$newLine->deserialize($readObj);
+						$newLine->StoryID = $story_id;
+						array_push($story_choices, $newLine);
+					} else if ($readObj[1] == "Y"){
+						//** Delete boxes
+						//deleteBoxList($readObj);
+					} else if ($readObj[1] == "Z"){
+						//** Delete choices
+						//deleteChoiceList($readObj);
+					}
+					$readState--;
+					$readObj = "";
+				}
+			}
+		}
+	}
 }
 
-function getStoryStartText($story_id) {
-  global $db;
-
-  $stmt = $db->prepare("SELECT text FROM stories INNER JOIN bodies ON bodies.id = stories.start_screen_body_id AND stories.id = ?");
-  $stmt->execute(array($story_id));
-
-  $result = $stmt->fetch();
-  return $result["text"];
+function sendGraphObjects(){
+	global $story_id;
+	global $story_name;
+	global $story_public;
+	global $story_boxes;
+	global $story_choices;
+	
+	//** Send Story Data
+	print($story_id . ',');
+	print($story_name . ',');
+	print($story_public);
+	
+	//** Send Boxes
+	foreach ($story_boxes as $obj){
+		print($obj->serialize());
+	}
+	
+	//** Send Choices
+	foreach ($story_choices as $obj){
+		print($obj->serialize());
+	}
 }
 
-function setStoryStartText($story_id, $story_text) {
- global $db;
+function getStory($id){
+	global $db;
+	
+	$stmt = $db->prepare('SELECT * FROM stories WHERE is_public = 1 AND id = ? LIMIT 1');
+	$stmt->execute(array($id));
 
-  $stmt = $db->prepare("UPDATE stories  INNER JOIN bodies ON bodies.id = stories.start_screen_body_id set text = ? WHERE stories.id = ?");
-  $stmt->execute(array($story_text, $story_id));
-
+	return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-function getStoryEndText($story_id) {
-  global $db;
+function getRandomStory(){
+	global $db;
+	
+	$stmt = $db->prepare('SELECT * FROM stories WHERE is_public != 0 ORDER BY RAND() LIMIT 1');
+	$stmt->execute();
 
-  $stmt = $db->prepare("SELECT text FROM stories INNER JOIN bodies ON bodies.id = stories.end_screen_body_id AND stories.id = ?");
-  $stmt->execute(array($story_id));
-
-  $result = $stmt->fetch();
-  return $result["text"];
+	return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-function setStoryEndText($story_id, $story_text) {
- global $db;
+function getStoryList(){
+	global $db;
+	
+	$stmt = $db->query('SELECT * FROM stories');
 
-  $stmt = $db->prepare("UPDATE stories  INNER JOIN bodies ON bodies.id = stories.end_screen_body_id set text = ? WHERE stories.id = ?");
-  $stmt->execute(array($story_text, $story_id));
-
+	return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
-
-
-if (!isset($_SERVER["REQUEST_METHOD"])) {
- print_r( getFacts("ALL"));
- }
-
-
 ?>
