@@ -1,0 +1,26 @@
+#cvsGraph{margin:0px;padding:0px;border:1px #000000 solid;}
+.btnDown{background:#CCCCCC;border-top:2px #AAAAAA solid;border-left:2px #AAAAAA solid;border-bottom:1px #666666 solid;border-right:1px #666666 solid;}
+.btnUp{background:#FFFFFF;border-top:1px #666666 solid;border-left:1px #666666 solid;border-bottom:2px #AAAAAA solid;border-right:2px #AAAAAA solid;}
+#editorBorder{margin-top:5px;margin-left:auto;margin-right:auto;width:700px; min-height:300px; background-color:#FFFFFF; border: 1px #000000 solid;}
+#editorBox{margin:0px;padding:0px;width:100%px;height:100%;background-color:#FFFFFF; border: 1px #CCCCCC solid;}
+#editorBack{display: none; position:absolute;left:0px;top:0px;width:0px;height:100%;width:100%;border:0px;margin:0px;padding:0px;background-color:rgba(0,0,0,0.1)}
+#editorTitle{padding-left:5px;height:22px;background-color:#E0E0FF;border-bottom:2px #F3F3FF solid;}
+#hideBox{position:absolute;top:0px;left:0px;width:1px;height:1px;display:none;overflow:hidden;}
+.toolbar{position:relative; border:1px rgba(0,0,0,0.3) solid;margin:0px;padding:0px;width:1000px;height:26px;text-align:right;font-size:14px;}
+.statusBox{ position:absolute; top: 5px; left:5px; }
+.tb2{position:absolute;top:3px;right:340px;width:100px;}
+.tb3{position:absolute;top:3px;right:5px;}
+.rightCheck{ text-align:left;}
+.rightLabel{ width:240px;text-align:right;border:1px #E5E5E5 solid; }
+.rlHover{ border:1px #777777 solid; }
+.toolBtn{display:inline-block;width:26px;height:26px;}
+.toolBtn:hover{cursor:pointer}
+.imgMove{background-image:url("images/cursorMove.png");}
+.imgBox{background-image:url("images/cursorBox.png");}
+.imgLine{background-image:url("images/cursorLine.png");}
+.imgFact{background-image:url("images/cursorFact.png");}
+.imgEraser{background-image:url("images/cursorEraser.png");}
+.imgPreview{background-image:url("images/cursorPreview.png");}
+.label{font-weight:bold;font-size:12px;}
+.editContentBox{padding:0px;}
+.editContentDiv{padding:2px;padding-left:5px;margin:2px;border:1px solid rgba(0,0,0,0.1);}
