@@ -1,4 +1,17 @@
 <?PHP
+class choiceDisplay {
+	var $ID = 0;
+	var $Text = '';
+	var $Data = 0;
+	var $Fact = '';
+	
+	public function getButton() {
+		$newButton = '<button id="choice' . $this->ID . '" class="choiceBtn choice" data-url="' . $this->Data 
+					 . '" data-choice="' . $this->ID . '">' . $this->Text . '</button>';
+		return $newButton;
+	}
+}
+
 //** Only load a page if one does not exist already
 //if (!isset($story_boxes)){
 	$pagePrefix = "editor/";
@@ -31,53 +44,15 @@
 //}
 
 //** Handle Choice vars
-$c1Vis = 'inline-block';
-$c1Text = '';
-$c1Data = 0;
-$c1Fact = '';
-
-$c2Vis = 'inline-block';
-$c2Text = '';
-$c2Data = 0;
-$c2Fact = '';
-
-$c3Vis = 'inline-block';
-$c3Text = '';
-$c3Data = 0;
-$c3Fact = '';
-
-$c4Vis = 'inline-block';
-$c4Text = '';
-$c4Data = 0;
-$c4Fact = '';
-
-if (count($story_choices) < 4){
-	$c4Vis = 'none';
-} else {
-	$c4Text = $story_choices[3]->Choice;
-	$c4Data = $story_choices[3]->Box2;
-	$c4Fact = $story_choices[3]->Fact;
-}
-if (count($story_choices) < 3){
-	$c3Vis = 'none';
-} else {
-	$c3Text = $story_choices[2]->Choice;
-	$c3Data = $story_choices[2]->Box2;
-	$c3Fact = $story_choices[2]->Fact;
-}
-if (count($story_choices) < 2){
-	$c2Vis = 'none';
-} else {
-	$c2Text = $story_choices[1]->Choice;
-	$c2Data = $story_choices[1]->Box2;
-	$c2Fact = $story_choices[1]->Fact;
-}
-if (count($story_choices) < 1){
-	$c1Vis = 'none';
-} else {
-	$c1Text = $story_choices[0]->Choice;
-	$c1Data = $story_choices[0]->Box2;
-	$c1Fact = $story_choices[0]->Fact;
+$choices = array();
+$choiceCount = count($story_choices);
+for ($i=0; $i<$choiceCount; $i++){
+	$newChoice = new choiceDisplay();
+	$newChoice->ID = $i;
+	$newChoice->Text = $story_choices[$i]->Choice;
+	$newChoice->Data = $story_choices[$i]->Box2;
+	$newChoice->Fact = $story_choices[$i]->Fact;
+	array_push($choices, $newChoice);
 }
 
 //** Output Page
@@ -90,10 +65,18 @@ echo '<html>
 	<script language="javascript" type="text/javascript" src="editor/js/base_classes.js"></script>
 	<script language="javascript" type="text/javascript" src="editor/js/story.js"></script>
 	<script type="text/javascript">
-		var choice1_Fact = "' .urldecode($c1Fact). '";
-		var choice2_Fact = "' .urldecode($c2Fact). '";
-		var choice3_Fact = "' .urldecode($c3Fact). '";
-		var choice4_Fact = "' .urldecode($c4Fact). '";
+		var choice_Facts = [';
+		
+//** Add facts as a js array(temporary non-ajax method)
+for ($i=0; $i<$choiceCount; $i++){
+	echo '"' . urldecode($choices[$i]->Fact) . '"';
+	if ($i<$choiceCount-1){
+		echo ',';
+	}
+}
+
+//** Coninue page output
+echo '];
 	</script>
 	<link rel="stylesheet" href="editor/css/story.css" />
 	<link rel="stylesheet" href="editor/css/storybg.css" />
@@ -114,18 +97,18 @@ if (count($story_boxes) > 0){
 	
 	<hr class="hr2"></hr>
 	
-	<div class="choiceBox">
-		<button id="choice1" style=\'display:'.$c1Vis.'\' class="choiceBtn choice" data-url="'.$c1Data.'" data-choice="1">'.$c1Text.'</button>
-		<div id="vr2" style=\'display:'.$c2Vis.'\' class="vr"></div>
-		
-		<button id="choice2" style=\'display:'.$c2Vis.'\' class="choiceBtn choice" data-url="'.$c2Data.'" data-choice="2">'.$c2Text.'</button>
-		<div id="vr3" style=\'display:'.$c3Vis.'\' class="vr"></div>
-		
-		<button id="choice3" style=\'display:'.$c3Vis.'\' class="choiceBtn choice" data-url="'.$c3Data.'" data-choice="3">'.$c3Text.'</button>
-		<div id="vr4" style=\'display:'.$c4Vis.'\' class="vr"></div>
-		
-		<button id="choice4" style=\'display:'.$c4Vis.'\' class="choiceBtn choice" data-url="'.$c4Data.'" data-choice="4">'.$c4Text.'</button>
-	</div>';
+	<div class="choiceBox">';
+	
+	//** Add choice buttons
+	for ($i=0; $i<$choiceCount; $i++){
+		echo $choices[$i]->getButton();
+		if ($i<$choiceCount-1){
+			//** Add vertical divider
+			echo '<div id="vr_'.$i.'" class="vr"></div>';
+		}
+	}
+	
+	echo '</div>';
 } else {
 	echo 'No stories are enabled.';
 }

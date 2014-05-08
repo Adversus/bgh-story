@@ -76,8 +76,10 @@ max-width:500px;
 	vertical-align:top;
 	display:inline-block;
 	width:2px;
-	height:80px;
-	background-color:rgba(0,0,0,0.3);
+	height:75px;
+	background-color:rgba(0,0,0,0.05);
+	margin-left:2px;
+	margin-right:2px;
 }
 
 /* Spinner that shows during load */
