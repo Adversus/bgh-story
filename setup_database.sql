@@ -1,7 +1,6 @@
 CREATE TABLE IF NOT EXISTS  `BGHinteractive`.`stories` (
 `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
 `story_name` VARCHAR( 100 ) NOT NULL COMMENT  'Text string for a story name',
-`start_id` INT NOT NULL COMMENT  'foreign_key',
 `is_public` BOOLEAN NOT NULL COMMENT  'enable/disable playing this story'
 ) ENGINE = MYISAM ;
 
@@ -11,7 +10,9 @@ CREATE TABLE IF NOT EXISTS `BGHinteractive`.`boxes` (
 `title` VARCHAR( 30 ) NOT NULL COMMENT  'Text string for a box title',
 `text` VARCHAR( 1024 ) NOT NULL COMMENT  'Text string for any given text',
 `x` INT NOT NULL COMMENT  'horizontal position on the graph',
-`y` INT NOT NULL COMMENT  'vertical position on the graph'
+`y` INT NOT NULL COMMENT  'vertical position on the graph',
+`grad_primary` VARCHAR( 7 ) NULL COMMENT  'Hex color code for the gradient bg',
+`grad_secondary` VARCHAR( 7 ) NULL COMMENT  'Hex color code for the gradient bg'
 ) ENGINE = MYISAM ;
 
 CREATE TABLE IF NOT EXISTS `BGHinteractive`.`choices` (
