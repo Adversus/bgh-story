@@ -52,51 +52,23 @@ class box {
 		$this->y = $row['y'];
 	}
 	public function serialize(){
-		$str = "{B,";
-		$str .= $this->ID . ",";
-		$str .= addStorySlashes($this->Title) . ",";
-		$str .= addStorySlashes($this->Text) . ",";
-		$str .= $this->x . ",";
-		$str .= $this->y;
-		$str .= "}";
-		return $str;
+		return json_encode($this->toCompact());
 	}
 	public function deserialize($str){
-		$readState = 0;
-		$readValue = "";
-		$ln = strlen($str);
+		$readObj = new stdClass();
 		
-		for ($c=0; $c<$ln; $c++){
-			if ($readState == 0){
-				if ($c+2>=$ln){
-					break; //** Not large enough to read
-				}
-				if ($str[$c] == "{" && $str[$c+1] == "B" && $str[$c+2] == ","){
-					$c+=2; //** Advance 2 + 1 from for loop
-					$readState++;
-					continue;
-				}
-			} else {
-				if ($str[$c] == "," && $str[$c-1] != "\\"){
-					if ($readState == 1){
-						$this->ID = intval($readValue);
-					} else if ($readState == 2){
-						$this->Title = dropStorySlashes($readValue);
-					} else if ($readState == 3){
-						$this->Text = dropStorySlashes($readValue);
-					} else if ($readState == 4){
-						$this->x = intval($readValue);
-					}
-					$readValue = "";
-					$readState++;
-				} else if ($readState == 5 && $str[$c] == "}" && $str[$c-1] != "\\"){
-					$this->y = intval($readValue);
-					break;
-				} else {
-					$readValue .= $str[$c];
-				}
-			}
+		//** Handle strings and already decoded strings
+		if (is_str($str)){
+			$readObj = json_decode($str);
+		} else {
+			$readObj = $str;
 		}
+		
+		$this->ID = $obj->a;
+		$this->Title = $obj->b;
+		$this->Text = $obj->c;
+		$this->x = $obj->x;
+		$this->y = $obj->y;
 	}
 	public function saveToDB(){
 		global $db, $story_choices;
@@ -129,6 +101,18 @@ class box {
 			$stmt->execute(array($this->Title, $this->Text, $this->x, $this->y, $this->ID));
 		}
 	}
+	
+	public function toCompact(){
+		/* Convert this object into a compact one containing only the important vars */
+		$obj = new stdClass();
+		$obj->type = "B";
+		$obj->a = $this->ID;
+		$obj->b = $this->Title;
+		$obj->c = $this->Text;
+		$obj->x = $this->x;
+		$obj->y = $this->y;
+		return $obj;
+	}
 }
 
 class choice {
@@ -152,51 +136,24 @@ class choice {
 		$this->Box2 = $row['box2_id'];
 	}
 	public function serialize(){
-		$str = "{L,";
-		$str .= $this->ID . ",";
-		$str .= addStorySlashes($this->Choice) . ",";
-		$str .= addStorySlashes($this->Fact) . ",";
-		$str .= $this->Box1 . ",";
-		$str .= $this->Box2;
-		$str .= "}";
-		return $str;
+		//** Return the object as a string
+		return json_encode($this->toCompact());
 	}
 	public function deserialize($str){
-		$readState = 0;
-		$readValue = "";
-		$ln = strlen($str);
+		$readObj = new stdClass();
 		
-		for ($c=0; $c<$ln; $c++){
-			if ($readState == 0){
-				if ($c+2>=$ln){
-					break; //** Not large enough to read
-				}
-				if ($str[$c] == "{" && $str[$c+1] == "L" && $str[$c+2] == ","){
-					$c+=2; //** Advance 2 + 1 from for loop
-					$readState++;
-					continue;
-				}
-			} else {
-				if ($str[$c] == "," && $str[$c-1] != "\\"){
-					if ($readState == 1){
-						$this->ID = intval($readValue);
-					} else if ($readState == 2){
-						$this->Choice = dropStorySlashes($readValue);
-					} else if ($readState == 3){
-						$this->Fact = dropStorySlashes($readValue);
-					} else if ($readState == 4){
-						$this->Box1 = intval($readValue);
-					}
-					$readValue = "";
-					$readState++;
-				} else if ($readState == 5 && $str[$c] == "}" && $str[$c-1] != "\\"){
-					$this->Box2 = intval($readValue);
-					break;
-				} else {
-					$readValue .= $str[$c];
-				}
-			}
+		//** Handle strings and already decoded strings
+		if (is_str($str)){
+			$readObj = json_decode($str);
+		} else {
+			$readObj = $str;
 		}
+		
+		$this->ID = intval($obj->a);
+		$this->Choice = $obj->b;
+		$this->Fact = $obj->c;
+		$this->Box1 = intval($obj->b1);
+		$this->Box2 = intval($obj->b2);
 	}
 	public function saveToDB(){
 		global $db;
@@ -218,6 +175,18 @@ class choice {
 			$stmt = $db->prepare("UPDATE choices SET choice = ?, fact=?, box1_id=?, box2_id=? WHERE id=?");
 			$stmt->execute(array($this->Choice, $this->Fact, $this->Box1, $this->Box2, $this->ID));
 		}
+	}
+	
+	public function toCompact(){
+		/* Convert this object into a compact one containing only the important vars */
+		$obj = new stdClass();
+		$obj->type = "L";
+		$obj->a = $this->ID;
+		$obj->b = $this->Choice;
+		$obj->c = $this->Fact;
+		$obj->b1 = $this->Box1;
+		$obj->b2 = $this->Box2;
+		return $obj;
 	}
 }
 
@@ -278,7 +247,7 @@ function saveStory(){
 	if ($story_id < 0){
 		//** Create new story in db
 		$stmt = $db->prepare("INSERT INTO stories (story_name, is_public) VALUES (?, ?)");
-		$result = $stmt->execute(array(addStorySlashes($story_name), $story_public));
+		$result = $stmt->execute(array($story_name, $story_public));
 		$story_id = $db->lastInsertId();
 		
 		//** Update object story_ids
@@ -290,7 +259,7 @@ function saveStory(){
 		}
 	} else {
 		$stmt = $db->prepare("UPDATE stories SET story_name = ?, is_public = ? WHERE id = ?");
-		$stmt->execute(array(addStorySlashes($story_name), $story_public, $story_id));
+		$stmt->execute(array($story_name, $story_public, $story_id));
 	}
 	
 	foreach ($story_boxes as $obj){
@@ -443,44 +412,6 @@ function deleteChoiceList($str){
 	$stmt->execute($boxList);
 }
 
-function dropStorySlashes($str){
-	$ln = strlen($str);
-	$newString = "";
-	$hasSlashes = false;
-	
-	for ($ch=0; $ch<$ln; $ch++){
-		if ($str[$ch] == "\\"){
-			//** Found slash
-			if ($hasSlashes == true){
-				//** Second slash, add slash to string
-				$newString .= $str[$ch];
-				$hasSlashes = false;
-			} else {
-				//** Keep track of this slash
-				$hasSlashes = true;
-			}
-		} else {
-			//** Append character
-			$newString .= $str[$ch];
-			$hasSlashes = false;
-		}
-	}
-	return $newString;
-}
-
-function addStorySlashes($str){
-	$ln = strlen($str);
-	$newString = "";
-	
-	for ($ch=0; $ch<$ln; $ch++){
-		if ($str[$ch] == "{" || $str[$ch] == "}" || $str[$ch] == "," || $str[$ch] == "\\"){
-			$newString .= "\\";
-		}
-		$newString .= $str[$ch];
-	}
-	return $newString;
-}
-
 function parseInput($input){
 	global $story_id;
 	global $story_name;
@@ -502,70 +433,25 @@ function parseInput($input){
 	$story_public = 0;
 	$story_boxes = array();
 	$story_choices = array();
-	for ($c=0; $c<$ln; $c++){
-		//** Get graph ID & Name
-		if ($readState == 0){
-			if ($input[$c] == "," && (($c == 0) || ($input[$c-1] != "\\"))){
-				$readState++;
-				$story_id = intval($readObj);
-				$readObj = "";
-			} else {
-				$readObj .= $input[$c];
-				continue;
-			}
-		} else if ($readState == 1){
-			if ($input[$c] == "," && (($c == 0) || ($input[$c-1] != "\\"))){
-				$readState++;
-				$story_name = $readObj;
-				$readObj = "";
-			} else {
-				$readObj .= $input[$c];
-				continue;
-			}
-		} else if ($readState == 2){
-			if ($input[$c] == "{" && ($input[$c-1] != "\\")){
-				$readState++;
-				$story_public = intval($readObj);
-				$readObj = "";
-				//** This state doesn't advance so the object can be started in the same loop
-			} else {
-				$readObj .= $input[$c];
-				continue;
-			}
-		}
-		
-		//** Get Objects
-		if ($readState == 3){
-			if ($input[$c] == "{" && ($input[$c-1] != "\\")){
-				$readState++;
-				$readObj = $input[$c];
-			}
-		} else if ($readState == 4){
-			$readObj .= $input[$c];
-			if ($input[$c] == "}"){
-				if ($c > 0 && ($input[$c-1] != "\\")){
-					//** End of object
-					if ($readObj[1] == "B"){
-						$newBox = new box;
-						$newBox->deserialize($readObj);
-						$newBox->StoryID = $story_id;
-						array_push($story_boxes, $newBox);
-					} else if ($readObj[1] == "L"){
-						$newLine = new choice;
-						$newLine->deserialize($readObj);
-						$newLine->StoryID = $story_id;
-						array_push($story_choices, $newLine);
-					} else if ($readObj[1] == "Y"){
-						//** Delete boxes
-						//deleteBoxList($readObj);
-					} else if ($readObj[1] == "Z"){
-						//** Delete choices
-						//deleteChoiceList($readObj);
-					}
-					$readState--;
-					$readObj = "";
-				}
-			}
+	
+	//** Decode the input into and set relevent vars
+	$graph = json_decode($input);
+	$story_id = intval($graph->id);
+	$story_name = $graph->name;
+	$story_public = intval($graph->pub);
+	
+	//** Convert graph objects into boxes and lines
+	for ($o = sizeof($graph["objs"])-1; $o>-1; $o--) {
+		if ($graph["objs"][$o]->type == "B"){
+			$newBox = new box;
+			$newBox->deserialize($graph["objs"][$o]);
+			$newBox->StoryID = $story_id;
+			array_push($story_boxes, $newBox);
+		} else if ($graph["objs"][$o]->type == "L"){
+			$newLine = new choice;
+			$newLine->deserialize($graph["objs"][$o]);
+			$newLine->StoryID = $story_id;
+			array_push($story_choices, $newLine);
 		}
 	}
 }
@@ -577,20 +463,25 @@ function sendGraphObjects(){
 	global $story_boxes;
 	global $story_choices;
 	
-	//** Send Story Data
-	print($story_id . ',');
-	print($story_name . ',');
-	print($story_public);
+	//** Create story object with relevent vars
+	$sendObj = new stdClass();
+	$sendObj->id = $story_id;
+	$sendObj->name = $story_name;
+	$sendObj->pub = $story_public;
+	$sendObj->objs = [];
 	
 	//** Send Boxes
 	foreach ($story_boxes as $obj){
-		print($obj->serialize());
+		array_push($sendObj->objs, $obj->toCompact());
 	}
 	
 	//** Send Choices
 	foreach ($story_choices as $obj){
-		print($obj->serialize());
+		array_push($sendObj->objs, $obj->toCompact());
 	}
+	
+	//** Send the graph object to the client
+	print(json_encode($sendObj));
 }
 
 function getStory($id){

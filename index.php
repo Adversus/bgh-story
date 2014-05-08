@@ -90,10 +90,10 @@ echo '<html>
 	<script language="javascript" type="text/javascript" src="editor/js/base_classes.js"></script>
 	<script language="javascript" type="text/javascript" src="editor/js/story.js"></script>
 	<script type="text/javascript">
-		var choice1_Fact = "' .addStorySlashes($c1Fact). '";
-		var choice2_Fact = "' .addStorySlashes($c2Fact). '";
-		var choice3_Fact = "' .addStorySlashes($c3Fact). '";
-		var choice4_Fact = "' .addStorySlashes($c4Fact). '";
+		var choice1_Fact = "' .urldecode($c1Fact). '";
+		var choice2_Fact = "' .urldecode($c2Fact). '";
+		var choice3_Fact = "' .urldecode($c3Fact). '";
+		var choice4_Fact = "' .urldecode($c4Fact). '";
 	</script>
 	<link rel="stylesheet" href="editor/css/story.css" />
 	<link rel="stylesheet" href="editor/css/storybg.css" />

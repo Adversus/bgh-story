@@ -15,10 +15,6 @@ window.mDownTime = 0;
 //**************************************************************//
 //		Classes
 //**************************************************************//
-window.story = {
-	prototype: window.story_base,
-	__proto__: window.story_base
-};
 window.editor = {
 	saveURL: '',
 	storyID: -1,
@@ -34,7 +30,8 @@ window.editor = {
 	hoverColor: "#FFFFFF",
 	mouseX: -1,
 	mouseY: -1,
-	startData: "-1,(New Graph),0{B,-1,Start,(Starting message),150,200}{B,-2,End,(Completion message),550,200}{L,-1,(new choice),,-1,-2}",
+	startData: '{"id":-1,"name":"New%20Story","pub":0,"objs":[{"type":"B","a":-2,"b":"End","c":"(Ending%20message)","x":700,"y":210},{"type":"B","a":-1,"b":"Start","c":"(Starting%20message)","x":300,"y":210},{"type":"L","a":-3,"b":"(new%20choice)","c":"","b1":-1,"b2":-2}]}',
+	
 	deserializeGraph: function(input){
 		var ln = input.length;
 		var boxList = [];
@@ -47,58 +44,18 @@ window.editor = {
 		//** Clear the graph
 		editor.clearGraph();
 		
-		//** Split full string into strings representing each object
-		for (var ch=0; ch<ln; ch++){
-			if (readState == 0){
-				if (input[ch] == "," && ((ch == 0) || (input[ch-1] != "\\"))){
-					readState++;
-					editor.storyID = parseInt(readObj);
-					readObj = '';
-				} else {
-					readObj += input[ch];
-				}
-			} else if (readState == 1){
-				if (input[ch] == "," && ((ch == 0) || (input[ch-1] != "\\"))){
-					readState++;
-					editor.storyName = readObj;
-					getElem('GraphName').value = editor.storyName;
-					readObj = '';
-				} else {
-					readObj += input[ch];
-				}
-			} else if (readState == 2){
-				if (input[ch] == "{" && ((ch == 0) || (input[ch-1] != "\\"))){
-					readState++;
-					editor.storyPublic = parseInt(readObj);
-					if (editor.storyPublic == 1){
-						$("#GraphPublic").prop('checked', true);
-					} else {
-						$("#GraphPublic").prop('checked', false);
-					}
-					readObj = '';
-				} else {
-					readObj += input[ch];
-				}
-			}
-			if (readState == 3){
-				if (input[ch] == "{" && ((ch == 0) || (input[ch-1] != "\\"))){
-					readState++;
-					readObj = input[ch];
-				}
-			} else if (readState == 4){
-				readObj += input[ch];
-				if (input[ch] == "}"){
-					if (ch > 0 && (input[ch-1] != "\\")){
-						//** End of object
-						if (readObj[1] == "B"){
-							boxList.push(readObj);
-						} else if (readObj[1] == "L"){
-							lineList.push(readObj);
-						}
-						readState--;
-						readObj = "";
-					}
-				}
+		//** Decode graph object and set basic vars
+		var newGraph = jQuery.parseJSON(input);
+		editor.storyID = parseInt(newGraph.id);
+		editor.storyName = decodeURIComponent(newGraph.name);
+		editor.storyPublic = parseInt(newGraph.pub);
+		
+		//** Sort each graph object into arrays of boxes and lines
+		for (var o=0; o<newGraph.objs.length; o++){
+			if (newGraph.objs[o].type == "B"){
+				boxList.push(newGraph.objs[o]);
+			} else if (newGraph.objs[o].type == "L"){
+				lineList.push(newGraph.objs[o]);
 			}
 		}
 		
@@ -120,27 +77,40 @@ window.editor = {
 			window.Lines.push(newLine.name);
 		}
 		
+		//** Update displays
+		getElem("GraphName").value = editor.storyName;
 		$('#cvsGraph').drawLayers();
 	},
+	
 	serializeGraph: function(){
 		var layers = $("#cvsGraph").getLayers();
+		var graphObjs = [];
 		
+		
+		//** Get public check value
 		if ($("#GraphPublic").prop('checked')){
 			editor.storyPublic = 1;
 		} else {
 			editor.storyPublic = 0;
 		}
 		
-		var str = "" + editor.storyID + "," + editor.storyName + "," + editor.storyPublic;
+		//** Create graph object to send
+		var graph = {
+			id: editor.storyID,
+			name: editor.storyName,
+			pub: editor.storyPublic,
+			objs: []
+		};
 		
 		//** Add all (important) objects to the string
 		for (var i=layers.length-1;i>-1;i--){
-			if (layers[i].serialize != undefined){
-				str += layers[i].serialize();
+			if (layers[i].toCompact != undefined){
+				graph.objs.push(layers[i].toCompact());
 			}
 		}
-		return str;
+		return JSON.stringify(graph);
 	},
+	
 	clearGraph: function(){
 		//** Clear lines
 		for (var l=0;l<Lines.length;l++){
@@ -1062,12 +1032,15 @@ $( document ).ready( function(){
 			  width: 'auto', resizable: false,
 			  buttons: {
 				  Yes: function () {
+					getElem("testDiv").innerHTML = editor.serializeGraph();
+					
 					  //** Send graph to server (save.php)
 					  $.ajax({ url: 'save.php',
 							 data: {graph: editor.serializeGraph},
 							 type: 'post',
+							 //dataType: 'json',
 							 success: function(responseText){
-								getElem("testDiv").innerHTML = responseText;
+								//getElem("testDiv").innerHTML = responseText;
 								editor.deserializeGraph(responseText);
 							 }
 					  });
@@ -1087,18 +1060,20 @@ $( document ).ready( function(){
 	$( "#graphLoad").click(function(){
 		$.ajax({ url: 'storylist.php',
 				 data: '',
+				 dataType: 'json',
 				 type: 'post',
-				 success: function(responseText){
+				 success: function(response){
 					//** Build and display load menu
-					var sList = parseStoryList(responseText);
 					var liStr = "<select id='openList' size='5' style='width:360px;'>";
 					
-					getElem("testDiv").innerHTML = responseText;
-					for (var i = 0; i < sList.length; i++) {
-						liStr += "<option value = " + sList[i].id + ">[" + sList[i].id + "] " + sList[i].name + "</option>";
+					getElem("testDiv").innerHTML = response;
+					//** Create the list options
+					for (var i = 0; i < response["lst"].length; i++) {
+						liStr += "<option value = " + response["lst"][i][0] + ">[" + response["lst"][i][0] + "] " + response["lst"][i][1] + "</option>";
 					}
 					liStr += "</select>";
 					
+					//** Display the load story menu
 					$('<div></div>').appendTo('body')
 					  .html('<div>' + liStr + '</div>')
 					  .dialog({
@@ -1112,6 +1087,7 @@ $( document ).ready( function(){
 									  $.ajax({ url: 'load.php',
 											 data: {id: gID},
 											 type: 'post',
+											 //dataType: 'json',
 											 success: function(responseText){
 												getElem("testDiv").innerHTML = responseText;
 												editor.deserializeGraph(responseText);
