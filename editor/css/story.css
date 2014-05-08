@@ -13,6 +13,7 @@ body, html {
 	background-repeat:repeat;
 	opacity:0.03;
 	filter:alpha(opacity=3); /* For IE8 and earlier */
+	z-index: -900;
 }
 .topButtons {
 	text-align:right;
