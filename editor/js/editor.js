@@ -1061,7 +1061,9 @@ $( document ).ready( function(){
 					
 					//** Create the list options
 					for (var i = 0; i < response["lst"].length; i++) {
-						liStr += "<option value = " + response["lst"][i][0] + ">[" + response["lst"][i][0] + "] " + response["lst"][i][1] + "</option>";
+						liStr += "<option value = " + response["lst"][i][0] + ">["
+						+ response["lst"][i][0] + "] "
+						+ decodeURIComponent(response["lst"][i][1]) + "</option>";
 					}
 					liStr += "</select>";
 					
