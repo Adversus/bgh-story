@@ -37,6 +37,8 @@ class box {
 	var $Text = "";
 	var $x = 0;
 	var $y = 0;
+	var $grad1 = "";
+	var $grad2 = "";
 	
 	public function __construct($str = "") {
 		/* Box class constructor */
@@ -51,6 +53,8 @@ class box {
 		$this->Text = $row['text'];
 		$this->x = $row['x'];
 		$this->y = $row['y'];
+		$this->grad1 = $row['grad_primary'];
+		$this->grad2 = $row['grad_secondary'];
 	}
 	public function serialize(){
 		/* Convert the box class vars into a single string and return it */
@@ -73,12 +77,16 @@ class box {
 			$this->Text = $readObj["c"];
 			$this->x = intval($readObj["x"]);
 			$this->y = intval($readObj["y"]);
+			$this->grad1 = $readObj["grad1"];
+			$this->grad2 = $readObj["grad2"];
 		} else {
 			$this->ID = intval($obj->a);
 			$this->Title = $obj->b;
 			$this->Text = $obj->c;
 			$this->x = intval($obj->x);
 			$this->y = intval($obj->y);
+			$this->grad1 = $obj->grad1;
+			$this->grad2 = $obj->grad2;
 		}
 	}
 	public function saveToDB(){
@@ -93,8 +101,8 @@ class box {
 		//** Add content to db
 		if (!$isValid){
 			//** Insert into db because it doesn't exist
-			$stmt = $db->prepare("INSERT INTO boxes ( story_id, title, text, x, y ) VALUES (?, ?, ?, ?, ?)");
-			$stmt->execute(array($this->StoryID, $this->Title, $this->Text, $this->x, $this->y));
+			$stmt = $db->prepare("INSERT INTO boxes ( story_id, title, text, x, y, grad_primary, grad_secondary ) VALUES (?, ?, ?, ?, ?, ?, ?)");
+			$stmt->execute(array($this->StoryID, $this->Title, $this->Text, $this->x, $this->y, $this->grad1, $this->grad2));
 			
 			$lastID = $this->ID;
 			$this->ID = $db->lastInsertId();
@@ -122,6 +130,8 @@ class box {
 		$obj->c = $this->Text;
 		$obj->x = $this->x;
 		$obj->y = $this->y;
+		$obj->grad1 = $this->grad1;
+		$obj->grad2 = $this->grad2;
 		return $obj;
 	}
 }

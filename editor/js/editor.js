@@ -30,7 +30,7 @@ window.editor = {
 	hoverColor: "#FFFFFF",
 	mouseX: -1,
 	mouseY: -1,
-	startData: '{"id":-1,"name":"New%20Story","pub":0,"objs":[{"type":"B","a":-2,"b":"End","c":"(Ending%20message)","x":700,"y":210},{"type":"B","a":-1,"b":"Start","c":"(Starting%20message)","x":300,"y":210},{"type":"L","a":-3,"b":"(new%20choice)","c":"","b1":-1,"b2":-2}]}',
+	startData: '{"id":-1,"name":"New%20Story","pub":0,"objs":[{"type":"B","a":-2,"b":"End","c":"(Ending%20message)","x":700,"y":210,"grad1":"#EEEEFF","grad2":"#00A3EF"},{"type":"B","a":-1,"b":"Start","c":"(Starting%20message)","x":300,"y":210,"grad1":"#EEEEFF","grad2":"#00A3EF"},{"type":"L","a":-3,"b":"(new%20choice)","c":"","b1":-1,"b2":-2}]}',
 	
 	deserializeGraph: function(input){
 		var ln = input.length;
@@ -1059,7 +1059,6 @@ $( document ).ready( function(){
 					//** Build and display load menu
 					var liStr = "<select id='openList' size='5' style='width:360px;'>";
 					
-					getElem("testDiv").innerHTML = response;
 					//** Create the list options
 					for (var i = 0; i < response["lst"].length; i++) {
 						liStr += "<option value = " + response["lst"][i][0] + ">[" + response["lst"][i][0] + "] " + response["lst"][i][1] + "</option>";

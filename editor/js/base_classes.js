@@ -30,6 +30,8 @@ window.box_proto_base = {
 		this.contentText = decodeURIComponent(readObj.c);
 		this.x = parseInt(readObj.x);
 		this.y = parseInt(readObj.y);
+		this.grad1 = readObj.grad1;
+		this.grad2 = readObj.grad2;
 		
 		//** Update Label (if one is attached)
 		if (this.textLabel != ""){
@@ -64,7 +66,9 @@ window.box_proto_base = {
 			b: encodeURIComponent(this.title),
 			c: encodeURIComponent(this.contentText),
 			x: this.x,
-			y: this.y
+			y: this.y,
+			grad1: this.grad1,
+			grad2: this.grad2
 		};
 	}
 }
