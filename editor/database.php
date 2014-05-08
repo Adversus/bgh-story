@@ -39,6 +39,7 @@ class box {
 	var $y = 0;
 	
 	public function __construct($str = "") {
+		/* Box class constructor */
 		if ($str != ""){
 			$this->deserialize($str);
 		}
@@ -52,23 +53,33 @@ class box {
 		$this->y = $row['y'];
 	}
 	public function serialize(){
+		/* Convert the box class vars into a single string and return it */
 		return json_encode($this->toCompact());
 	}
 	public function deserialize($str){
 		$readObj = new stdClass();
 		
 		//** Handle strings and already decoded strings
-		if (is_str($str)){
+		if (is_string($str)){
 			$readObj = json_decode($str);
 		} else {
 			$readObj = $str;
 		}
 		
-		$this->ID = $obj->a;
-		$this->Title = $obj->b;
-		$this->Text = $obj->c;
-		$this->x = $obj->x;
-		$this->y = $obj->y;
+		//** Get vars from the array or object
+		if (is_array($readObj)){
+			$this->ID = intval($readObj["a"]);
+			$this->Title = $readObj["b"];
+			$this->Text = $readObj["c"];
+			$this->x = intval($readObj["x"]);
+			$this->y = intval($readObj["y"]);
+		} else {
+			$this->ID = intval($obj->a);
+			$this->Title = $obj->b;
+			$this->Text = $obj->c;
+			$this->x = intval($obj->x);
+			$this->y = intval($obj->y);
+		}
 	}
 	public function saveToDB(){
 		global $db, $story_choices;
@@ -136,24 +147,33 @@ class choice {
 		$this->Box2 = $row['box2_id'];
 	}
 	public function serialize(){
-		//** Return the object as a string
+		/* Convert the choice class vars into a single string and return it */
 		return json_encode($this->toCompact());
 	}
 	public function deserialize($str){
 		$readObj = new stdClass();
 		
 		//** Handle strings and already decoded strings
-		if (is_str($str)){
+		if (is_string($str)){
 			$readObj = json_decode($str);
 		} else {
 			$readObj = $str;
 		}
 		
-		$this->ID = intval($obj->a);
-		$this->Choice = $obj->b;
-		$this->Fact = $obj->c;
-		$this->Box1 = intval($obj->b1);
-		$this->Box2 = intval($obj->b2);
+		//** Get vars from the array or object
+		if (is_array($readObj)){
+			$this->ID = intval($readObj["a"]);
+			$this->Choice = $readObj["b"];
+			$this->Fact = $readObj["c"];
+			$this->Box1 = intval($readObj["b1"]);
+			$this->Box2 = intval($readObj["b2"]);
+		} else {
+			$this->ID = intval($readObj->a);
+			$this->Choice = $readObj->b;
+			$this->Fact = $readObj->c;
+			$this->Box1 = intval($readObj->b1);
+			$this->Box2 = intval($readObj->b2);
+		}
 	}
 	public function saveToDB(){
 		global $db;
@@ -340,78 +360,6 @@ function isValidElement($id, $table) { //** Adapted from isValidStory (database.
   return $results;
 }
 
-function deleteBoxList($str){
-	$readState = 0;
-	$readValue = "";
-	$ln = strlen($str);
-	$boxList = array();
-	
-	//** Parse string object
-	for ($c=0; $c<$ln; $c++){
-		if ($readState == 0){
-			if ($c+2>=$ln){
-				break; //** Not large enough to read
-			}
-			if ($str[$c] == "{" && $str[$c+1] == "A" && $str[$c+2] == ","){
-				$c+=2; //** Advance 2 + 1 from for loop
-				$readState++;
-				continue;
-			}
-		} else {
-			if ($str[$c] == "," && $str[$c-1] != "\\"){
-				array_push($boxList, intval($readValue));
-				$readValue = "";
-			} else if ($str[$c] == "}" && $str[$c-1] != "\\"){
-				break;
-			} else {
-				$readValue .= $str[$c];
-			}
-		}
-	}
-	
-	//** Delete objects in list
-	$vals = implode(',', array_fill(0, count($boxList), '?')); //** Borrowed form stack overflow
-	$stmt = $db->prepare("DELETE FROM boxes WHERE id IN ( " . $vals . " )");
-	$stmt->execute($boxList);
-}
-
-function deleteChoiceList($str){
-	$readState = 0;
-	$readValue = "";
-	$ln = strlen($str);
-	$choiceList = array();
-	
-	//** Parse string object
-	for ($c=0; $c<$ln; $c++){
-		if ($readState == 0){
-			if ($c+2>=$ln){
-				break; //** Not large enough to read
-			}
-			if ($str[$c] == "{" && $str[$c+1] == "B" && $str[$c+2] == ","){
-				$c+=2; //** Advance 2 + 1 from for loop
-				$readState++;
-				continue;
-			}
-		} else {
-			if ($str[$c] == "," && $str[$c-1] != "\\"){
-				array_push($choiceList, intval($readValue));
-				$readValue = "";
-			} else if ($str[$c] == "}" && $str[$c-1] != "\\"){
-				break;
-			} else {
-				$readValue .= $str[$c];
-			}
-		}
-	}
-	
-	if (count($choiceList) < 1){return;}
-	
-	//** Delete objects in list
-	$vals = implode(',', array_fill(0, count($choiceList), '?')); //** Borrowed form stack overflow
-	$stmt = $db->prepare("DELETE FROM choices WHERE id IN ( " . $vals . " )");
-	$stmt->execute($boxList);
-}
-
 function parseInput($input){
 	global $story_id;
 	global $story_name;
@@ -435,19 +383,19 @@ function parseInput($input){
 	$story_choices = array();
 	
 	//** Decode the input into and set relevent vars
-	$graph = json_decode($input);
-	$story_id = intval($graph->id);
-	$story_name = $graph->name;
-	$story_public = intval($graph->pub);
+	$graph = json_decode($input, true);
+	$story_id = intval($graph["id"]);
+	$story_name = $graph["name"];
+	$story_public = intval($graph["pub"]);
 	
 	//** Convert graph objects into boxes and lines
 	for ($o = sizeof($graph["objs"])-1; $o>-1; $o--) {
-		if ($graph["objs"][$o]->type == "B"){
+		if ($graph["objs"][$o]["type"] == "B"){
 			$newBox = new box;
 			$newBox->deserialize($graph["objs"][$o]);
 			$newBox->StoryID = $story_id;
 			array_push($story_boxes, $newBox);
-		} else if ($graph["objs"][$o]->type == "L"){
+		} else if ($graph["objs"][$o]["type"] == "L"){
 			$newLine = new choice;
 			$newLine->deserialize($graph["objs"][$o]);
 			$newLine->StoryID = $story_id;

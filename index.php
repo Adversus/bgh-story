@@ -49,9 +49,9 @@ $choiceCount = count($story_choices);
 for ($i=0; $i<$choiceCount; $i++){
 	$newChoice = new choiceDisplay();
 	$newChoice->ID = $i;
-	$newChoice->Text = $story_choices[$i]->Choice;
-	$newChoice->Data = $story_choices[$i]->Box2;
-	$newChoice->Fact = $story_choices[$i]->Fact;
+	$newChoice->Text = urldecode($story_choices[$i]->Choice);
+	$newChoice->Data = intval($story_choices[$i]->Box2);
+	$newChoice->Fact = urldecode($story_choices[$i]->Fact);
 	array_push($choices, $newChoice);
 }
 
@@ -92,7 +92,7 @@ echo '];
 	
 if (count($story_boxes) > 0){
 	echo '<div id="storyBox" class="text" >
-	<p id="storyText">' . $story_boxes[0]->Text . '</p>
+	<p id="storyText">' . urldecode($story_boxes[0]->Text) . '</p>
 	</div>
 	
 	<hr class="hr2"></hr>

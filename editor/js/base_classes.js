@@ -11,7 +11,6 @@ window.box_proto_base = {
 	
 	serialize: function(){
 		/* Convert the box class vars into a single string and return it */
-		
 		return JSON.stringify(this.toCompact());
 	},
 	

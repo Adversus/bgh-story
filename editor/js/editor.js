@@ -131,12 +131,6 @@ window.editor = {
 		window.Labels = [];
 		
 		$('#cvsGraph').drawLayers();
-	},
-	sendSave: function(){
-		var saveString = "" + this.storyID + "," + this.storyName + this.serializeGraph;
-		/*$.post( "ajax/test.html", function( data ) {
-		  $( ".result" ).html( data );
-		});*/
 	}
 };
 
@@ -1038,9 +1032,8 @@ $( document ).ready( function(){
 					  $.ajax({ url: 'save.php',
 							 data: {graph: editor.serializeGraph},
 							 type: 'post',
-							 //dataType: 'json',
 							 success: function(responseText){
-								//getElem("testDiv").innerHTML = responseText;
+								getElem("testDiv").innerHTML += "<br><br>" + responseText;
 								editor.deserializeGraph(responseText);
 							 }
 					  });
@@ -1087,7 +1080,6 @@ $( document ).ready( function(){
 									  $.ajax({ url: 'load.php',
 											 data: {id: gID},
 											 type: 'post',
-											 //dataType: 'json',
 											 success: function(responseText){
 												getElem("testDiv").innerHTML = responseText;
 												editor.deserializeGraph(responseText);
