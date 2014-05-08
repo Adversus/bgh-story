@@ -97,7 +97,7 @@ window.editor = {
 		//** Create graph object to send
 		var graph = {
 			id: editor.storyID,
-			name: editor.storyName,
+			name: encodeURIComponent(editor.storyName),
 			pub: editor.storyPublic,
 			objs: []
 		};
