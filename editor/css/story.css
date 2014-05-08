@@ -3,6 +3,17 @@ body, html {
 	overflow-y:hidden;
 	overflow:hidden;
 }
+.bgOverlay {
+	position:fixed;
+	left: 0px;
+	right: 0px;
+	top: 0px;
+	bottom: 0px;
+	background-image:url("images/bg1.png");
+	background-repeat:repeat;
+	opacity:0.03;
+	filter:alpha(opacity=3); /* For IE8 and earlier */
+}
 .topButtons {
 	text-align:right;
 }

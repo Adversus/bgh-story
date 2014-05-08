@@ -82,6 +82,8 @@ echo '];
 	<link rel="stylesheet" href="editor/css/storybg.css" />
 	</head>
 	<body class="storybg_blue">
+	<div class="bgOverlay">
+	</div>
 	<div class="topButtons">
 		<button class="tbBtn">Get Help</button>
 		<button class="tbBtn">About Us</button>
