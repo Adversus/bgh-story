@@ -58,9 +58,41 @@ for ($i=0; $i<$choiceCount; $i++){
 //** Output Page
 echo '<html>
 	<head>
-	<title>BGH Example</title>
+	<title>BGH Example</title>';
 	
-	<script language="javascript" type="text/javascript" src="editor/js/jquery-1.9.1.min.js"></script>
+//** Output background
+if (count($story_boxes) > 0){
+	echo '<style rel="stylesheet" type="text/css">
+		.storybg_box{
+		background: '.$story_boxes[0]->grad2.' no-repeat center center fixed; 
+		-webkit-background-size: cover;
+		-moz-background-size: cover;
+		-o-background-size: cover;
+		background-size: cover;
+
+		/* IE10 Consumer Preview */ 
+		background-image: -ms-radial-gradient(center, circle farthest-corner, '.$story_boxes[0]->grad1.' 0%, '.$story_boxes[0]->grad2.' 100%);
+
+		/* Mozilla Firefox */ 
+		background-image: -moz-radial-gradient(center, circle farthest-corner, '.$story_boxes[0]->grad1.' 0%, '.$story_boxes[0]->grad2.' 100%);
+
+		/* Opera */ 
+		background-image: -o-radial-gradient(center, circle farthest-corner, '.$story_boxes[0]->grad1.' 0%, '.$story_boxes[0]->grad2.' 100%);
+
+		/* Webkit (Safari/Chrome 10) */ 
+		background-image: -webkit-gradient(radial, center center, 0, center center, 506, color-stop(0, '.$story_boxes[0]->grad1.'), color-stop(1, '.$story_boxes[0]->grad2.'));
+
+		/* Webkit (Chrome 11+) */ 
+		background-image: -webkit-radial-gradient(center, circle farthest-corner, '.$story_boxes[0]->grad1.' 0%, '.$story_boxes[0]->grad2.' 100%);
+
+		/* W3C Markup, IE10 Release Preview */ 
+		background-image: radial-gradient(circle farthest-corner at center, '.$story_boxes[0]->grad1.' 0%, '.$story_boxes[0]->grad2.' 100%);
+		}
+	</style>';
+}
+
+//** Output scripts
+echo '<script language="javascript" type="text/javascript" src="editor/js/jquery-1.9.1.min.js"></script>
 	<script language="javascript" type="text/javascript" src="editor/js/jquery-ui-1.10.4.min.js"></script>
 	<script language="javascript" type="text/javascript" src="editor/js/base_classes.js"></script>
 	<script language="javascript" type="text/javascript" src="editor/js/story.js"></script>
@@ -81,7 +113,7 @@ echo '];
 	<link rel="stylesheet" href="editor/css/story.css" />
 	<link rel="stylesheet" href="editor/css/storybg.css" />
 	</head>
-	<body class="storybg_blue">
+	<body class="storybg_box">
 	<div class="bgOverlay">
 	</div>
 	<div class="topButtons">
