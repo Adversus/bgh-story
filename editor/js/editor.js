@@ -883,44 +883,6 @@ window.getBoxById = function(id){
 	}
 	return undefined;
 }
-window.parseStoryList = function(str){
-	var storyList = [];
-	var tmp_id = 0;
-	var tmp_name = '';
-	var ln = str.length;
-	var readState = 0;
-	var readValue = "";
-	
-	for (var ch=0; ch<ln; ch++){
-		if (readState == 0){
-			if (ch+2 >= ln){
-				break; //** Not large enough to read
-			}
-			if (str[ch] == "{"){
-				readState++;
-				continue;
-			}
-		} else {
-			if (str[ch] == "," && str[ch-1] != "\\"){
-				if (readState == 1){
-					tmp_id = parseInt(readValue);
-				}
-				readValue = "";
-				readState++;
-			} else if (readState == 2 && str[ch] == "}" && str[ch-1] != "\\"){
-				tmp_name = readValue;
-				//** Add object to array
-				storyList.push({id: tmp_id, name: tmp_name});
-				readValue = "";
-				readState = 0;
-			} else {
-				readValue += str[ch];
-			}
-		}
-	}
-	
-	return storyList;
-};
 window.updateColorPreview = function(id, clr1, clr2){
 	$(id).css({background: '#FFFFFF'})
 	/* IE10 Consumer Preview */ 
