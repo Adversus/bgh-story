@@ -116,8 +116,8 @@ class box {
 			}
 		} else {
 			//** Update preexisting database entry
-			$stmt = $db->prepare("UPDATE boxes SET title = ?, text=?, x=?, y=? WHERE id=?");
-			$stmt->execute(array($this->Title, $this->Text, $this->x, $this->y, $this->ID));
+			$stmt = $db->prepare("UPDATE boxes SET title = ?, text=?, x=?, y=?, grad_primary=?, grad_secondary=? WHERE id=?");
+			$stmt->execute(array($this->Title, $this->Text, $this->x, $this->y, $this->grad1, $this->grad2, $this->ID));
 		}
 	}
 	
