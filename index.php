@@ -101,7 +101,7 @@ echo '<script language="javascript" type="text/javascript" src="editor/js/jquery
 		
 //** Add facts as a js array(temporary non-ajax method)
 for ($i=0; $i<$choiceCount; $i++){
-	echo '"' . urldecode($choices[$i]->Fact) . '"';
+	echo '\'' . addslashes(urldecode($choices[$i]->Fact)) . '\'';
 	if ($i<$choiceCount-1){
 		echo ',';
 	}
