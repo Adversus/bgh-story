@@ -77,6 +77,13 @@ window.editor = {
 			window.Lines.push(newLine.name);
 		}
 		
+		//** Set public check value
+		if (editor.storyPublic == 1){
+			$("#GraphPublic").prop('checked', true);
+		} else {
+			$("#GraphPublic").prop('checked', false);
+		}
+		
 		//** Update displays
 		getElem("GraphName").value = editor.storyName;
 		$('#cvsGraph').drawLayers();
