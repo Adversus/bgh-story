@@ -757,10 +757,10 @@ window.showPopMenu = function(title, name, contentDiv, func){
 	  mode : "textareas",
 	  theme : "modern",
 	  plugins: [
-		"link image"
+		"link image textcolor"
 	  ],
 	  menubar: "false",
-	  toolbar1: "bold italic underline link image undo redo",
+	  toolbar1: "bold italic underline | link image | forecolor backcolor | undo redo",
 	  content_css : "tiny_mce_content.css",
 	  forced_root_block : false,
 	  force_br_newlines : true,
