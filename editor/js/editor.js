@@ -990,6 +990,12 @@ $( document ).ready( function(){
 			editor.dat2 = ""
 			$("#cvsGraph").drawLayers();
 		}
+		
+		//** Toggle editor output
+		var kCode = e.keyCode || e.which;
+		if (kCode == 192 || kCode == 223){
+			$("#testDiv").toggle();
+		}
 	});
 	
 	//** Attach toolbar button events **//
