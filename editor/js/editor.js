@@ -11,6 +11,7 @@ window.incBoxName = -1;
 window.incLineName = -1;
 window.incLabelName = -1;
 window.mDownTime = 0;
+window.loadCounter = 0;
 
 //**************************************************************//
 //		Classes
@@ -759,7 +760,7 @@ window.showPopMenu = function(title, name, contentDiv, func){
 		"link image"
 	  ],
 	  menubar: "false",
-	  toolbar1: "link image",
+	  toolbar1: "bold italic underline link image undo redo",
 	  content_css : "tiny_mce_content.css",
 	  forced_root_block : false,
 	  force_br_newlines : true,
@@ -904,6 +905,19 @@ window.updateColorPreview = function(id, clr1, clr2){
 	.css({background: 'radial-gradient(circle farthest-corner at center, ' +
 		clr1 + ' 0%, ' + clr2 + ' 100%)'});
 };
+window.showLoadLabel = function(){
+	window.loadCounter++;
+	$("#loadBox").show();
+	$("#statusBox").hide();
+};
+window.hideLoadLabel = function(){
+	window.loadCounter--;
+	if (window.loadCounter < 0){window.loadCounter = 0;}
+	if (window.loadCounter == 0){
+		$("#loadBox").hide();
+		$("#statusBox").show();
+	}
+};
 
 //**************************************************************//
 //		Initializer
@@ -990,8 +1004,10 @@ $( document ).ready( function(){
 			  width: 'auto', resizable: false,
 			  buttons: {
 				  Yes: function () {
+					  window.showLoadLabel();
 					  editor.deserializeGraph(editor.startData);
 					  $(this).dialog("close");
+					  window.hideLoadLabel();
 				  },
 				  No: function () {
 					  $(this).dialog("close");
@@ -1022,6 +1038,7 @@ $( document ).ready( function(){
 			  width: 'auto', resizable: false,
 			  buttons: {
 				  Yes: function () {
+					window.showLoadLabel();
 					getElem("testDiv").innerHTML = editor.serializeGraph();
 					
 					  //** Send graph to server (save.php)
@@ -1031,6 +1048,10 @@ $( document ).ready( function(){
 							 success: function(responseText){
 								getElem("testDiv").innerHTML += "<br><br>" + responseText;
 								editor.deserializeGraph(responseText);
+								window.hideLoadLabel();
+							 },
+							 error: function(responseText){
+								window.hideLoadLabel();
 							 }
 					  });
 					  $(this).dialog("close");
@@ -1055,6 +1076,7 @@ $( document ).ready( function(){
 	
 	//** Load button event
 	$( "#graphLoad").click(function(){
+		window.showLoadLabel();
 		$.ajax({ url: 'storylist.php',
 				 data: '',
 				 dataType: 'json',
@@ -1072,6 +1094,7 @@ $( document ).ready( function(){
 					liStr += "</select>";
 					
 					//** Display the load story menu
+					window.hideLoadLabel();
 					$('<div></div>').appendTo('body')
 					  .html('<div>' + liStr + '</div>')
 					  .dialog({
@@ -1082,12 +1105,17 @@ $( document ).ready( function(){
 								  var gID = $( "#openList" ).val();
 								  if (gID > 0){
 									  //** Get graph from server (load.php)
+									  window.showLoadLabel();
 									  $.ajax({ url: 'load.php',
 											 data: {id: gID},
 											 type: 'post',
 											 success: function(responseText){
 												getElem("testDiv").innerHTML = responseText;
 												editor.deserializeGraph(responseText);
+												window.hideLoadLabel();
+											 },
+											 error: function(responseText){
+												window.hideLoadLabel();
 											 }
 									  });
 								  }
@@ -1101,6 +1129,9 @@ $( document ).ready( function(){
 							  $(this).remove();
 						  }
 					});
+				 },
+				 error: function(response){
+					window.hideLoadLabel();
 				 }
 		  });
 	});
