@@ -342,6 +342,8 @@ window.box = function(xPos, yPos, newText, boxID){
 		fromCenter: true,
 		isStart: newStart,
 		isEnd: newEnd,
+		grad1: "#EEEEFF",
+		grad2: "#00A3EF",
 		prototype: window.box_proto,
 		__proto__: window.box_proto
 	};
