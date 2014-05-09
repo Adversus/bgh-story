@@ -130,6 +130,15 @@ window.line_proto_base = {
 				tmpBox.back.push(this.name);
 			}
 		}
+		
+		//** Set line color to alt if a fact exists
+		if (this.factText == ""){
+			this.strokeStyle = this.baseColor = "#AAAACC";
+			this.moveColor = "#8888AA";
+		} else {
+			this.strokeStyle = this.baseColor = "#70DD70";
+			this.moveColor = "#50BB50";
+		}
 	},
 	
 	toCompact: function(){
