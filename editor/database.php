@@ -321,7 +321,7 @@ function saveStory(){
 		array_push($delBoxes, $obj->ID);
 	}
 	$vals = implode(',', array_fill(0, count($delBoxes), '?')); //** Borrowed form stack overflow
-	$stmt = $db->prepare("DELETE FROM boxes WHERE id NOT IN ( " . $vals . " )");
+	$stmt = $db->prepare("DELETE FROM boxes WHERE story_id = " . $story_id . " AND id NOT IN ( " . $vals . " )");
 	$stmt->execute($delBoxes);
 	
 	//** Clean up deleted choices
@@ -330,7 +330,7 @@ function saveStory(){
 		array_push($delChoices, $obj->ID);
 	}
 	$vals = implode(',', array_fill(0, count($delChoices), '?')); //** Borrowed form stack overflow
-	$stmt = $db->prepare("DELETE FROM choices WHERE id NOT IN ( " . $vals . " )");
+	$stmt = $db->prepare("DELETE FROM choices WHERE story_id = " . $story_id . " AND id NOT IN ( " . $vals . " )");
 	$stmt->execute($delChoices);
 }
 
