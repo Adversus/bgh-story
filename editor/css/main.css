@@ -6,6 +6,7 @@
 #editorBack{display: none; position:absolute;left:0px;top:0px;width:0px;height:100%;width:100%;border:0px;margin:0px;padding:0px;background-color:rgba(0,0,0,0.1)}
 #editorTitle{padding-left:5px;height:22px;background-color:#E0E0FF;border-bottom:2px #F3F3FF solid;}
 #hideBox{position:absolute;top:0px;left:0px;width:1px;height:1px;display:none;overflow:hidden;}
+#colorPreviewBox{display:inline-block;width:50px;height:50px;border:1px #000000 solid;}
 .toolbar{position:relative; border:1px rgba(0,0,0,0.3) solid;margin:0px;padding:0px;width:1000px;height:26px;text-align:right;font-size:14px;}
 .statusBox{ position:absolute; top: 5px; left:5px; }
 .tb2{position:absolute;top:3px;right:340px;width:100px;}

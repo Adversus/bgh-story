@@ -222,6 +222,7 @@ window.box_proto = {
 	dblclick: function(layer) {
 		if (editor.tool == "Move"){
 			//** Handle open div
+			window.updateColorPreview('#colorPreviewBox', layer.grad1, layer.grad2);
 			showPopMenu("Box Editor - " + layer.text, layer.name, "edit_Box", updateBox);
 		}
 	},
@@ -915,6 +916,27 @@ window.parseStoryList = function(str){
 	
 	return storyList;
 };
+window.updateColorPreview = function(id, clr1, clr2){
+	$(id).css({background: '#FFFFFF'})
+	/* IE10 Consumer Preview */ 
+	.css({background: '-ms-radial-gradient(center, circle farthest-corner, ' +
+		clr1 + ' 0%, ' + clr2 + ' 100%)'})
+	/* Mozilla Firefox */ 
+	.css({background: '-moz-radial-gradient(center, circle farthest-corner, ' +
+		clr1 + ' 0%, ' + clr2 + ' 100%)'})
+	/* Opera */ 
+	.css({background: '-o-radial-gradient(center, circle farthest-corner, ' +
+		clr1 + ' 0%, ' + clr2 + ' 100%)'})
+	/* Webkit (Safari/Chrome 10) */ 
+	.css({'background': '-webkit-gradient(radial, center center, 0, center center, 506, color-stop(0, ' +
+		clr1 + ' 0%, ' + clr2 + ' 100%)'})
+	/* Webkit (Chrome 11+) */ 
+	.css({'background': '-webkit-radial-gradient(center, circle farthest-corner, ' +
+		clr1 + ' 0%, ' + clr2 + ' 100%)'})
+	/* W3C Markup, IE10 Release Preview */ 
+	.css({background: 'radial-gradient(circle farthest-corner at center, ' +
+		clr1 + ' 0%, ' + clr2 + ' 100%)'});
+};
 
 //**************************************************************//
 //		Initializer
@@ -1054,6 +1076,14 @@ $( document ).ready( function(){
 				  $(this).remove();
 			  }
 		});
+	});
+	
+	//** Color picker preview update events
+	$("#edit_color1").change(function(){
+		window.updateColorPreview('#colorPreviewBox', $("#edit_color1").val(), $("#edit_color2").val());
+	});
+	$("#edit_color2").change(function(){
+		window.updateColorPreview('#colorPreviewBox', $("#edit_color1").val(), $("#edit_color2").val());
 	});
 	
 	//** Load button event
