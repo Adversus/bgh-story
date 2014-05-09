@@ -77,16 +77,32 @@ class box {
 			$this->Text = $readObj["c"];
 			$this->x = intval($readObj["x"]);
 			$this->y = intval($readObj["y"]);
-			$this->grad1 = $readObj["grad1"];
-			$this->grad2 = $readObj["grad2"];
+			if (isset($readObj["grad1"])){
+				$this->grad1 = $readObj["grad1"];
+			} else {
+				$this->grad1 = "";
+			}
+			if (isset($readObj["grad2"])){
+				$this->grad2 = $readObj["grad2"];
+			} else {
+				$this->grad2 = "";
+			}
 		} else {
 			$this->ID = intval($obj->a);
 			$this->Title = $obj->b;
 			$this->Text = $obj->c;
 			$this->x = intval($obj->x);
 			$this->y = intval($obj->y);
-			$this->grad1 = $obj->grad1;
-			$this->grad2 = $obj->grad2;
+			if (isset($readObj["grad1"])){
+				$this->grad1 = $obj->grad1;
+			} else {
+				$this->grad1 = "";
+			}
+			if (isset($readObj["grad2"])){
+				$this->grad2 = $obj->grad2;
+			} else {
+				$this->grad2 = "";
+			}
 		}
 	}
 	public function saveToDB(){
