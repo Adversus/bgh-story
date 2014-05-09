@@ -114,6 +114,7 @@ echo '];
 	<link rel="stylesheet" href="editor/css/storybg.css" />
 	</head>
 	<body class="storybg_box">
+	<div class="centerColumn">
 	<div class="bgOverlay">
 	</div>
 	<div class="topButtons">
@@ -157,8 +158,11 @@ echo '</div>
 		<button id="btnContinue" class="choiceBtn">Continue</button>
 	</div>
 </div>
+</div>
 <div id="loadScreen" style="display:none;">
 	<img src="editor/css/images/ajax-loader.gif" class="loaderImg">
 </div>
+<div class="leftBar"></div>
+<div class="rightBar"></div>
 </body></html>';
 ?>
