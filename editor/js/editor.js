@@ -757,10 +757,10 @@ window.showPopMenu = function(title, name, contentDiv, func){
 	  mode : "textareas",
 	  theme : "modern",
 	  plugins: [
-		"link image textcolor"
+		"link image media textcolor"
 	  ],
 	  menubar: "false",
-	  toolbar1: "bold italic underline | link image | forecolor backcolor | undo redo",
+	  toolbar1: "bold italic underline | link image media | forecolor backcolor | undo redo",
 	  content_css : "tiny_mce_content.css",
 	  forced_root_block : false,
 	  force_br_newlines : true,
@@ -803,6 +803,24 @@ window.savePopMenu = function(){
 				var sVal = children[i].value;
 				if (dDis != sVal){
 					editObj[dAtt] = children[i].value;
+					//** Check if it contains a youtube video
+					if (editObj[dAtt].indexOf('youtube.com/embed/') > -1){
+						var pos = editObj[dAtt].indexOf('<iframe src="');
+						while (pos > -1){
+							//** Youtube video found; force autoplay
+							var tmpStr = editObj[dAtt].substring(pos+13, editObj[dAtt].indexOf('"', pos+13));
+							if (tmpStr.indexOf("autoplay=1") == -1){
+								//** Add autoplay
+								if (tmpStr.indexOf("?") == -1){
+									tmpStr += "?autoplay=1";
+								} else {
+									tmpStr += "&autoplay=1";
+								}
+							}
+							window.alert(tmpStr);
+							pos = editObj[dAtt].indexOf('<iframe src="', pos+1);
+						}
+					}
 				}
 			}
 		}
