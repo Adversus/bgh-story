@@ -361,6 +361,11 @@ function loadPage($id, $isStart = false){
 		$newBox->setup($row);
 		array_push($story_boxes, $newBox);
 	}
+	
+	//** Confirm story has boxes
+	if (count($story_boxes) == 0 ){
+		return;
+	}
 	$id = $story_boxes[0]->ID;
 	
 	//** Retrieve choices
