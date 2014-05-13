@@ -60,7 +60,7 @@ window.box_proto_base = {
 	
 	clone: function(){
 		var newClone = {};
-		newClone.BoxID = this.BoxID;
+		newClone.BoxID = -1;
 		newClone.title = this.title;
 		newClone.contentText = this.contentText;
 		newClone.x = this.x;

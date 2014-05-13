@@ -12,6 +12,7 @@ window.incLineName = -1;
 window.incLabelName = -1;
 window.mDownTime = 0;
 window.loadCounter = 0;
+window.clipboard = "";
 
 //**************************************************************//
 //		Classes
@@ -225,6 +226,9 @@ window.box_proto = {
 			//** Handle open div
 			window.updateColorPreview('#colorPreviewBox', layer.grad1, layer.grad2);
 			showPopMenu("Box Editor - " + layer.text, layer.name, "edit_Box", updateBox);
+		} else if (editor.tool == "CopyPaste"){
+			window.clipboard = layer.clone();
+			$("#statusBox").text("Copy / Paste (Copied: " + layer.title + ")");
 		}
 	},
 	drag: function(layer) {
@@ -984,6 +988,20 @@ $( document ).ready( function(){
 					}
 				}
 			}
+		}
+	});
+	$( "#cvsGraph" ).dblclick(function(e){
+		if (editor.tool == "CopyPaste" && window.clipboard != ""){
+			var pos = $( "#cvsGraph" ).getLayer('dragBox');
+			var rect = getElem("cvsGraph").getBoundingClientRect();
+			var newBox = new box((e.clientX - pos.translateX) - rect.left, (e.clientY - pos.translateY) - rect.top, window.clipboard.title);
+			newBox.contentText = window.clipboard.contentText;
+			newBox.grad1 = window.clipboard.grad1;
+			newBox.grad2 = window.clipboard.grad2;
+			newBox.addToGraph();
+			Boxes.push(newBox.name);
+			window.clipboard = "";
+			$("#statusBox").text("Copy / Paste");
 		}
 	});
 	
