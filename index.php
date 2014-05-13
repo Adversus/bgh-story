@@ -89,7 +89,7 @@ echo '<script language="javascript" type="text/javascript" src="editor/js/jquery
 echo '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="display:inline-block;">
 <input type="hidden" name="cmd" value="_s-xclick">
 <input type="hidden" name="hosted_button_id" value="' . $paypal_button_id . '">
-<input type="submit" class="tbBtn" value="Donate"></button></form>';
+<input type="submit" class="tbBtn" value="Donate" name="submit"></button></form>';
 
 echo '</div>
 	<div style="width:100%;border-top:1px rgba(0,0,0,0.3) solid;margin-top:2px;"></div>

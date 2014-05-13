@@ -23,12 +23,31 @@ form{
 }
 .topButtons {
 	text-align:right;
+	margin:0px;
+	padding-top:3px;
+	padding-bottom:3px;
+	width:100%;
+}
+.tbBtn{
+	border:0px;
+	background-color:rgba(0,0,0,0);
+	color:rgb(240,240,240);
+	font-weight:bold;
+	text-shadow: -1px 0 rgba(0,0,0,0.05), 0 1px rgba(0,0,0,0.05),
+      1px 0 rgba(0,0,0,0.05), 0 -1px rgba(0,0,0,0.05);
+	outline:none;
+}
+.tbBtn:hover{
+	color:rgb(110,110,205);
+	text-shadow: -2px 0 rgba(0,0,255,0.05), 0 2px rgba(0,0,255,0.05),
+      2px 0 rgba(0,0,255,0.05), 0 -2px rgba(0,0,255,0.05);
+	  cursor: pointer; cursor: hand;
 }
 .centerColumn {
 	margin-left:3%;
 	width:94%;
-	text-shadow: -1px 0 rgba(0,0,0,0.05), 0 1px rgba(0,0,0,0.05),
-      1px 0 rgba(0,0,0,0.05), 0 -1px rgba(0,0,0,0.05);
+	text-shadow: -1px 0 rgba(0,0,0,0.05), 0 2px rgba(0,0,0,0.05),
+      2px 0 rgba(0,0,0,0.05), 0 -1px rgba(0,0,0,0.05);
 }
 .leftBar, .rightBar {
 	position:fixed;
@@ -50,7 +69,6 @@ font-size:35px;
 font-family:"Verdana", Verdana, Sans-serif;
 min-height:400px;
 max-height:400px;
-overflow:
 }
 .hr1 {
 width:100%;
@@ -106,6 +124,10 @@ max-width:500px;
 .choiceBtn:active {
 	position:relative;
 	top:1px;
+}
+.storybg_box{
+	margin:0px;
+	padding:0px;
 }
 
 /* Vertical line between choices*/
