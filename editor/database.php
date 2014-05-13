@@ -334,12 +334,6 @@ function saveStory(){
 	$stmt->execute($delChoices);
 }
 
-function loadFirstPage($story_id){
-	global $db;
-	
-	//loadPage($pageID);
-}
-
 function loadPage($id, $isStart = false){
 	//** Variant on loadStory that retrieves a single page and its choices
 	global $db;
