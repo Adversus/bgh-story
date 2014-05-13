@@ -17,7 +17,7 @@
 .rightLabel{ width:240px;text-align:right;border:1px #E5E5E5 solid; }
 .rlHover{ border:1px #777777 solid; }
 .toolBtn{display:inline-block;width:26px;height:26px;}
-.toolBtn:hover{cursor:pointer}
+.toolBtn:hover{cursor: pointer; cursor: hand;}
 .imgMove{background-image:url("images/cursorMove.png");}
 .imgBox{background-image:url("images/cursorBox.png");}
 .imgLine{background-image:url("images/cursorLine.png");}
@@ -25,6 +25,11 @@
 .imgEraser{background-image:url("images/cursorEraser.png");}
 .imgCopyPaste{background-image:url("images/cursorCopyPaste.png");}
 .imgPreview{background-image:url("images/cursorPreview.png");}
+.imgSound{ display:inline-block;width:16px;height:16px;}
+.imgSound:hover{cursor: pointer; cursor: hand;}
+.imgSoundAdd{background-image:url("images/sound_add.png");}
+.imgSoundEdit{background-image:url("images/sound_edit.png");}
+.imgSoundDelete{background-image:url("images/sound_delete.png");}
 .label{font-weight:bold;font-size:12px;}
 .editContentBox{padding:0px;}
 .editContentDiv{padding:2px;padding-left:5px;margin:2px;border:1px solid rgba(0,0,0,0.1);}
