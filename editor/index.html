@@ -52,6 +52,10 @@
 				data-tool="Eraser" 
 				data-desc="Eraser"
 				data-color="#FFBBBB"></div>
+			<div id="cursorCopyPaste" class="toolBtn imgCopyPaste btnUp" 
+				data-tool="CopyPaste" 
+				data-desc="CopyPaste"
+				data-color="#DDDDDD"></div>
 			<div id="cursorPreview" class="toolBtn imgPreview btnUp" 
 				data-tool="Preview" 
 				data-desc="Preview"
@@ -63,7 +67,7 @@
 			<div id="editorBox">
 				<div id="editorTitle">
 				</div>
-				<div id="editorContent" style="width:100%;height:480px;border-bottom:1px #AAAAAA solid;overflow-y:scroll">
+				<div id="editorContent">
 				</div>
 				<div style="text-align:right;padding-right:5px;background-color:#EEEEEE">
 					<input id="editCancel" value="Cancel" type="button"></input>
@@ -88,11 +92,13 @@
 			</div>
 			<div class="editContentDiv" style="vertical-align:text-top;">
 				<span class="label">Background Color</span></br>
-				<div style="display:inline-block;">
-					<input id='edit_color1' name='edit_color1' type="color" data-assign="grad1" /></br>
-					<input id='edit_color2' name='edit_color2' type="color" data-assign="grad2" />
-				</div>
-				<div id="colorPreviewBox">
+				<div class="colorPreviewBorder">
+					<div style="display:inline-block;">
+						<input id='edit_color1' name='edit_color1' type="color" data-assign="grad1" /></br>
+						<input id='edit_color2' name='edit_color2' type="color" data-assign="grad2" />
+					</div>
+					<div id="colorPreviewBox">
+					</div>
 				</div>
 			</div>
 		</div>

@@ -23,6 +23,7 @@
 .imgLine{background-image:url("images/cursorLine.png");}
 .imgFact{background-image:url("images/cursorFact.png");}
 .imgEraser{background-image:url("images/cursorEraser.png");}
+.imgCopyPaste{background-image:url("images/cursorCopyPaste.png");}
 .imgPreview{background-image:url("images/cursorPreview.png");}
 .label{font-weight:bold;font-size:12px;}
 .editContentBox{padding:0px;}
