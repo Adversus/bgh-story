@@ -30,7 +30,12 @@
 				<input type="text" id="GraphName" class="rightLabel"></input>
 			</div>
 		</div>
-		<canvas id="cvsGraph" name="cvsGraph" width="1000" height="500"></canvas>
+		<canvas id="cvsGraph" name="cvsGraph" width="1000" height="500" style="display:inline-block;"></canvas>
+		<div id="soundDiv" style="display:inline-block;width:240px;height:500px;border:1px #000000 solid;overflow-x:hidden;padding:2px;">
+			<div class="label" style="text-align:center;">Sound Effects</div>
+			<select size="12" style="width:100%;">
+			</select>
+		</div>
 		<div id="toolbar" class="toolbar">
 			<div id="statusBox" class="statusBox">Move</div>
 			<div id="loadBox" class="statusBox" style="display:none;">
@@ -54,7 +59,7 @@
 				data-color="#FFBBBB"></div>
 			<div id="cursorCopyPaste" class="toolBtn imgCopyPaste btnUp" 
 				data-tool="CopyPaste" 
-				data-desc="CopyPaste"
+				data-desc="Copy / Paste"
 				data-color="#DDDDDD"></div>
 			<div id="cursorPreview" class="toolBtn imgPreview btnUp" 
 				data-tool="Preview" 
