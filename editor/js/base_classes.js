@@ -58,6 +58,18 @@ window.box_proto_base = {
 		}
 	},
 	
+	clone: function(){
+		var newClone = {};
+		newClone.BoxID = this.BoxID;
+		newClone.title = this.title;
+		newClone.contentText = this.contentText;
+		newClone.x = this.x;
+		newClone.y = this.y;
+		newClone.grad1 = this.grad1;
+		newClone.grad2 = this.grad2;
+		return newClone;
+	},
+	
 	toCompact: function(){
 		/* Convert this object into a compact one containing only the important vars */
 		return {
