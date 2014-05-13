@@ -1010,9 +1010,12 @@ $( document ).ready( function(){
 		}
 		
 		//** Toggle editor output
-		var kCode = e.keyCode || e.which;
-		if (kCode == 192 || kCode == 223){
-			$("#testDiv").toggle();
+		var focusElem = document.activeElement.tagName.toLowerCase();
+		if (focusElem != "input" && focusElem != "textarea"){ //** Only if not typing
+			var kCode = e.keyCode || e.which;
+			if (kCode == 192 || kCode == 223){
+				$("#testDiv").toggle();
+			}
 		}
 	});
 	
