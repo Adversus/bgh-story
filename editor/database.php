@@ -35,6 +35,7 @@ class box {
 	var $StoryID = -1;
 	var $Title = "";
 	var $Text = "";
+	var $SoundID = -1;
 	var $x = 0;
 	var $y = 0;
 	var $grad1 = "";
@@ -51,6 +52,7 @@ class box {
 		$this->StoryID = $row['story_id'];
 		$this->Title = $row['title'];
 		$this->Text = $row['text'];
+		$this->SoundID = $row['sound_id'];
 		$this->x = $row['x'];
 		$this->y = $row['y'];
 		$this->grad1 = $row['grad_primary'];
@@ -75,6 +77,7 @@ class box {
 			$this->ID = intval($readObj["a"]);
 			$this->Title = $readObj["b"];
 			$this->Text = $readObj["c"];
+			$this->SoundID = $readObj["d"];
 			$this->x = intval($readObj["x"]);
 			$this->y = intval($readObj["y"]);
 			if (isset($readObj["grad1"])){
@@ -91,6 +94,7 @@ class box {
 			$this->ID = intval($obj->a);
 			$this->Title = $obj->b;
 			$this->Text = $obj->c;
+			$this->SoundID = $obj->d;
 			$this->x = intval($obj->x);
 			$this->y = intval($obj->y);
 			if (isset($readObj["grad1"])){
@@ -117,8 +121,8 @@ class box {
 		//** Add content to db
 		if (!$isValid){
 			//** Insert into db because it doesn't exist
-			$stmt = $db->prepare("INSERT INTO boxes ( story_id, title, text, x, y, grad_primary, grad_secondary ) VALUES (?, ?, ?, ?, ?, ?, ?)");
-			$stmt->execute(array($this->StoryID, $this->Title, $this->Text, $this->x, $this->y, $this->grad1, $this->grad2));
+			$stmt = $db->prepare("INSERT INTO boxes ( story_id, title, text, sound_id, x, y, grad_primary, grad_secondary ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+			$stmt->execute(array($this->StoryID, $this->Title, $this->Text, $this->SoundID, $this->x, $this->y, $this->grad1, $this->grad2));
 			
 			$lastID = $this->ID;
 			$this->ID = $db->lastInsertId();
@@ -132,8 +136,8 @@ class box {
 			}
 		} else {
 			//** Update preexisting database entry
-			$stmt = $db->prepare("UPDATE boxes SET title = ?, text=?, x=?, y=?, grad_primary=?, grad_secondary=? WHERE id=?");
-			$stmt->execute(array($this->Title, $this->Text, $this->x, $this->y, $this->grad1, $this->grad2, $this->ID));
+			$stmt = $db->prepare("UPDATE boxes SET title = ?, text=?, sound_id=?, x=?, y=?, grad_primary=?, grad_secondary=? WHERE id=?");
+			$stmt->execute(array($this->Title, $this->Text, $this->SoundID, $this->x, $this->y, $this->grad1, $this->grad2, $this->ID));
 		}
 	}
 	
@@ -144,6 +148,7 @@ class box {
 		$obj->a = $this->ID;
 		$obj->b = $this->Title;
 		$obj->c = $this->Text;
+		$obj->d = $this->SoundID;
 		$obj->x = $this->x;
 		$obj->y = $this->y;
 		$obj->grad1 = $this->grad1;
@@ -157,6 +162,7 @@ class choice {
 	var $StoryID = -1;
 	var $Choice = "";
 	var $Fact = "";
+	var $SoundID = -1;
 	var $Box1 = -1;
 	var $Box2 = -1;
 	public function __construct($str = "") {
@@ -169,6 +175,7 @@ class choice {
 		$this->StoryID = $row['story_id'];
 		$this->Choice = $row['choice'];
 		$this->Fact = $row['fact'];
+		$this->SoundID = $row['sound_id'];
 		$this->Box1 = $row['box1_id'];
 		$this->Box2 = $row['box2_id'];
 	}
@@ -191,12 +198,14 @@ class choice {
 			$this->ID = intval($readObj["a"]);
 			$this->Choice = $readObj["b"];
 			$this->Fact = $readObj["c"];
+			$this->SoundID = $readObj["d"];
 			$this->Box1 = intval($readObj["b1"]);
 			$this->Box2 = intval($readObj["b2"]);
 		} else {
 			$this->ID = intval($readObj->a);
 			$this->Choice = $readObj->b;
 			$this->Fact = $readObj->c;
+			$this->SoundID = $readObj->d;
 			$this->Box1 = intval($readObj->b1);
 			$this->Box2 = intval($readObj->b2);
 		}
@@ -213,13 +222,13 @@ class choice {
 		//** Add content to db
 		if (!$isValid){
 			//** Insert into db because it doesn't exist
-			$stmt = $db->prepare("INSERT INTO choices ( story_id, choice, fact, box1_id, box2_id ) VALUES (?, ?, ?, ?, ?)");
-			$stmt->execute(array($this->StoryID, $this->Choice, $this->Fact, $this->Box1, $this->Box2));
+			$stmt = $db->prepare("INSERT INTO choices ( story_id, choice, fact, sound_id, box1_id, box2_id ) VALUES (?, ?, ?, ?, ?, ?)");
+			$stmt->execute(array($this->StoryID, $this->Choice, $this->Fact, $this->SoundID, $this->Box1, $this->Box2));
 			$this->ID = $db->lastInsertId();
 		} else {
 			//** Update preexisting database entry
-			$stmt = $db->prepare("UPDATE choices SET choice = ?, fact=?, box1_id=?, box2_id=? WHERE id=?");
-			$stmt->execute(array($this->Choice, $this->Fact, $this->Box1, $this->Box2, $this->ID));
+			$stmt = $db->prepare("UPDATE choices SET choice = ?, fact=?, sound_id=?, box1_id=?, box2_id=? WHERE id=?");
+			$stmt->execute(array($this->Choice, $this->Fact, $this->SoundID, $this->Box1, $this->Box2, $this->ID));
 		}
 	}
 	
@@ -230,6 +239,7 @@ class choice {
 		$obj->a = $this->ID;
 		$obj->b = $this->Choice;
 		$obj->c = $this->Fact;
+		$obj->d = $this->SoundID;
 		$obj->b1 = $this->Box1;
 		$obj->b2 = $this->Box2;
 		return $obj;
