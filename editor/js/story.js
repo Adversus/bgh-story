@@ -80,7 +80,18 @@ window.line = function(){
 
 window.loadPage = function(newURL){
 	$("#loadScreen").show();
-	setTimeout(function(){document.location.href = newURL}, 500);
+	
+	$.ajax({ url: newURL,
+			 type: 'post',
+			 dataType: 'json',
+			 success: function(response){
+				window.storyData = response;
+				window.updateDisplayFromData(window.storyData);
+				$("#choiceScreen").fadeIn();
+			 },
+			 error: function(responseText){
+			 }
+	  });
 }
 
 window.updateColorGradient = function(id, clr1, clr2){
@@ -105,6 +116,28 @@ window.updateColorGradient = function(id, clr1, clr2){
 		clr1 + ' 0%, ' + clr2 + ' 100%)'});
 };
 
+window.updateDisplayFromData = function(data){
+	var i = 4;
+	
+	//** Set main text
+	$("#storyText").html(decodeURIComponent(data.text));
+	
+	//** Hide unused buttons & dividers
+	for (;i > data.choices.length-1;i--){
+		$("#choice_" + i).hide();
+		if (i < 4){
+			$("#vr_" + i).hide();
+		}
+	}
+	
+	//** Update used buttons
+	for (;i > -1;i--){
+		$("#choice_" + i).text(decodeURIComponent(data.choices[i].Choice));
+		$("#choice_" + i).show();
+		$("#vr_" + i).show();
+	}
+};
+
 //**************************************************************//
 //		Initializer
 //**************************************************************//
@@ -113,26 +146,30 @@ $( document ).ready( function(){
 	//** Set button event handler
 	$( ".choice").click(function(e){
 		window.choiceClicked = parseInt(e.currentTarget.getAttribute("data-choice"));
-		window.choiceURL = e.currentTarget.getAttribute("data-url");
+		window.choiceURL = storyData.choices[window.choiceClicked].Target;
 		
 		$("#choiceScreen").fadeOut(function(){
-			if (choice_Facts[window.choiceClicked] != ""){
-				$("#factText").html(choice_Facts[window.choiceClicked]);
+			if (storyData.choices[window.choiceClicked].Fact != ""){
+				$("#factText").html(decodeURIComponent(storyData.choices[window.choiceClicked].Fact));
 					$("#factScreen").fadeIn();
 					return;
 			}
 			
 			//** Load next page by default
-			window.loadPage('index.php?p=' + window.choiceURL);
+			window.loadPage('storyupdate.php?b=' + window.choiceURL);
 		});
 	});
 	
 	//** Fact continue button handler
 	$( "#btnContinue").click(function(e){
 		$("#factScreen").fadeOut(function(){
-			window.loadPage('index.php?p=' + window.choiceURL);
+			window.loadPage('storyupdate.php?b=' + window.choiceURL);
 		});
 	});
+	
+	if (storyData["text"] != undefined){
+		window.updateDisplayFromData(storyData);
+	}
 	
 	//** This stuff happens when the page loads
 	$("#choiceScreen").fadeIn();
