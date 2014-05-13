@@ -136,6 +136,11 @@ window.updateDisplayFromData = function(data){
 		$("#choice_" + i).show();
 		$("#vr_" + i).show();
 	}
+	
+	//** Update background
+	if (data.grad1 != "" && data.grad1 != ""){
+		window.updateColorGradient(".storybg_box", data.grad1, data.grad2);
+	}
 };
 
 //**************************************************************//
