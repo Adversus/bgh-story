@@ -83,6 +83,28 @@ window.loadPage = function(newURL){
 	setTimeout(function(){document.location.href = newURL}, 500);
 }
 
+window.updateColorGradient = function(id, clr1, clr2){
+	$(id).css({background: '#FFFFFF'})
+	/* IE10 Consumer Preview */ 
+	.css({background: '-ms-radial-gradient(center, circle farthest-corner, ' +
+		clr1 + ' 0%, ' + clr2 + ' 100%)'})
+	/* Mozilla Firefox */ 
+	.css({background: '-moz-radial-gradient(center, circle farthest-corner, ' +
+		clr1 + ' 0%, ' + clr2 + ' 100%)'})
+	/* Opera */ 
+	.css({background: '-o-radial-gradient(center, circle farthest-corner, ' +
+		clr1 + ' 0%, ' + clr2 + ' 100%)'})
+	/* Webkit (Safari/Chrome 10) */ 
+	.css({'background': '-webkit-gradient(radial, center center, 0, center center, 506, color-stop(0, ' +
+		clr1 + ' 0%, ' + clr2 + ' 100%)'})
+	/* Webkit (Chrome 11+) */ 
+	.css({'background': '-webkit-radial-gradient(center, circle farthest-corner, ' +
+		clr1 + ' 0%, ' + clr2 + ' 100%)'})
+	/* W3C Markup, IE10 Release Preview */ 
+	.css({background: 'radial-gradient(circle farthest-corner at center, ' +
+		clr1 + ' 0%, ' + clr2 + ' 100%)'});
+};
+
 //**************************************************************//
 //		Initializer
 //**************************************************************//
