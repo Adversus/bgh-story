@@ -83,9 +83,15 @@ echo '<script language="javascript" type="text/javascript" src="editor/js/jquery
 	</div>
 	<div class="topButtons">
 		<button class="tbBtn">Get Help</button>
-		<button class="tbBtn">About Us</button>
-		<button class="tbBtn">Donate</button>
-	</div>
+		<a href="' . $about_us_url . '"><button class="tbBtn">About Us</button></a>';
+
+//** Paypal donate button
+echo '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top" style="display:inline-block;">
+<input type="hidden" name="cmd" value="_s-xclick">
+<input type="hidden" name="hosted_button_id" value="' . $paypal_button_id . '">
+<input type="submit" class="tbBtn" value="Donate"></button></form>';
+
+echo '</div>
 	<div style="width:100%;border-top:1px rgba(0,0,0,0.3) solid;margin-top:2px;"></div>
 	<div id="choiceScreen" style="display:none;">';
 	
