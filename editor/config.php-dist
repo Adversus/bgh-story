@@ -1,8 +1,11 @@
 <?PHP
 
-$db_host  = "localhost";
-$db_user  = "youruser";
-$db_pass  = "somepassword";
-$db_name  = "thedatabase";
+$db_host = "localhost";
+$db_user = "youruser";
+$db_pass = "somepassword";
+$db_name = "thedatabase";
+
+$paypal_button_id = "";
+$about_us_url = "#";
 
 ?>
