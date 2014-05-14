@@ -1033,8 +1033,17 @@ $( document ).ready( function(){
 		$("#editorBack").hide();
 	});
 	$(document).keyup(function(e) {
-		if ($("#editorBack").display != "none"){
-			if (e.keyCode == 27) { $('#editCancel').click(); }
+		if (e.keyCode == 27) {
+			if ($("#editorBack").display != "none"){
+				 $('#editCancel').click();
+			}
+			if (editor.tool == "CopyPaste"){
+				var focusElem = document.activeElement.tagName.toLowerCase();
+				if (focusElem != "input" && focusElem != "textarea"){ //** Only if not typing
+					window.clipboard = "";
+					$("#statusBox").text("Copy / Paste");
+				}
+			}
 		}
 		if ( toolLine != "" ){
 			$( "#cvsGraph" ).removeLayer(toolLine);
