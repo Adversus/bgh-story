@@ -1093,6 +1093,11 @@ $( document ).ready( function(){
 	
 	//** Attach toolbar button events **//
 	$( ".btnUp" ).click(toolButtonHandler);
+	$("#cursorCopyPaste").dblclick(function(){
+		//** Clear clipboard on button double click
+		window.clipboard = "";
+		$("#statusBox").text("Copy / Paste");
+	});
 	
 	//** Attach new button effect
 	$( "#graphNew").click(function(){
