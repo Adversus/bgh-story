@@ -12,6 +12,7 @@ $story_name = "(New Graph)";
 $story_public = 0;
 $story_boxes = array();
 $story_choices = array();
+$story_sounds = array();
 $delete_boxes = array();
 $delete_choices = array();
 
@@ -256,7 +257,9 @@ function loadStory($sID){
 	global $story_public;
 	global $story_boxes;
 	global $story_choices;
+	global $story_sounds;
 	
+	$soundList = "";
 	$story_id = $sID;
 	
 	//** Retrieve story
@@ -275,6 +278,13 @@ function loadStory($sID){
 		//** Create new instances of the box class for every box in the story
 		$newBox = new box;
 		$newBox->setup($row);
+		//** Append sound to list if it is not -1
+		/*if ($newBox->SoundID != -1){
+			if ($soundList != ""){
+				$soundList .= ", ";
+			}
+			$soundList .= $newBox->SoundID;
+		}*/
 		array_push($story_boxes, $newBox);
 	}
 	
@@ -288,7 +298,30 @@ function loadStory($sID){
 		//** Create new instances of the choice class for every choice in the story
 		$newChoice = new choice;
 		$newChoice->setup($row);
+		//** Append sound to list if it is not -1
+		/*if ($newChoice->SoundID != -1){
+			if ($soundList != ""){
+				$soundList .= ", ";
+			}
+			$soundList .= $newChoice->SoundID;
+		}*/
 		array_push($story_choices, $newChoice);
+	}
+	
+	//** Retrieve sounds
+	empty($story_sounds);
+	if ($soundList != ""){
+		$stmt2 = $db->prepare("SELECT * FROM sounds");// WHERE id IN (" . $soundList . ")");
+		$stmt2->execute();
+		$result = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+		foreach ($result as $row){
+			//** Create new instances of the choice class for every choice in the story
+			$newSound = new stdClass();
+			$newSound->id = $row["id"];
+			$newSound->name = $row["name"];
+			$newSound->url = $row["url"];
+			array_push($story_sounds, $newSound);
+		}
 	}
 }
 
@@ -445,6 +478,7 @@ function sendGraphObjects(){
 	global $story_public;
 	global $story_boxes;
 	global $story_choices;
+	global $story_sounds;
 	
 	//** Create story object with relevent vars
 	$sendObj = new stdClass();
@@ -452,6 +486,7 @@ function sendGraphObjects(){
 	$sendObj->name = $story_name;
 	$sendObj->pub = $story_public;
 	$sendObj->objs = [];
+	$sendObj->sounds = [];
 	
 	//** Send Boxes
 	foreach ($story_boxes as $obj){
@@ -461,6 +496,11 @@ function sendGraphObjects(){
 	//** Send Choices
 	foreach ($story_choices as $obj){
 		array_push($sendObj->objs, $obj->toCompact());
+	}
+	
+	//** Send Sounds
+	foreach ($story_sounds as $obj){
+		array_push($sendObj->sounds, $obj);
 	}
 	
 	//** Send the graph object to the client
