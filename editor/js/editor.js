@@ -96,10 +96,7 @@ window.editor = {
 		
 		//** Update displays
 		getElem("GraphName").value = editor.storyName;
-		$('#selectSound').find('option').remove().end();
-		for (var s=0; s<soundList.length; s++){
-			$('#selectSound').append('<option value="' + soundList[s].id + '" data-url="' + soundList[s].url + '">' + soundList[s].name + '</option>');
-		}
+		window.fillSoundOptions('#selectSound');
 		$('#cvsGraph').drawLayers();
 	},
 	
@@ -237,6 +234,7 @@ window.box_proto = {
 		if (editor.tool == "Move"){
 			//** Handle open div
 			window.updateColorPreview('#colorPreviewBox', layer.grad1, layer.grad2);
+			window.fillSoundOptions('#edit_BoxSoundID', true);
 			showPopMenu("Box Editor - " + layer.text, layer.name, "edit_Box", updateBox);
 		} else if (editor.tool == "CopyPaste"){
 			window.clipboard = layer.clone();
@@ -397,6 +395,7 @@ window.line_proto = {
 			title += $("#cvsGraph").getLayer(layer.p1).text;
 			title += " to ";
 			title += $("#cvsGraph").getLayer(layer.p2).text;
+			window.fillSoundOptions('#edit_ChoiceSoundID', true);
 			showPopMenu(title, layer.name, "edit_Line", updateLine);
 		}
 	},
@@ -955,6 +954,31 @@ window.hideLoadLabel = function(){
 	if (window.loadCounter == 0){
 		$("#loadBox").hide();
 		$("#statusBox").show();
+	}
+};
+window.fillSoundOptions = function(elemID, addEmpty){
+	$(elemID).find('option').remove().end();
+	//** If no ID is given then return the string
+	if (elemID != ""){
+		//** Add options to select
+		if (addEmpty == true){
+			$(elemID).append('<option value="-1" data-url="">(No Sound Effect)</option>');
+		}
+		for (var s=0; s<window.Sounds.length; s++){
+			$(elemID).append('<option value="' + window.Sounds[s].id + '" data-url="' + window.Sounds[s].url + '">' + 
+				window.Sounds[s].name + '</option>');
+		}
+	} else {
+		//** Create and return string containing options
+		var retStr = "";
+		if (addEmpty == true){
+			retStr += '<option value="-1" data-url="">(No Sound Effect)</option>';
+		}
+		for (var s=0; s<window.Sounds.length; s++){
+			retStr += '<option value="' + window.Sounds[s].id + '" data-url="' + window.Sounds[s].url + '">' + 
+				window.Sounds[s].name + '</option>';
+		}
+		return retStr;
 	}
 };
 
