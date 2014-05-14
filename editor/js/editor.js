@@ -841,7 +841,6 @@ window.savePopMenu = function(){
 									tmpStr += "&autoplay=1";
 								}
 							}
-							window.alert(tmpStr);
 							pos = editObj[dAtt].indexOf('<iframe src="', pos+1);
 						}
 					}
