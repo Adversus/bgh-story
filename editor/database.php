@@ -310,7 +310,7 @@ function loadStory($sID){
 	
 	//** Retrieve sounds
 	empty($story_sounds);
-	if ($soundList != ""){
+	//if ($soundList != ""){
 		$stmt2 = $db->prepare("SELECT * FROM sounds");// WHERE id IN (" . $soundList . ")");
 		$stmt2->execute();
 		$result = $stmt2->fetchAll(PDO::FETCH_ASSOC);
@@ -322,7 +322,7 @@ function loadStory($sID){
 			$newSound->url = $row["url"];
 			array_push($story_sounds, $newSound);
 		}
-	}
+	//}
 }
 
 function saveStory(){
