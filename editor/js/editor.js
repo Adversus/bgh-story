@@ -846,6 +846,9 @@ window.savePopMenu = function(){
 						}
 					}
 				}
+			} else if (children[i].nodeName == "SELECT"){
+				//** Let jquery sort it out
+				editObj[dAtt] = $("#" + children[i].id + "  option:selected").val();
 			}
 		}
 	}
