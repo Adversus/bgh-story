@@ -1153,8 +1153,12 @@ $( document ).ready( function(){
 							 data: {graph: editor.serializeGraph},
 							 type: 'post',
 							 success: function(responseText){
-								getElem("testDiv").innerHTML += "<br><br>" + responseText;
-								editor.deserializeGraph(responseText);
+								if (responseText != ""){
+									getElem("testDiv").innerHTML += "<br><br>" + responseText;
+									editor.deserializeGraph(responseText);
+								} else {
+									getElem("testDiv").innerHTML += "<br><br>No response received.";
+								}
 								window.hideLoadLabel();
 							 },
 							 error: function(responseText){
