@@ -235,6 +235,7 @@ window.box_proto = {
 			//** Handle open div
 			window.updateColorPreview('#colorPreviewBox', layer.grad1, layer.grad2);
 			window.fillSoundOptions('#edit_BoxSoundID', true);
+			$("#edit_BoxSoundID option[value='" + layer.SoundID + "']").attr('selected', 'selected');
 			showPopMenu("Box Editor - " + layer.text, layer.name, "edit_Box", updateBox);
 		} else if (editor.tool == "CopyPaste"){
 			window.clipboard = layer.clone();
@@ -359,6 +360,7 @@ window.box = function(xPos, yPos, newText, boxID){
 		isEnd: newEnd,
 		grad1: "#EEEEFF",
 		grad2: "#00A3EF",
+		SoundID: -1,
 		prototype: window.box_proto,
 		__proto__: window.box_proto
 	};
@@ -396,6 +398,7 @@ window.line_proto = {
 			title += " to ";
 			title += $("#cvsGraph").getLayer(layer.p2).text;
 			window.fillSoundOptions('#edit_ChoiceSoundID', true);
+			$("#edit_ChoiceSoundID option[value='" + layer.SoundID + "']").attr('selected', 'selected');
 			showPopMenu(title, layer.name, "edit_Line", updateLine);
 		}
 	},
@@ -452,6 +455,7 @@ window.line = function(name1, name2, lineID){
 		text: "",
 		choice: "(new choice)",
 		factText: "",
+		SoundID: -1,
 		prototype: window.line_proto,
 		__proto__: window.line_proto
 	};
