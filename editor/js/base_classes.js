@@ -28,6 +28,7 @@ window.box_proto_base = {
 		this.BoxID = parseInt(readObj.a);
 		this.title = decodeURIComponent(readObj.b);
 		this.contentText = decodeURIComponent(readObj.c);
+		this.SoundID = readObj.d;
 		this.x = parseInt(readObj.x);
 		this.y = parseInt(readObj.y);
 		this.grad1 = readObj.grad1;
@@ -67,6 +68,7 @@ window.box_proto_base = {
 		newClone.y = this.y;
 		newClone.grad1 = this.grad1;
 		newClone.grad2 = this.grad2;
+		newClone.SoundID = this.SoundID;
 		return newClone;
 	},
 	
@@ -77,6 +79,7 @@ window.box_proto_base = {
 			a: this.BoxID,
 			b: encodeURIComponent(this.title),
 			c: encodeURIComponent(this.contentText),
+			d: this.SoundID,
 			x: this.x,
 			y: this.y,
 			grad1: this.grad1,
@@ -115,6 +118,7 @@ window.line_proto_base = {
 		this.LineID = readObj.a;
 		this.choice = decodeURIComponent(readObj.b);
 		this.factText = decodeURIComponent(readObj.c);
+		this.SoundID = decodeURIComponent(readObj.d);
 		
 		//** Get IDs for the two boxes
 		Box1 = parseInt(readObj.b1);
@@ -162,6 +166,7 @@ window.line_proto_base = {
 			a: this.LineID,
 			b: encodeURIComponent(this.choice),
 			c: encodeURIComponent(this.factText),
+			d: this.SoundID,
 			b1: obj1.BoxID,
 			b2: obj2.BoxID
 		};
