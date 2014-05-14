@@ -429,11 +429,13 @@ function isValidElement($id, $table) { //** Adapted from isValidStory (database.
 }
 
 function parseInput($input){
+	global $db;
 	global $story_id;
 	global $story_name;
 	global $story_public;
 	global $story_boxes;
 	global $story_choices;
+	global $story_sounds;
 	
 	if ($input == ""){ return null; }
 	$ln = strlen($input);
@@ -470,6 +472,22 @@ function parseInput($input){
 			array_push($story_choices, $newLine);
 		}
 	}
+	
+	//** Retrieve sounds
+	empty($story_sounds);
+	//if ($soundList != ""){
+		$stmt2 = $db->prepare("SELECT * FROM sounds");// WHERE id IN (" . $soundList . ")");
+		$stmt2->execute();
+		$result = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+		foreach ($result as $row){
+			//** Create new instances of the choice class for every choice in the story
+			$newSound = new stdClass();
+			$newSound->id = $row["id"];
+			$newSound->name = $row["name"];
+			$newSound->url = $row["url"];
+			array_push($story_sounds, $newSound);
+		}
+	//}
 }
 
 function sendGraphObjects(){
