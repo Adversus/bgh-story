@@ -33,7 +33,7 @@ window.editor = {
 	hoverColor: "#FFFFFF",
 	mouseX: -1,
 	mouseY: -1,
-	startData: '{"id":-1,"name":"New%20Story","pub":0,"objs":[{"type":"B","a":-2,"b":"End","c":"(Ending%20message)","x":700,"y":210,"grad1":"#EEEEFF","grad2":"#00A3EF"},{"type":"B","a":-1,"b":"Start","c":"(Starting%20message)","x":300,"y":210,"grad1":"#EEEEFF","grad2":"#00A3EF"},{"type":"L","a":-3,"b":"(new%20choice)","c":"","b1":-1,"b2":-2}],"sounds":[]}',
+	startData: '{"id":-1,"name":"New%20Story","pub":0,"objs":[{"type":"B","a":-2,"b":"End","c":"(Ending%20message)","d":-1,"x":700,"y":210,"grad1":"#EEEEFF","grad2":"#00A3EF"},{"type":"B","a":-1,"b":"Start","c":"(Starting%20message)","d":-1,"x":300,"y":210,"grad1":"#EEEEFF","grad2":"#00A3EF"},{"type":"L","a":-3,"b":"(new%20choice)","c":"","d":-1,"b1":-1,"b2":-2}],"sounds":[]}',
 	
 	deserializeGraph: function(input){
 		var ln = input.length;
