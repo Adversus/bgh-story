@@ -240,7 +240,7 @@ window.box_proto = {
 			showPopMenu("Box Editor - " + layer.text, layer.name, "edit_Box", updateBox);
 		} else if (editor.tool == "CopyPaste"){
 			window.clipboard = layer.clone();
-			$("#statusBox").text("Copy / Paste (Copied: " + layer.title + ")");
+			$("#statusBox").text("Copy / Paste (" + layer.title + ")");
 		}
 	},
 	drag: function(layer) {
@@ -658,6 +658,11 @@ window.setEditor = function(type, color){
 		} else if (editor.tool == "Move"){
 			disableDrag();
 		}
+		if (type == "CopyPaste"){
+			if (window.clipboard != ""){
+				$("#statusBox").html($("#statusBox").html() + " (" + window.clipboard.title + ")");
+			}
+		}
 		
 		//** Update new display
 		if (type == "Line"){
@@ -897,8 +902,8 @@ window.toolButtonHandler = function(e){
 	if ($("#" + e.currentTarget.id).hasClass("btnUp")){
 		clearButtons( $(this).data("tool") );
 		enableDrag();
-		setEditor( $(this).data("tool"), $(this).data("color"));
 		$("#statusBox").html( $(this).data("desc") );
+		setEditor( $(this).data("tool"), $(this).data("color"));
 	}
 };
 window.updateMouseCoords = function(e){
