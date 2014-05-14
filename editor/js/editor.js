@@ -1207,6 +1207,99 @@ $( document ).ready( function(){
 		  });
 	});
 	
+	//** Add sound event
+	$("#soundAdd").click(function(){
+		//** Display the add sound menu
+		$('<div></div>').appendTo('body')
+		  .html('<div class="editContentDiv"><div class="label">Sound Name</div><input type="text" style="width:240px;"><br><div class="label">Sound URL</div><input type="text" style="width:240px;"></div>')
+		  .dialog({
+			  modal: true, title: 'Add New Sound', zIndex: 10000, autoOpen: true,
+			  width: 'auto', resizable: false,
+			  buttons: {
+				  Add: function () {
+					  //** TODO: Verify Data
+					  //** TODO: Send data to server
+					  //** TODO: Update List
+					  $(this).dialog("close");
+				  },
+				  Cancel: function () {
+					  $(this).dialog("close");
+				  }
+			  },
+			  close: function (event, ui) {
+				  $(this).remove();
+			  }
+		});
+	});
+	
+	//** Edit sound event
+	$("#soundEdit").click(function(){
+		//* Check if nothing is selected
+		var sIndex = $('#selectSound').prop("selectedIndex");
+		if (sIndex == -1 || sIndex == null){
+			return;
+		}
+		
+		var sID = $( "#selectSound option:selected" ).val();
+		var sName = $( "#selectSound option:selected" ).text();
+		var sURL = $( "#selectSound option:selected" ).data("url");
+		
+		//** Display the add sound menu
+		$('<div></div>').appendTo('body')
+		  .html('<div class="editContentDiv"><div class="label">Sound ID</div><input type="text" style="width:200px;" value="' + sID + '" disabled><br>' + 
+				'<div class="label">Sound Name</div><input type="text" style="width:240px;" value="' + sName + '"><br>' +
+				'<div class="label">Sound URL</div><input type="text" style="width:240px;" value="' + sURL + '"></div>')
+		  .dialog({
+			  modal: true, title: 'Edit Sound', zIndex: 10000, autoOpen: true,
+			  width: 'auto', resizable: false,
+			  buttons: {
+				  Save: function () {
+					  //** TODO: Verify data
+					  //** TODO: Send to server
+					  $(this).dialog("close");
+				  },
+				  Cancel: function () {
+					  $(this).dialog("close");
+				  }
+			  },
+			  close: function (event, ui) {
+				  $(this).remove();
+			  }
+		});
+	});
+	
+	//** Delete sound event
+	$("#soundDelete").click(function(){
+		//* Check if nothing is selected
+		var sIndex = $('#selectSound').prop("selectedIndex");
+		if (sIndex == -1 || sIndex == null){
+			return;
+		}
+		
+		var sName = $( "#selectSound option:selected" ).text();
+		
+		$('<div></div>').appendTo('body')
+		  .html('<div><h6>Are you sure you want to delete ' + sName + '?</h6></div>')
+		  .dialog({
+			  modal: true, title: "Delete Sound", zIndex: 10000, autoOpen: true,
+			  width: 'auto', resizable: false,
+			  buttons: {
+				  Yes: function () {
+					  //** TODO: Remove ID from all boxes & choices
+					  //** TODO: Send delete message to server
+					  //** TODO: Update list
+					  $(this).dialog("close");
+				  },
+				  No: function () {
+					  $(this).dialog("close");
+				  }
+			  },
+			  close: function (event, ui) {
+				  $(this).remove();
+			  }
+		});
+	});
+	
 	$("#cursorMove").click();
 	
 	//** Attach graph name hover events
