@@ -1281,13 +1281,25 @@ $( document ).ready( function () {
     $("#soundAdd").click(function () {
         //** Display the add sound menu
         $('<div></div>').appendTo('body')
-          .html('<div class="editContentDiv"><div class="label">Sound Name</div><input type="text" style="width:240px;"><br><div class="label">Sound URL</div><input type="text" style="width:240px;"></div>')
+          .html('<div class="editContentDiv"><div class="label">Sound Name</div><input type="text" id="soundName" style="width:240px;"><br><div class="label">Sound URL</div><input type="text" id="soundURL" style="width:240px;"></div>')
           .dialog({
               modal: true, title: 'Add New Sound', zIndex: 10000, autoOpen: true,
               width: 'auto', resizable: false,
               buttons: {
                   Add: function () {
-                      //** TODO: Verify Data
+                      var soundObj = {
+                          name: encodeURIComponent($("#soundName").text()),
+                          url: encodeURIComponent($("#soundURL").text())};
+                      $.ajax({ url: 'addsound.php',
+                             data: soundObj,
+                             type: 'post',
+                             success: function (responseText) {
+                                getElem("testDiv").innerHTML = responseText;
+                             },
+                             error: function (responseText) {
+                                getElem("testDiv").innerHTML = responseText;
+                             }
+                      });
                       //** TODO: Send data to server
                       //** TODO: Update List
                       $(this).dialog("close");
