@@ -71,7 +71,6 @@ echo '<script language="javascript" type="text/javascript" src="editor/js/jquery
 	<script language="javascript" type="text/javascript" src="editor/js/jquery-ui-1.10.4.min.js"></script>
 	<script language="javascript" type="text/javascript" src="editor/js/base_classes.js"></script>
 	<script language="javascript" type="text/javascript" src="editor/js/story.js"></script>
-	<script language="javascript" type="text/javascript" src="editor/js/json3.min.js"></script>
 	<script type="text/javascript">
 		window.storyData = ' . getStoryUpdate() . ';
 	</script>
