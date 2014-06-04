@@ -418,6 +418,24 @@ function loadPage($id, $isStart = false){
 	}
 }
 
+function loadSounds() {
+    global $db, $story_sounds;
+    
+    //** Retrieve sounds
+	empty($story_sounds);
+    $stmt2 = $db->prepare("SELECT * FROM sounds");
+    $stmt2->execute();
+    $result = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+    foreach ($result as $row){
+        //** Create new instances of the choice class for every choice in the story
+        $newSound = new stdClass();
+        $newSound->id = $row["id"];
+        $newSound->name = $row["name"];
+        $newSound->url = $row["url"];
+        array_push($story_sounds, $newSound);
+    }
+}
+
 function isValidElement($id, $table) { //** Adapted from isValidStory (database.php:226)
   global $db;
 
@@ -435,7 +453,7 @@ function parseInput($input){
 	global $story_public;
 	global $story_boxes;
 	global $story_choices;
-	global $story_sounds;
+	//global $story_sounds;
 	
 	if ($input == ""){ return null; }
 	$ln = strlen($input);
@@ -474,20 +492,7 @@ function parseInput($input){
 	}
 	
 	//** Retrieve sounds
-	empty($story_sounds);
-	//if ($soundList != ""){
-		$stmt2 = $db->prepare("SELECT * FROM sounds");// WHERE id IN (" . $soundList . ")");
-		$stmt2->execute();
-		$result = $stmt2->fetchAll(PDO::FETCH_ASSOC);
-		foreach ($result as $row){
-			//** Create new instances of the choice class for every choice in the story
-			$newSound = new stdClass();
-			$newSound->id = $row["id"];
-			$newSound->name = $row["name"];
-			$newSound->url = $row["url"];
-			array_push($story_sounds, $newSound);
-		}
-	//}
+	loadSounds();
 }
 
 function sendGraphObjects(){
