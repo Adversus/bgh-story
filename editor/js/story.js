@@ -108,28 +108,40 @@ window.loadPage = function(newURL){
 }
 
 window.updateColorGradient = function(id, clr1, clr2){
-    //* IE7-9 Fix */
-    document.body.style.backgroundColor = clr2;
+    var ua = window.navigator.userAgent;
     
+    if (ua.indexOf("MSIE") !== -1){
+        //* IE7-9 Fix */
+        if (id == "body"){
+            document.body.style.backgroundColor = clr2;
+        }
+        
+        //* IE Version catch */
+        var msInd = ua.indexOf("MSIE ");
+        var vNum = parseInt(ua.substring(msInd + 5, ua.indexOf(".", msInd)));
+        if (vNum < 10){ return; }
+    }
+    
+    //** Modify css only for modern browsers
     $(id).css({background: clr2})
-	/* IE10 Consumer Preview */ 
-	.css({background: '-ms-radial-gradient(center, circle farthest-corner, ' +
-		clr1 + ' 0%, ' + clr2 + ' 100%)'})
-	/* Mozilla Firefox */ 
-	.css({background: '-moz-radial-gradient(center, circle farthest-corner, ' +
-		clr1 + ' 0%, ' + clr2 + ' 100%)'})
-	/* Opera */ 
-	.css({background: '-o-radial-gradient(center, circle farthest-corner, ' +
-		clr1 + ' 0%, ' + clr2 + ' 100%)'})
-	/* Webkit (Safari/Chrome 10) */ 
-	.css({'background': '-webkit-gradient(radial, center center, 0, center center, 506, color-stop(0, ' +
-		clr1 + ' 0%, ' + clr2 + ' 100%)'})
-	/* Webkit (Chrome 11+) */ 
-	.css({'background': '-webkit-radial-gradient(center, circle farthest-corner, ' +
-		clr1 + ' 0%, ' + clr2 + ' 100%)'})
-	/* W3C Markup, IE10 Release Preview */ 
-	.css({background: 'radial-gradient(circle farthest-corner at center, ' +
-		clr1 + ' 0%, ' + clr2 + ' 100%)'});
+    /* IE10 Consumer Preview */ 
+    .css({background: '-ms-radial-gradient(center, circle farthest-corner, ' +
+        clr1 + ' 0%, ' + clr2 + ' 100%)'})
+    /* Mozilla Firefox */ 
+    .css({background: '-moz-radial-gradient(center, circle farthest-corner, ' +
+        clr1 + ' 0%, ' + clr2 + ' 100%)'})
+    /* Opera */ 
+    .css({background: '-o-radial-gradient(center, circle farthest-corner, ' +
+        clr1 + ' 0%, ' + clr2 + ' 100%)'})
+    /* Webkit (Safari/Chrome 10) */ 
+    .css({'background': '-webkit-gradient(radial, center center, 0, center center, 506, color-stop(0, ' +
+        clr1 + ' 0%, ' + clr2 + ' 100%)'})
+    /* Webkit (Chrome 11+) */ 
+    .css({'background': '-webkit-radial-gradient(center, circle farthest-corner, ' +
+        clr1 + ' 0%, ' + clr2 + ' 100%)'})
+    /* W3C Markup, IE10 Release Preview */ 
+    .css({background: 'radial-gradient(circle farthest-corner at center, ' +
+        clr1 + ' 0%, ' + clr2 + ' 100%)'});
 };
 
 window.updateDisplayFromData = function(data){

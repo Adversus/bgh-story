@@ -9,6 +9,7 @@ form{
 	padding:0px;
 	border:0px;
 }
+.ie body {min-width:1250px;width:1250px;background-color:#000000;}
 .bgOverlay {
 	position:fixed;
 	left: 0px;
@@ -41,7 +42,7 @@ form{
 	color:rgb(110,110,205);
 	text-shadow: -2px 0 rgba(0,0,255,0.05), 0 2px rgba(0,0,255,0.05),
       2px 0 rgba(0,0,255,0.05), 0 -2px rgba(0,0,255,0.05);
-	  cursor: pointer; cursor: hand;
+	cursor: pointer; cursor: hand;
 }
 .centerColumn {
 	margin-left:3%;
