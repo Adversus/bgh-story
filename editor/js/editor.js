@@ -1295,13 +1295,20 @@ $( document ).ready( function () {
                              type: 'post',
                              success: function (responseText) {
                                 getElem("testDiv").innerHTML = responseText;
+                                var response = jQuery.parseJSON(responseText);
+                                if (response.sounds.length > 0){
+                                    //** Add sounds to sound list
+                                    window.Sounds = [];
+                                    for (i = 0; i < response.sounds.length; i++) {
+                                        window.Sounds.push(response.sounds[i]);
+                                    }
+                                    window.fillSoundOptions('#selectSound');
+                                }
                              },
                              error: function (responseText) {
                                 getElem("testDiv").innerHTML = responseText;
                              }
                       });
-                      //** TODO: Send data to server
-                      //** TODO: Update List
                       $(this).dialog("close");
                   },
                   Cancel: function () {
@@ -1359,6 +1366,7 @@ $( document ).ready( function () {
         }
 
         var sName = $( "#selectSound option:selected" ).text();
+        var sID = $( "#selectSound option:selected" ).val();
 
         $('<div></div>').appendTo('body')
           .html('<div><h6>Are you sure you want to delete ' + sName + '?</h6></div>')
@@ -1367,9 +1375,26 @@ $( document ).ready( function () {
               width: 'auto', resizable: false,
               buttons: {
                   Yes: function () {
-                      //** TODO: Remove ID from all boxes & choices
-                      //** TODO: Send delete message to server
-                      //** TODO: Update list
+                      var soundObj = { sID: sID };
+                      $.ajax({ url: 'sounddelete.php',
+                             data: soundObj,
+                             type: 'post',
+                             success: function (responseText) {
+                                getElem("testDiv").innerHTML = responseText;
+                                var response = jQuery.parseJSON(responseText);
+                                if (response.sounds.length > 0){
+                                    //** Add sounds to sound list
+                                    window.Sounds = [];
+                                    for (i = 0; i < response.sounds.length; i++) {
+                                        window.Sounds.push(response.sounds[i]);
+                                    }
+                                    window.fillSoundOptions('#selectSound');
+                                }
+                             },
+                             error: function (responseText) {
+                                getElem("testDiv").innerHTML = responseText;
+                             }
+                      });
                       $(this).dialog("close");
                   },
                   No: function () {
