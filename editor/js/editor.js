@@ -1288,9 +1288,9 @@ $( document ).ready( function () {
               buttons: {
                   Add: function () {
                       var soundObj = {
-                          name: encodeURIComponent($("#soundName").text()),
-                          url: encodeURIComponent($("#soundURL").text())};
-                      $.ajax({ url: 'addsound.php',
+                          name: encodeURIComponent($("#soundName").val()),
+                          url: encodeURIComponent($("#soundURL").val())};
+                      $.ajax({ url: 'soundadd.php',
                              data: soundObj,
                              type: 'post',
                              success: function (responseText) {
