@@ -205,20 +205,22 @@ window.dragBox = {
 };
 
 //** Prototype of the class representing the boxes (pages) on the graph
-window.box_proto = {
-    mouseover: function (layer) {
+window.box_proto = function(){
+    this.mouseover = function (layer) {
         if (editor.color !== "") {
             $(this).animateLayer(layer, {
                 fillStyle: editor.color
             }, 200);
         }
-    },
-    mouseout: function (layer) {
+    };
+    
+    this.mouseout = function (layer) {
         $(this).animateLayer(layer, {
             fillStyle: "#EEEEEE"
         }, 200);
-    },
-    click: function (layer) {
+    };
+    
+    this.click = function (layer) {
         var lp = 0,
             obj = {};
 
@@ -244,8 +246,9 @@ window.box_proto = {
             }
             $("#cvsGraph").drawLayers();
         }
-    },
-    dblclick: function (layer) {
+    };
+    
+    this.dblclick = function (layer) {
         if (editor.tool === "Move") {
             //** Handle open div
             window.updateColorPreview('#colorPreviewBox', layer.grad1, layer.grad2);
@@ -256,8 +259,9 @@ window.box_proto = {
             window.clipboard = layer.clone();
             $("#statusBox").text("Copy / Paste (" + layer.title + ")");
         }
-    },
-    drag: function (layer) {
+    };
+    
+    this.drag = function (layer) {
         var lp = 0,
             obj = {};
 
@@ -274,8 +278,9 @@ window.box_proto = {
             obj.x = layer.x;
             obj.y = layer.y;
         }
-    },
-    recalcFront: function () {
+    };
+    
+    this.recalcFront = function () {
         var lp = 0,
             obj = {};
 
@@ -284,8 +289,9 @@ window.box_proto = {
             obj.x2 = this.x + (this.width / 2);
             obj.y2 = this.y;
         }
-    },
-    addToLayer: function () {
+    };
+    
+    this.addToLayer = function () {
         var l = 0;
 
         $("#cvsGraph").drawRect(this);
@@ -297,12 +303,14 @@ window.box_proto = {
                 }
             }
         }
-    },
-    addHooks: function () {
+    };
+    
+    this.addHooks = function () {
         if (!this.isStart) { window.LineHook(this, 'begin'); }
         if (!this.isEnd) { window.LineHook(this, 'end'); }
-    },
-    dropHooks: function () {
+    };
+    
+    this.dropHooks = function () {
         if (this.beginHook !== "") {
             $("#cvsGraph").removeLayer(this.beginHook);
             this.beginHook = "";
@@ -311,16 +319,27 @@ window.box_proto = {
             $("#cvsGraph").removeLayer(this.endHook);
             this.endHook = "";
         }
-    },
-    addToGraph: function () {
+    };
+    
+    this.addToGraph = function () {
         $("#cvsGraph").drawRect(this);
         $('canvas').moveLayer(this.name, 2);
         if (this.contentText !== "") {
             attachLabel(this.name);
         }
-    },
-    prototype: window.box_proto_base,
-    __proto__: window.box_proto_base
+    };
+    
+    //** Attempt to set prototype
+    this.prototype = window.box_proto_base;
+    this.__proto__ = window.box_proto_base;
+    
+    /* IE7-10 Check */
+    if (this.deserialize == undefined){
+        //** Clone the base prototype's attributes
+        for (var key in window.box_proto_base) {
+            this[key] = window.box_proto_base[key];
+        }
+    }
 };
 
 //** Constructor for the class representing the boxes (pages) on the graph
@@ -353,53 +372,54 @@ window.box = function (xPos, yPos, newText, boxID) {
     }
 
     //** Create Object
-    var newBox = {
-        name: "box" + newID,
-        objType: "box",
-        BoxID: newID, //** Attribute
-        layer: true,
-        draggable: true,
-        fillStyle: "#EEEEEE",
-        strokeStyle: "#CCCCCC",
-        x: xPos,
-        y: yPos,
-        width: 60,
-        height: 40,
-        cornerRadius: 8,
-        front: [],
-        back: [],
-        contentText: newContent,    //** Attribute
-        title: newText,    //** Attribute
-        textLabel: "",
-        beginHook: "",
-        endHook: "",
-        fromCenter: true,
-        isStart: newStart,
-        isEnd: newEnd,
-        grad1: "#EEEEFF",
-        grad2: "#00A3EF",
-        SoundID: -1,
-        prototype: window.box_proto,
-        __proto__: window.box_proto
-    };
+    var newBox = new box_proto();
+    
+    //** Set attributes
+    newBox.name = "box" + newID;
+    newBox.objType = "box";
+    newBox.BoxID = newID; //** Attribute
+    newBox.layer = true;
+    newBox.draggable = true;
+    newBox.fillStyle = "#EEEEEE";
+    newBox.strokeStyle = "#CCCCCC";
+    newBox.x = xPos;
+    newBox.y = yPos;
+    newBox.width = 60;
+    newBox.height = 40;
+    newBox.cornerRadius = 8;
+    newBox.front = [];
+    newBox.back = [];
+    newBox.contentText = newContent;    //** Attribute
+    newBox.title = newText;    //** Attribute
+    newBox.textLabel = "";
+    newBox.beginHook = "";
+    newBox.endHook = "";
+    newBox.fromCenter = true;
+    newBox.isStart = newStart;
+    newBox.isEnd = newEnd;
+    newBox.grad1 = "#EEEEFF";
+    newBox.grad2 = "#00A3EF";
+    newBox.SoundID = -1;
     return newBox;
 };
 
 //** Prototype of the class representing the lines (choices) on the graph
-window.line_proto = {
-    mouseover: function (layer) {
+window.line_proto = function(){
+    this.mouseover = function (layer) {
         if (editor.color !== "") {
             $(this).animateLayer(layer, {
                 strokeStyle: editor.color
             }, 200);
         }
-    },
-    mouseout: function (layer) {
+    };
+    
+    this.mouseout = function (layer) {
         $(this).animateLayer(layer, {
             strokeStyle: layer.baseColor
         }, 200);
-    },
-    click: function (layer) {
+    };
+    
+    this.click = function (layer) {
         if (editor.tool === "Eraser") {
             //** Eraser: Line
             if (layer.LineID > -1) { //** Add to list of deleted lines with valid IDs
@@ -407,8 +427,9 @@ window.line_proto = {
             }
             layer.destroy();
         }
-    },
-    dblclick: function (layer) {
+    };
+    
+    this.dblclick = function (layer) {
         if (editor.tool === "Move") {
             //** Handle open div
             var title = "Line Editor - ";
@@ -419,8 +440,9 @@ window.line_proto = {
             $("#edit_ChoiceSoundID option[value='" + layer.SoundID + "']").attr('selected', 'selected');
             showPopMenu(title, layer.name, "edit_Line", updateLine);
         }
-    },
-    destroy: function () {
+    };
+    
+    this.destroy = function () {
         //** Eraser: Line
         var obj1 = $("#cvsGraph").getLayer(this.p1);
         var obj2 = $("#cvsGraph").getLayer(this.p2);
@@ -430,16 +452,28 @@ window.line_proto = {
         $("#cvsGraph").removeLayer(this.name);
         obj1.recalcFront();
         $("#cvsGraph").drawLayers();
-    },
-    addToLayer: function () {
+    };
+    
+    this.addToLayer = function () {
         $("#cvsGraph").drawLine(this);
-    },
-    addToGraph: function () {
+    };
+    
+    this.addToGraph = function () {
         $("#cvsGraph").drawLine(this);
         $('canvas').moveLayer(this.name, 1);
-    },
-    prototype: window.line_proto_base,
-    __proto__: window.line_proto_base
+    };
+    
+    //** Attempt to set prototype
+    this.prototype = window.line_proto_base;
+    this.__proto__ = window.line_proto_base;
+    
+    /* IE7-10 Check */
+    if (this.deserialize == undefined){
+        //** Clone the target prototype's attributes
+        for (var key in window.line_proto_base) {
+            this[key] = window.line_proto_base[key];
+        }
+    }
 };
 
 //** Constructor for the class representing the lines (choices) on the graph
@@ -460,23 +494,20 @@ window.line = function (name1, name2, lineID) {
     }
 
     //** Create Object
-    var newLine = {
-        name: "line" + newID,
-        objType: "line",
-        LineID: newID,  //** Attribute
-        layer: true,
-        draggable: false,
-        strokeStyle: '#BBBBDD',
-        strokeWidth: 5,
-        baseColor: '#AAAACC',
-        moveColor: '#8888AA',
-        text: "",
-        choice: "(new choice)",
-        factText: "",
-        SoundID: -1,
-        prototype: window.line_proto,
-        __proto__: window.line_proto
-    };
+    var newLine = new line_proto();
+    newLine.name = "line" + newID;
+    newLine.objType = "line";
+    newLine.LineID = newID;  //** Attribute
+    newLine.layer = true;
+    newLine.draggable = false;
+    newLine.strokeStyle = '#BBBBDD';
+    newLine.strokeWidth = 5;
+    newLine.baseColor = '#AAAACC';
+    newLine.moveColor = '#8888AA';
+    newLine.text = "";
+    newLine.choice = "(new choice)";
+    newLine.factText = "";
+    newLine.SoundID = -1;
 
     //** Handle object 1
     if (obj1 !== undefined) {
@@ -514,23 +545,26 @@ window.line = function (name1, name2, lineID) {
 };
 
 //** Prototype of the class representing the circles on boxes that allow connecting lines
-window.LineHook_proto = {
-    serialize: function () {
+window.LineHook_proto = function(){
+    this.serialize = function () {
         return "";
-    },
-    mouseover: function (layer) {
+    };
+    
+    this.mouseover = function (layer) {
         $(this).animateLayer(layer, {
             fillStyle: "#FEFEFE",
             strokeStyle: "#BBBBBB"
         }, 200);
-    },
-    mouseout: function (layer) {
+    };
+    
+    this.mouseout = function (layer) {
         $(this).animateLayer(layer, {
             fillStyle: "#EEEEEE",
             strokeStyle: "#9999AA"
         }, 200);
-    },
-    click: function (layer) {
+    };
+    
+    this.click = function (layer) {
         var newLine = {};
 
         //** Attach line
@@ -583,7 +617,7 @@ window.LineHook_proto = {
             editor.dat2 = "";
         }
         $("#cvsGraph").drawLayers();
-    }
+    };
 };
 
 //** Class representing the circles on boxes that allow connecting lines
@@ -597,22 +631,25 @@ window.LineHook = function (obj, str) {
         strName = "end";
         xOff = (obj.width/2);
     }
-    var newCircle = {
-        name: obj.name + "_" + strName,
-        objType: "hook",
-        BoxName: obj.name,    //** Attribute
-        Side: strName,         //** Attribute
-        objTarget: obj.name,
-        layer: true,
-        fillStyle: "#EEEEEE",
-        strokeStyle: "#9999AA",
-        x: obj.x + xOff, y: obj.y,
-        fromCenter: true,
-        width: 22,
-        height: 22,
-        prototype: window.LineHook_proto,
-        __proto__: window.LineHook_proto
-    };
+    
+    //** Create Object
+    var newCircle = new LineHook_proto();
+    
+    //** Set attributes
+    newCircle.name = obj.name + "_" + strName;
+    newCircle.objType = "hook";
+    newCircle.BoxName = obj.name;    //** Attribute
+    newCircle.Side = strName;        //** Attribute
+    newCircle.objTarget = obj.name;
+    newCircle.layer = true;
+    newCircle.fillStyle = "#EEEEEE";
+    newCircle.strokeStyle = "#9999AA";
+    newCircle.x = obj.x + xOff;
+    newCircle.y = obj.y;
+    newCircle.fromCenter = true;
+    newCircle.width = 22;
+    newCircle.height = 22;
+    
     if (str === "begin") {
         obj.beginHook = newCircle.name;
     } else {

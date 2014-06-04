@@ -50,33 +50,46 @@ window.story = {
 //**************************************************************//
 //		Classes
 //**************************************************************//
-window.box_proto = {
-	prototype: window.box_proto_base,
-	__proto__: window.box_proto_base
-};
 
 //** Box Constructor
 window.box = function(){
 	var newBox = {
-		prototype: window.box_proto,
-		__proto__: window.box_proto
+		prototype: window.box_proto_base,
+		__proto__: window.box_proto_base
 	};
+    
+    /* IE7-10 Check */
+    if (newBox.deserialize == undefined){
+        //** Clone the target prototype's attributes
+        for (var key in window.box_proto_base) {
+            newBox[key] = window.box_proto_base[key];
+        }
+    }
 	return newBox;
-};
-
-window.line_proto = {
-	prototype: window.line_proto_base,
-	__proto__: window.line_proto_base
 };
 
 //** Line Constructor
 window.line = function(){
 	var newLine = {
-		prototype: window.line_proto,
-		__proto__: window.line_proto
+		prototype: window.line_proto_base,
+		__proto__: window.line_proto_base
 	};
+    
+    /* IE7-10 Check */
+    if (newLine.deserialize == undefined){
+        //** Clone the target prototype's attributes
+        for (var key in window.line_proto_base) {
+            newLine[key] = window.line_proto_base[key];
+        }
+    }
 	return newLine;
 };
+
+//**************************************************************//
+//		Functions
+//**************************************************************//
+window.getElem = function (id) {return document.getElementById(id);};
+window.clone = function (obj) {return JSON.parse(JSON.stringify(obj));};
 
 window.loadPage = function(newURL){
 	$("#loadScreen").show();
@@ -95,7 +108,10 @@ window.loadPage = function(newURL){
 }
 
 window.updateColorGradient = function(id, clr1, clr2){
-	$(id).css({background: '#FFFFFF'})
+    //* IE7-9 Fix */
+    document.body.style.backgroundColor = clr2;
+    
+    $(id).css({background: clr2})
 	/* IE10 Consumer Preview */ 
 	.css({background: '-ms-radial-gradient(center, circle farthest-corner, ' +
 		clr1 + ' 0%, ' + clr2 + ' 100%)'})
