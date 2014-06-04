@@ -530,6 +530,20 @@ function sendGraphObjects(){
 	print(json_encode($sendObj));
 }
 
+function sendSounds() {
+    global $db, $story_sounds;
+    
+    $sendObj = new stdClass();
+    $sendObj->sounds = [];
+    
+    //** Send Sounds
+    foreach ($story_sounds as $obj){
+	    array_push($sendObj->sounds, $obj);
+    }
+    
+    print(json_encode($sendObj));
+}
+
 function getStory($id){
 	global $db;
 	
